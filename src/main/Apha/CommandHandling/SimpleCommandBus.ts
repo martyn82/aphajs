@@ -9,7 +9,7 @@ import {NoCommandHandlerException} from "./NoCommandHandlerException";
 export class SimpleCommandBus extends CommandBus {
     private handlers: {[commandClass: string]: CommandHandler} = {};
 
-    public registerHandler(commandType: {new(): Command}, handler: CommandHandler) {
+    public registerHandler(commandType: {new(...args: any[]): Command}, handler: CommandHandler) {
         let commandClass = ClassNameInflector.className(commandType);
 
         if (this.handlers[commandClass]) {
@@ -19,7 +19,7 @@ export class SimpleCommandBus extends CommandBus {
         this.handlers[commandClass] = handler;
     }
 
-    public unregisterHandler(commandType: {new(): Command}) {
+    public unregisterHandler(commandType: {new(...args: any[]): Command}) {
         let commandClass = ClassNameInflector.className(commandType);
 
         if (!this.handlers[commandClass]) {

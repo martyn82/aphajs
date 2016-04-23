@@ -23,5 +23,4 @@ describe("EventClassMap", () => {
     });
 });
 
-class EventClassMapEvent extends Event {
-}
+class EventClassMapEvent extends Event {}

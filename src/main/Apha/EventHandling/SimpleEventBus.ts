@@ -8,7 +8,7 @@ export class SimpleEventBus extends EventBus {
     private static wildcard = "*";
     private listeners: {[eventClass: string]: EventListener[]} = {};
 
-    public subscribe(listener: EventListener, eventType?: {new(): Event}): void {
+    public subscribe(listener: EventListener, eventType?: {new(...args: any[]): Event}): void {
         let eventClass;
 
         if (eventType == null) {
@@ -24,7 +24,7 @@ export class SimpleEventBus extends EventBus {
         this.listeners[eventClass].push(listener);
     }
 
-    public unsubscribe(listener: EventListener, eventType: {new(): Event}): void {
+    public unsubscribe(listener: EventListener, eventType: {new(...args: any[]): Event}): void {
         let eventClass = ClassNameInflector.className(eventType);
 
         if (!this.listeners[eventClass]) {
