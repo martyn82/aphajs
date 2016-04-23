@@ -3,19 +3,30 @@ import {EventStorage} from "./EventStorage";
 import {EventDescriptor} from "../EventDescriptor";
 
 export class MemoryEventStorage implements EventStorage {
+    private data: {[id: string]: EventDescriptor[]} = {};
+
     public contains(id: string): boolean {
-        return false;
+        return typeof this.data[id] !== "undefined";
     }
 
     public append(event: EventDescriptor): boolean {
-        return false;
+        if (!this.contains(event.id)) {
+            this.data[event.id] = [];
+        }
+
+        this.data[event.id].push(event);
+        return true;
     }
 
     public find(id: string): EventDescriptor[] {
-        return [];
+        if (!this.contains(id)) {
+            return [];
+        }
+
+        return this.data[id];
     }
 
     public findIdentities(): string[] {
-        return [];
+        return Object.keys(this.data);
     }
 }
