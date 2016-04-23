@@ -1,0 +1,13 @@
+# IDE
+.idea/
+*.iml
+
+# Vendor
+node_modules/
+typings/
+
+# NPM
+npm-debug.log
+
+# Build
+target/

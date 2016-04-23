@@ -1,0 +1,79 @@
+{
+  "name": "aphajs",
+  "version": "1.0.0",
+  "description": "APHA CQRS/ES library.",
+  "keywords": [
+    "typescript",
+    "commands",
+    "events",
+    "cqrs",
+    "event sourcing"
+  ],
+  "author": "Martijn Endenburg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/martyn82/aphajs/issues"
+  },
+  "homepage": "https://github.com/martyn82/aphajs#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martyn82/aphajs.git"
+  },
+  "typings": "./typings/main.d.ts",
+  "config": {
+    "all_sources_dir": "src",
+    "build_dir": "target/build",
+    "build_views_dir": "target/build/views",
+    "dist_dir": "target/dist",
+    "reports_dir": "target/reports",
+    "resources_dir": "src/main/Resources",
+    "sources_dir": "src/main",
+    "test_reports_dir": "target/reports/test",
+    "test_sources_dir": "src/test"
+  },
+  "scripts": {
+    "build": "npm run lint && npm run clean && npm run compile && npm run test",
+    "clean": "npm run clean:build",
+    "clean:build": "rimraf ${npm_package_config_build_dir}/ && mkdirp ${npm_package_config_build_dir}",
+    "clean:reports": "rimraf ${npm_package_config_reports_dir}/ && mkdirp ${npm_package_config_reports_dir}",
+    "clean:reports:test": "rimraf ${npm_package_config_test_reports_dir}/ && mkdirp ${npm_package_config_test_reports_dir}",
+    "compile": "npm run compile:ts",
+    "compile:ts": "tsc --project ./tsconfig.json --sourceMap --outDir ${npm_package_config_build_dir}",
+    "lint": "npm run lint:ts",
+    "lint:ts": "tslint ${npm_package_config_all_sources_dir}/**/*.ts",
+    "postinstall": "typings install",
+    "posttest:unit:coverage:html": "echo \"Coverage report:\n\tfile://$(pwd)/${npm_package_config_test_reports_dir}/html/index.html\n\"",
+    "precompile:ts": "npm run clean:build",
+    "preinstall": "npm prune",
+    "test": "npm run test:unit && npm run test:unit:coverage",
+    "test:unit": "karma start config/karma.conf.js",
+    "test:unit:coverage": "npm run test:unit:coverage:html && npm run test:unit:coverage:lcov",
+    "test:unit:coverage:html": "remap-istanbul -i ${npm_package_config_test_reports_dir}/coverage.json -t html -o ${npm_package_config_test_reports_dir}/html",
+    "test:unit:coverage:lcov": "remap-istanbul -i ${npm_package_config_test_reports_dir}/coverage.json -t lcovonly -o ${npm_package_config_test_reports_dir}/lcov.info"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "istanbul-instrumenter-loader": "^0.2.0",
+    "karma": "^0.13.22",
+    "karma-chai": "^0.1.0",
+    "karma-coverage": "^0.5.5",
+    "karma-mocha": "^0.2.2",
+    "karma-phantomjs-launcher": "^1.0.0",
+    "karma-sinon": "^1.0.4",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-spec-reporter": "0.0.26",
+    "karma-webpack": "^1.7.0",
+    "mkdirp": "^0.5.1",
+    "mocha": "^2.4.5",
+    "phantomjs-prebuilt": "^2.1.7",
+    "remap-istanbul": "^0.6.3",
+    "rimraf": "^2.5.2",
+    "sinon": "^1.17.3",
+    "ts-loader": "^0.8.2",
+    "tslint": "^3.7.4",
+    "typescript": "^1.8.10",
+    "typings": "^0.8.1",
+    "webpack": "^1.13.0"
+  }
+}
