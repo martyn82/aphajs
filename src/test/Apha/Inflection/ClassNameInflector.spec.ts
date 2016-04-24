@@ -16,10 +16,19 @@ describe("ClassNameInflector", () => {
         });
 
         it("throws exception if no name can be inflected", () => {
-            let notAnObject = "";
             expect(() => {
-                ClassNameInflector.classOf(notAnObject);
+                ClassNameInflector.classOf("");
             }).to.throw(InflectionException);
+        });
+    });
+
+    describe("className", () => {
+        it("inflects class name from type", () => {
+            expect(ClassNameInflector.className(ClassNameInflectorSpecClass)).to.equal("ClassNameInflectorSpecClass");
+        });
+
+        it("inflects class name from inherited type", () => {
+            expect(ClassNameInflector.className(ClassNameInflectorSpecChild)).to.equal("ClassNameInflectorSpecChild");
         });
     });
 });
