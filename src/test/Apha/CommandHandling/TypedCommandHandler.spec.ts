@@ -22,6 +22,7 @@ describe("TypedCommandHandler", () => {
                 .withArgs(command);
 
             handler.handle(command);
+            handlerMock.verify();
         });
 
         it("throws exception if no appropriate handler can be found", () => {
