@@ -27,8 +27,7 @@ export class MemoryProjectionStorage implements ProjectionStorage {
     }
 
     public findAll(offset: number, limit: number): Projection[] {
-        let slice = Object.getOwnPropertyNames(this.data).slice(offset, offset + limit);
-        return slice.map((id) => {
+        return Object.getOwnPropertyNames(this.data).slice(offset, offset + limit).map((id) => {
             return this.data[id];
         });
     }
