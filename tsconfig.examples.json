@@ -4,10 +4,11 @@
     "module": "commonjs",
     "allowJs": false,
     "noImplicitAny": false,
-    "noImplicitReturns": true,
-    "rootDir": "src",
-    "sourceMap": true
+    "noImplicitReturns": true
   },
+  "files": [
+    "examples/commands-events.ts"
+  ],
   "exclude": [
     "node_modules",
     "target",

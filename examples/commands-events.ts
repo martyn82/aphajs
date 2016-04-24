@@ -3,9 +3,7 @@ import {SimpleCommandBus} from "./../src/main/Apha/CommandHandling/SimpleCommand
 import {Command} from "./../src/main/Apha/Message/Command";
 import {Event} from "./../src/main/Apha/Message/Event";
 import {AggregateRoot} from "./../src/main/Apha/Domain/AggregateRoot";
-import {CommandHandler} from "./../src/main/Apha/CommandHandling/CommandHandler";
 import {Repository} from "./../src/main/Apha/Repository/Repository";
-import {ClassNameInflector} from "./../src/main/Apha/Inflection/ClassNameInflector";
 import {EventSourcingRepository} from "./../src/main/Apha/Repository/EventSourcingRepository";
 import {GenericAggregateFactory} from "./../src/main/Apha/Domain/GenericAggregateFactory";
 import {EventStore} from "./../src/main/Apha/EventStore/EventStore";
@@ -13,19 +11,13 @@ import {SimpleEventBus} from "./../src/main/Apha/EventHandling/SimpleEventBus";
 import {JsonSerializer} from "./../src/main/Apha/Serialization/JsonSerializer";
 import {EventClassMap} from "./../src/main/Apha/EventStore/EventClassMap";
 import {MemoryEventStorage} from "./../src/main/Apha/EventStore/Storage/MemoryEventStorage";
-import {EventListener} from "./../src/main/Apha/EventHandling/EventListener";
 import {EventStorage} from "./../src/main/Apha/EventStore/Storage/EventStorage";
+import {TypedCommandHandler} from "../src/main/Apha/CommandHandling/TypedCommandHandler";
+import {TypedEventListener} from "../src/main/Apha/EventHandling/TypedEventListener";
 
-class DemonstrateHandler implements CommandHandler {
-    constructor(private repository: Repository<Demonstration>) {}
-
-    public handle(command: Command): void {
-        let commandClass = ClassNameInflector.classOf(command);
-        let handler = this["handle" + commandClass];
-
-        if (typeof handler === "function") {
-            handler.call(this, command);
-        }
+class DemonstrateHandler extends TypedCommandHandler {
+    constructor(private repository: Repository<Demonstration>) {
+        super();
     }
 
     public handleDemonstrate(command: Demonstration.Demonstrate): void {
@@ -43,16 +35,9 @@ class DemonstrateHandler implements CommandHandler {
     }
 }
 
-export class DemonstratedListener implements EventListener {
-    constructor(private storage: EventStorage) {}
-
-    public on(event: Event): void {
-        let eventClass = ClassNameInflector.classOf(event);
-        let handler = this["on" + eventClass];
-
-        if (typeof handler === "function") {
-            handler.call(this, event);
-        }
+export class DemonstratedListener extends TypedEventListener {
+    constructor(private storage: EventStorage) {
+        super();
     }
 
     public onDemonstrated(event: Demonstration.Demonstrated): void {
@@ -67,7 +52,6 @@ export class DemonstratedListener implements EventListener {
         });
     }
 }
-
 
 class Demonstration extends AggregateRoot {
     private id: string;
