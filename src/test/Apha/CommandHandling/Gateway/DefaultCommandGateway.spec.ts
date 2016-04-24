@@ -1,5 +1,5 @@
 
-import {expect} from "chai";
+import * as sinon from "sinon";
 import {DefaultCommandGateway} from "../../../../main/Apha/CommandHandling/Gateway/DefaultCommandGateway";
 import {SimpleCommandBus} from "../../../../main/Apha/CommandHandling/SimpleCommandBus";
 import {Command} from "../../../../main/Apha/Message/Command";

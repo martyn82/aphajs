@@ -1,4 +1,5 @@
 
+import * as sinon from "sinon";
 import {expect} from "chai";
 import {SimpleCommandBus} from "../../../main/Apha/CommandHandling/SimpleCommandBus";
 import {CommandHandler} from "../../../main/Apha/CommandHandling/CommandHandler";

@@ -1,4 +1,5 @@
 
+import * as sinon from "sinon";
 import {expect} from "chai";
 import {EventSourcingRepository} from "../../../main/Apha/Repository/EventSourcingRepository";
 import {AggregateFactory} from "../../../main/Apha/Domain/AggregateFactory";

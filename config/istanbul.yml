@@ -1,0 +1,13 @@
+instrumentation:
+  root: ./target/build/main
+  include-all-sources: true
+  extensions:
+    - .js
+reporting:
+  print: none
+  reports:
+    - json
+  dir: ./target/reports/test
+  report-config:
+    json:
+      file: coverage.json

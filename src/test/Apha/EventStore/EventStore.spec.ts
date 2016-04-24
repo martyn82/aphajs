@@ -1,4 +1,5 @@
 
+import * as sinon from "sinon";
 import {expect} from "chai";
 import {EventStore} from "../../../main/Apha/EventStore/EventStore";
 import {EventBus} from "../../../main/Apha/EventHandling/EventBus";
