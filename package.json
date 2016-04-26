@@ -32,7 +32,7 @@
     "test_sources_dir": "src/test"
   },
   "scripts": {
-    "build": "npm run lint && npm run clean && npm run compile && npm run test",
+    "build": "npm run clean && npm run compile && npm run test",
     "clean": "npm run clean:build",
     "clean:build": "rimraf ${npm_package_config_build_dir}/ && mkdirp ${npm_package_config_build_dir}",
     "clean:reports": "rimraf ${npm_package_config_reports_dir}/ && mkdirp ${npm_package_config_reports_dir}",
@@ -44,7 +44,7 @@
     "lint:ts": "tslint ${npm_package_config_all_sources_dir}/**/*.ts",
     "postinstall": "typings install",
     "posttest:unit:coverage:html": "echo \"Coverage report:\n\tfile://$(pwd)/${npm_package_config_test_reports_dir}/html/index.html\n\"",
-    "precompile:ts": "npm run clean:build",
+    "precompile:ts": "npm run clean:build && npm run lint",
     "preinstall": "npm prune",
     "test": "npm run test:unit && npm run test:unit:coverage",
     "test:unit": "istanbul cover --config config/istanbul.yml _mocha -- --opts config/mocha.opts ${npm_package_config_build_tests_dir}/**/*.spec.js",
