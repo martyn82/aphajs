@@ -115,7 +115,7 @@ describe("MemoryProjectionStorage", () => {
 
     describe("findBy", () => {
         it("retrieves projections matching criteria", () => {
-            let projections = []
+            let projections = [];
 
             projections.push(new MemoryProjectionStorageSpecProjection("foo", "bar"));
             projections.push(new MemoryProjectionStorageSpecProjection("bar", "foo"));
@@ -134,7 +134,7 @@ describe("MemoryProjectionStorage", () => {
         });
 
         it("retrieves projections matching multiple criteria", () => {
-            let projections = []
+            let projections = [];
 
             projections.push(new MemoryProjectionStorageSpecProjection("foo", "bar"));
             projections.push(new MemoryProjectionStorageSpecProjection("bar", "foo"));

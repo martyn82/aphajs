@@ -22,7 +22,7 @@ export class MemoryProjectionStorage implements ProjectionStorage {
         if (!this.data[id]) {
             throw new ProjectionNotFoundException(id);
         }
-        
+
         return this.data[id];
     }
 
