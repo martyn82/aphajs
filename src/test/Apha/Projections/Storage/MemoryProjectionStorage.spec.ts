@@ -35,13 +35,13 @@ describe("MemoryProjectionStorage", () => {
         });
     });
 
-    describe("delete", () => {
+    describe("remove", () => {
         it("removes a projection from storage", () => {
             let projectionId = "id";
             let projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
             storage.upsert(projectionId, projection);
 
-            storage.delete(projectionId);
+            storage.remove(projectionId);
 
             expect(() => {
                 storage.find(projectionId);
@@ -50,7 +50,7 @@ describe("MemoryProjectionStorage", () => {
 
         it("is idempotent", () => {
             expect(() => {
-                storage.delete("id");
+                storage.remove("id");
             }).not.to.throw(Error);
         });
     });

@@ -10,7 +10,7 @@ export class MemoryProjectionStorage implements ProjectionStorage {
         this.data[id] = projection;
     }
 
-    public delete(id: string): void {
+    public remove(id: string): void {
         if (!this.data[id]) {
             return;
         }
