@@ -14,12 +14,10 @@ export class SagaRepository<T extends Saga> {
             return;
         }
 
-        let associationValues = saga.getAssociationValues().getArrayCopy().map(AssociationValueDescriptor.fromValue);
-
         this.storage.insert(
             ClassNameInflector.classOf(saga),
             saga.getId(),
-            associationValues,
+            AssociationValueDescriptor.fromValues(saga.getAssociationValues()),
             this.serializer.serialize(saga)
         );
     }
@@ -30,12 +28,10 @@ export class SagaRepository<T extends Saga> {
             return;
         }
 
-        let associationValues = saga.getAssociationValues().getArrayCopy().map(AssociationValueDescriptor.fromValue);
-
         this.storage.update(
             ClassNameInflector.classOf(saga),
             saga.getId(),
-            associationValues,
+            AssociationValueDescriptor.fromValues(saga.getAssociationValues()),
             this.serializer.serialize(saga)
         );
     }

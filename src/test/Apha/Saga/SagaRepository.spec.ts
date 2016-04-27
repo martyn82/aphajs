@@ -30,7 +30,7 @@ describe("SagaRepository", () => {
         it("adds an active saga to the repository", () => {
             let sagaId = "id";
             let saga = new SagaRepositorySpecSaga(sagaId, new AssociationValues());
-            let descriptors = saga.getAssociationValues().getArrayCopy().map(AssociationValueDescriptor.fromValue);
+            let descriptors = AssociationValueDescriptor.fromValues(saga.getAssociationValues());
 
             storageMock.expects("insert")
                 .once()
@@ -63,7 +63,7 @@ describe("SagaRepository", () => {
         it("updates existing active saga in repository", () => {
             let sagaId = "id";
             let saga = new SagaRepositorySpecSaga(sagaId, new AssociationValues());
-            let descriptors = saga.getAssociationValues().getArrayCopy().map(AssociationValueDescriptor.fromValue);
+            let descriptors = AssociationValueDescriptor.fromValues(saga.getAssociationValues());
 
             storageMock.expects("update")
                 .once()
@@ -149,8 +149,8 @@ class SagaRepositorySpecSaga extends Saga {
 }
 
 class SagaRepositorySpecSagaStorage implements SagaStorage {
-    insert(sagaClass: string, id: string, associationValues: AssociationValueDescriptor[], data: string): void {}
-    update(sagaClass: string, id: string, associationValues: AssociationValueDescriptor[], data: string): void {}
+    insert(sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string): void {}
+    update(sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string): void {}
     remove(id: string): void {}
     findById(id: string): string {
         return null;
