@@ -6,7 +6,7 @@ export class JsonSerializer implements Serializer {
         return JSON.stringify(value);
     }
 
-    public deserialize(data: string, type?: {new(): any}): any {
+    public deserialize(data: string, type?: {new(...args: any[]): any}): any {
         let deserialized = JSON.parse(data);
 
         if (type) {
