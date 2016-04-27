@@ -9,7 +9,8 @@ Command-Query Responsibility Segregation either with or without
 Event Sourcing.
 
 APHAjs provides:
-* Typed command and event handling
+* Typed command and event handling with annotations
+*
 
 ## Prerequisites
 
