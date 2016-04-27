@@ -45,15 +45,18 @@ class SagaSerializerSpecSaga extends Saga {
     }
 }
 
-class SagaSerializerSpecSagaFactory implements SagaFactory {
-    public createSaga(sagaClass: string, id: string, associationValues: AssociationValues): Saga {
+class SagaSerializerSpecSagaFactory implements SagaFactory<SagaSerializerSpecSaga> {
+    public createSaga(
+        sagaType: {new(...args: any[]): SagaSerializerSpecSaga},
+        id: string,
+        associationValues: AssociationValues
+    ): SagaSerializerSpecSaga {
         return null;
     }
 
-    public supports(sagaClass: string): boolean {
+    public supports(sagaType: {new(...args: any[]): SagaSerializerSpecSaga}): boolean {
         return true;
     }
 
-    public hydrate(saga: Saga): void {
-    }
+    public hydrate(saga: SagaSerializerSpecSaga): void {}
 }

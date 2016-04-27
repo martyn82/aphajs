@@ -7,7 +7,7 @@ import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 export class GenericAggregateFactory<T extends AggregateRoot> implements AggregateFactory<T> {
     private aggregateType: string;
 
-    constructor(private ctor: {new(): T}) {
+    constructor(private ctor: {new(...args: any[]): T}) {
         this.aggregateType = ClassNameInflector.className(this.ctor);
     }
 
