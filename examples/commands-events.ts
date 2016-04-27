@@ -12,9 +12,10 @@ import {JsonSerializer} from "./../src/main/Apha/Serialization/JsonSerializer";
 import {EventClassMap} from "./../src/main/Apha/EventStore/EventClassMap";
 import {MemoryEventStorage} from "./../src/main/Apha/EventStore/Storage/MemoryEventStorage";
 import {EventStorage} from "./../src/main/Apha/EventStore/Storage/EventStorage";
-import {TypedEventListener} from "../src/main/Apha/EventHandling/TypedEventListener";
 import {AnnotatedCommandHandler} from "../src/main/Apha/CommandHandling/AnnotatedCommandHandler";
 import {CommandHandler} from "../src/main/Apha/Decorators/CommandHandlerDecorator";
+import {AnnotatedEventListener} from "../src/main/Apha/EventHandling/AnnotatedEventListener";
+import {EventListener} from "../src/main/Apha/Decorators/EventListenerDecorator";
 
 class Demonstration extends AggregateRoot {
     private id: string;
@@ -70,11 +71,12 @@ class DemonstrateHandler extends AnnotatedCommandHandler {
     }
 }
 
-export class DemonstratedListener extends TypedEventListener {
+export class DemonstratedListener extends AnnotatedEventListener {
     constructor(private storage: EventStorage) {
         super();
     }
 
+    @EventListener
     public onDemonstrated(event: Demonstration.Demonstrated): void {
         console.log("received event", event);
 
