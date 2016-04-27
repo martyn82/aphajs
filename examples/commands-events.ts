@@ -12,46 +12,9 @@ import {JsonSerializer} from "./../src/main/Apha/Serialization/JsonSerializer";
 import {EventClassMap} from "./../src/main/Apha/EventStore/EventClassMap";
 import {MemoryEventStorage} from "./../src/main/Apha/EventStore/Storage/MemoryEventStorage";
 import {EventStorage} from "./../src/main/Apha/EventStore/Storage/EventStorage";
-import {TypedCommandHandler} from "../src/main/Apha/CommandHandling/TypedCommandHandler";
 import {TypedEventListener} from "../src/main/Apha/EventHandling/TypedEventListener";
-
-class DemonstrateHandler extends TypedCommandHandler {
-    constructor(private repository: Repository<Demonstration>) {
-        super();
-    }
-
-    public handleDemonstrate(command: Demonstration.Demonstrate): void {
-        console.log("received command", command);
-        let aggregate;
-
-        try {
-            aggregate = this.repository.findById(command.id);
-        } catch (e) {
-            aggregate = new Demonstration();
-        }
-
-        aggregate.demonstrate(command);
-        this.repository.store(aggregate, aggregate.getVersion());
-    }
-}
-
-export class DemonstratedListener extends TypedEventListener {
-    constructor(private storage: EventStorage) {
-        super();
-    }
-
-    public onDemonstrated(event: Demonstration.Demonstrated): void {
-        console.log("received event", event);
-
-        let identities = this.storage.findIdentities();
-        console.log("stored aggregates:", identities);
-
-        identities.forEach((identity) => {
-            let events = this.storage.find(identity);
-            console.log(identity, "events:", events);
-        });
-    }
-}
+import {AnnotatedCommandHandler} from "../src/main/Apha/CommandHandling/AnnotatedCommandHandler";
+import {CommandHandler} from "../src/main/Apha/Decorators/CommandHandlerDecorator";
 
 class Demonstration extends AggregateRoot {
     private id: string;
@@ -83,6 +46,45 @@ namespace Demonstration {
         constructor(public id: string) {
             super();
         }
+    }
+}
+
+class DemonstrateHandler extends AnnotatedCommandHandler {
+    constructor(private repository: Repository<Demonstration>) {
+        super();
+    }
+
+    @CommandHandler
+    public handleDemonstrate(command: Demonstration.Demonstrate): void {
+        console.log("received command", command);
+        let aggregate;
+
+        try {
+            aggregate = this.repository.findById(command.id);
+        } catch (e) {
+            aggregate = new Demonstration();
+        }
+
+        aggregate.demonstrate(command);
+        this.repository.store(aggregate, aggregate.getVersion());
+    }
+}
+
+export class DemonstratedListener extends TypedEventListener {
+    constructor(private storage: EventStorage) {
+        super();
+    }
+
+    public onDemonstrated(event: Demonstration.Demonstrated): void {
+        console.log("received event", event);
+
+        let identities = this.storage.findIdentities();
+        console.log("stored aggregates:", identities);
+
+        identities.forEach((identity) => {
+            let events = this.storage.find(identity);
+            console.log(identity, "events:", events);
+        });
     }
 }
 
