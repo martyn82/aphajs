@@ -4,7 +4,9 @@
     "module": "commonjs",
     "allowJs": false,
     "noImplicitAny": false,
-    "noImplicitReturns": true
+    "noImplicitReturns": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "files": [
     "examples/commands-events.ts"

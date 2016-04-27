@@ -5,6 +5,8 @@
     "allowJs": false,
     "noImplicitAny": false,
     "noImplicitReturns": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "rootDir": "src",
     "sourceMap": true
   },

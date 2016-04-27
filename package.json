@@ -52,7 +52,9 @@
     "test:unit:coverage:html": "remap-istanbul -i ${npm_package_config_test_reports_dir}/coverage.json -t html -o ${npm_package_config_test_reports_dir}/html",
     "test:unit:coverage:lcov": "remap-istanbul -i ${npm_package_config_test_reports_dir}/coverage.json -t lcovonly -o ${npm_package_config_test_reports_dir}/lcov.info"
   },
-  "dependencies": {},
+  "dependencies": {
+    "reflect-metadata": "^0.1.3"
+  },
   "devDependencies": {
     "chai": "^3.5.0",
     "istanbul": "^0.4.3",
