@@ -1,17 +1,24 @@
 
 import {EventListener} from "../EventHandling/EventListener";
-import {Saga} from "./Saga";
+import {Saga, SagaType} from "./Saga";
 import {SagaFactory} from "./SagaFactory";
 import {SagaRepository} from "./SagaRepository";
 import {Event} from "../Message/Event";
 import {AssociationValues} from "./AssociationValues";
 import {IdentityProvider} from "../Domain/IdentityProvider";
+import {AssociationValueResolver} from "./AssociationValueResolver";
+
+export enum SagaCreationPolicy {
+    Never,
+    IFNoneFound,
+    Always
+}
 
 export abstract class SagaManager<T extends Saga> implements EventListener {
     constructor(
-        private sagaTypes: {new(...args: any[]): T}[],
+        private sagaTypes: SagaType<T>[],
         private repository: SagaRepository<T>,
-        // private associationValueResolver: AssociationValueResolver,
+        private associationValueResolver: AssociationValueResolver,
         private factory: SagaFactory<T>
     ) {}
 
@@ -47,6 +54,10 @@ export abstract class SagaManager<T extends Saga> implements EventListener {
         this.repository.commit(saga);
     }
 
-    protected abstract extractAssociationValues(sagaType: {new(...args: any[]): T}, event: Event): AssociationValues;
-    protected abstract getSagaCreationPolicy(sagaType: {new(...args: any[]): T}, event: Event): number;
+    protected getAssociationValueResolver(): AssociationValueResolver {
+        return this.associationValueResolver;
+    }
+
+    protected abstract extractAssociationValues(sagaType: SagaType<T>, event: Event): AssociationValues;
+    protected abstract getSagaCreationPolicy(sagaType: SagaType<T>, event: Event): SagaCreationPolicy;
 }

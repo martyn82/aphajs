@@ -1,7 +1,7 @@
 
 import {SagaStorage} from "./Storage/SagaStorage";
 import {SagaSerializer} from "./SagaSerializer";
-import {Saga} from "./Saga";
+import {Saga, SagaType} from "./Saga";
 import {AssociationValue} from "./AssociationValue";
 import {AssociationValueDescriptor} from "./Storage/AssociationValueDescriptor";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
@@ -36,12 +36,12 @@ export class SagaRepository<T extends Saga> {
         );
     }
 
-    public find(sagaType: {new(...args: any[]): T}, associationValue: AssociationValue): string[] {
+    public find(sagaType: SagaType<T>, associationValue: AssociationValue): string[] {
         let sagaClass = ClassNameInflector.className(sagaType);
         return this.storage.find(sagaClass, AssociationValueDescriptor.fromValue(associationValue));
     }
 
-    public load(id: string, sagaType: {new(...args: any[]): T}): T {
+    public load(id: string, sagaType: SagaType<T>): T {
         let sagaData = this.storage.findById(id);
 
         if (!sagaData) {

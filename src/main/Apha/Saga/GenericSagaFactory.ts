@@ -1,12 +1,12 @@
 
-import {Saga} from "./Saga";
+import {Saga, SagaType} from "./Saga";
 import {SagaFactory} from "./SagaFactory";
 import {AssociationValues} from "./AssociationValues";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {UnsupportedSagaException} from "./UnsupportedSagaException";
 
 export class GenericSagaFactory<T extends Saga> implements SagaFactory<T> {
-    public createSaga(sagaType: {new(...args: any[]): T}, id: string, associationValues: AssociationValues): T {
+    public createSaga(sagaType: SagaType<T>, id: string, associationValues: AssociationValues): T {
         if (!this.supports(sagaType)) {
             let sagaClass = ClassNameInflector.className(sagaType);
             throw new UnsupportedSagaException(sagaClass);
@@ -15,7 +15,7 @@ export class GenericSagaFactory<T extends Saga> implements SagaFactory<T> {
         return new sagaType(id, associationValues);
     }
 
-    public supports(sagaType: {new(...args: any[]): T}): boolean {
+    public supports(sagaType: SagaType<T>): boolean {
         return true;
     }
 

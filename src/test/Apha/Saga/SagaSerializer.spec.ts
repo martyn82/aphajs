@@ -1,6 +1,6 @@
 
 import {expect} from "chai";
-import {Saga} from "../../../main/Apha/Saga/Saga";
+import {Saga, SagaType} from "../../../main/Apha/Saga/Saga";
 import {Event} from "../../../main/Apha/Message/Event";
 import {SagaSerializer} from "../../../main/Apha/Saga/SagaSerializer";
 import {JsonSerializer} from "../../../main/Apha/Serialization/JsonSerializer";
@@ -47,14 +47,14 @@ class SagaSerializerSpecSaga extends Saga {
 
 class SagaSerializerSpecSagaFactory implements SagaFactory<SagaSerializerSpecSaga> {
     public createSaga(
-        sagaType: {new(...args: any[]): SagaSerializerSpecSaga},
+        sagaType: SagaType<SagaSerializerSpecSaga>,
         id: string,
         associationValues: AssociationValues
     ): SagaSerializerSpecSaga {
         return null;
     }
 
-    public supports(sagaType: {new(...args: any[]): SagaSerializerSpecSaga}): boolean {
+    public supports(sagaType: SagaType<SagaSerializerSpecSaga>): boolean {
         return true;
     }
 
