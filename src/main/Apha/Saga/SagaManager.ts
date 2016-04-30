@@ -40,8 +40,8 @@ export abstract class SagaManager<T extends Saga> implements EventListener {
             });
 
             if (
-                this.getSagaCreationPolicy(sagaType, event) === 0 /* ALWAYS */ ||
-                (!handled && this.getSagaCreationPolicy(sagaType, event) === 1 /* IF NONE FOUND */)
+                this.getSagaCreationPolicy(sagaType, event) === SagaCreationPolicy.Always ||
+                (!handled && this.getSagaCreationPolicy(sagaType, event) === SagaCreationPolicy.IFNoneFound)
             ) {
                 let saga = this.factory.createSaga(sagaType, IdentityProvider.generateNew(), associationValues);
                 saga.on(event);
