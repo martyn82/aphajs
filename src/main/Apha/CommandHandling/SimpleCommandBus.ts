@@ -1,7 +1,7 @@
 
 import {CommandBus} from "./CommandBus";
 import {CommandHandler} from "./CommandHandler";
-import {Command} from "../Message/Command";
+import {Command, CommandType} from "../Message/Command";
 import {CommandHandlerAlreadyExistsException} from "./CommandHandlerAlreadyExistsException";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {NoCommandHandlerException} from "./NoCommandHandlerException";
@@ -9,7 +9,7 @@ import {NoCommandHandlerException} from "./NoCommandHandlerException";
 export class SimpleCommandBus extends CommandBus {
     private handlers: {[commandClass: string]: CommandHandler} = {};
 
-    public registerHandler(commandType: {new(...args: any[]): Command}, handler: CommandHandler) {
+    public registerHandler(commandType: CommandType, handler: CommandHandler) {
         let commandClass = ClassNameInflector.className(commandType);
 
         if (this.handlers[commandClass]) {
@@ -19,7 +19,7 @@ export class SimpleCommandBus extends CommandBus {
         this.handlers[commandClass] = handler;
     }
 
-    public unregisterHandler(commandType: {new(...args: any[]): Command}) {
+    public unregisterHandler(commandType: CommandType) {
         let commandClass = ClassNameInflector.className(commandType);
 
         if (!this.handlers[commandClass]) {

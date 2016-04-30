@@ -1,5 +1,5 @@
 
-import {Serializer} from "../Serialization/Serializer";
+import {Serializer, AnyType} from "../Serialization/Serializer";
 import {SagaFactory} from "./SagaFactory";
 import {Saga} from "./Saga";
 
@@ -10,7 +10,7 @@ export class SagaSerializer<T extends Saga> implements Serializer {
         return this.serializer.serialize(value);
     }
 
-    public deserialize(data: string, type?: {new(...args: any[]): any}): any {
+    public deserialize(data: string, type?: AnyType): any {
         let deserialized = this.serializer.deserialize(data, type);
         this.factory.hydrate(deserialized);
         return deserialized;

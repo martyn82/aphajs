@@ -1,14 +1,14 @@
 
 import {EventBus} from "./EventBus";
 import {EventListener} from "./EventListener";
-import {Event} from "../Message/Event";
+import {Event, EventType} from "../Message/Event";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 
 export class SimpleEventBus extends EventBus {
     private static wildcard = "*";
     private listeners: {[eventClass: string]: EventListener[]} = {};
 
-    public subscribe(listener: EventListener, eventType?: {new(...args: any[]): Event}): void {
+    public subscribe(listener: EventListener, eventType?: EventType): void {
         let eventClass;
 
         if (eventType == null) {
@@ -24,7 +24,7 @@ export class SimpleEventBus extends EventBus {
         this.listeners[eventClass].push(listener);
     }
 
-    public unsubscribe(listener: EventListener, eventType: {new(...args: any[]): Event}): void {
+    public unsubscribe(listener: EventListener, eventType: EventType): void {
         let eventClass = ClassNameInflector.className(eventType);
 
         if (!this.listeners[eventClass]) {

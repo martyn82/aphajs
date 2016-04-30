@@ -1,12 +1,12 @@
 
-import {Serializer} from "./Serializer";
+import {Serializer, AnyType} from "./Serializer";
 
 export class JsonSerializer implements Serializer {
     public serialize(value: any): string {
         return JSON.stringify(value);
     }
 
-    public deserialize(data: string, type?: {new(...args: any[]): any}): any {
+    public deserialize(data: string, type?: AnyType): any {
         let deserialized = JSON.parse(data);
 
         if (type) {

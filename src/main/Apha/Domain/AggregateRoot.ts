@@ -3,6 +3,8 @@ import {Event} from "../Message/Event";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {UnsupportedEventException} from "./UnsupportedEventException";
 
+export type AggregateRootType<T extends AggregateRoot | AggregateRoot> = {new(...args: any[]): T};
+
 export abstract class AggregateRoot {
     private version: number = -1;
     private eventLog: Event[] = [];

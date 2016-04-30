@@ -1,6 +1,8 @@
 
 import {InflectionException} from "./InflectionException";
 
+type AnyType = {new(...args: any[]): any};
+
 export class ClassNameInflector {
     private static pattern = /function (.{1,})\(/;
 
@@ -12,7 +14,7 @@ export class ClassNameInflector {
         return ClassNameInflector.pattern.exec((<any>object).constructor.toString())[1];
     }
 
-    public static className(ctor: {new(): any}): string {
-        return ClassNameInflector.pattern.exec(ctor.toString())[1];
+    public static className(type: AnyType): string {
+        return ClassNameInflector.pattern.exec(type.toString())[1];
     }
 }

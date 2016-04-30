@@ -1,18 +1,18 @@
 
 import {AggregateFactory} from "./AggregateFactory";
 import {Event} from "../Message/Event";
-import {AggregateRoot} from "./AggregateRoot";
+import {AggregateRoot, AggregateRootType} from "./AggregateRoot";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 
 export class GenericAggregateFactory<T extends AggregateRoot> implements AggregateFactory<T> {
     private aggregateType: string;
 
-    constructor(private ctor: {new(...args: any[]): T}) {
-        this.aggregateType = ClassNameInflector.className(this.ctor);
+    constructor(private aggregateRootType: AggregateRootType<T>) {
+        this.aggregateType = ClassNameInflector.className(this.aggregateRootType);
     }
 
     public createAggregate(events: Event[]): T {
-        let instance = new this.ctor();
+        let instance = new this.aggregateRootType();
         instance.loadFromHistory(events);
         return instance;
     }

@@ -4,9 +4,9 @@ import {expect} from "chai";
 import {EventStore} from "../../../main/Apha/EventStore/EventStore";
 import {EventBus} from "../../../main/Apha/EventHandling/EventBus";
 import {EventStorage} from "../../../main/Apha/EventStore/Storage/EventStorage";
-import {Serializer} from "../../../main/Apha/Serialization/Serializer";
+import {Serializer, AnyType} from "../../../main/Apha/Serialization/Serializer";
 import {EventDescriptor} from "../../../main/Apha/EventStore/EventDescriptor";
-import {Event} from "../../../main/Apha/Message/Event";
+import {Event, EventType} from "../../../main/Apha/Message/Event";
 import {EventClassMap} from "../../../main/Apha/EventStore/EventClassMap";
 import {ClassNameInflector} from "../../../main/Apha/Inflection/ClassNameInflector";
 import {AggregateNotFoundException} from "../../../main/Apha/EventStore/AggregateNotFoundException";
@@ -191,16 +191,16 @@ class EventStoreSerializer implements Serializer {
         return "";
     }
 
-    public deserialize(data: string, type: {new(): any}): any {
+    public deserialize(data: string, type: AnyType): any {
         return null;
     }
 }
 
 class EventStoreEventBus extends EventBus {
-    public subscribe(listener: EventListener, eventType?: {new(): Event}): void {
+    public subscribe(listener: EventListener, eventType?: EventType): void {
     }
 
-    public unsubscribe(listener: EventListener, eventType: {new(): Event}): void {
+    public unsubscribe(listener: EventListener, eventType: EventType): void {
     }
 
     public publish(event: Event): boolean {

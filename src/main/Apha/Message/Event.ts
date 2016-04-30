@@ -1,6 +1,8 @@
 
 import {Message} from "./Message";
 
+export type EventType = {new(...args: any[]): Event};
+
 export abstract class Event extends Message {
     private version: number = 0;
     protected id: string;
