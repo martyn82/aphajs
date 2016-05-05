@@ -15,7 +15,7 @@ APHAjs provides:
 ## Prerequisites
 
 Requirements:
-* Node 5.x or 4.x
+* Node 6+
 
 ## Installation
 ```
