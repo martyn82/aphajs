@@ -7,10 +7,10 @@ export namespace Inflect {
             return "";
         }
 
-        return object.constructor["name"];
+        return object.constructor.name;
     }
 
     export function className(type: AnyType): string {
-        return type["name"];
+        return type.name;
     }
 }
