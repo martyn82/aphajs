@@ -1,19 +1,19 @@
 
+import "reflect-metadata";
 import {expect} from "chai";
+import {MetadataKeys} from "../../../main/Apha/Decorators/MetadataKeys";
 import {AnnotatedEventListener} from "../../../main/Apha/EventHandling/AnnotatedEventListener";
 import {Event} from "../../../main/Apha/Message/Event";
 import {EventListener} from "../../../main/Apha/Decorators/EventListenerDecorator";
 import {DecoratorException} from "../../../main/Apha/Decorators/DecoratorException";
 import {UnsupportedEventException} from "../../../main/Apha/EventHandling/UnsupportedEventException";
 
-const ANNOTATIONS_EVENTLISTENERS_METADATA_KEY = "annotations:eventlisteners";
-
 describe("EventListenerDecorator", () => {
     describe("EventListener", () => {
         it("defines method as an event handler", () => {
             let target = new EventListenerDecoratorSpecTarget();
 
-            let handlers = Reflect.getMetadata(ANNOTATIONS_EVENTLISTENERS_METADATA_KEY, target);
+            let handlers = Reflect.getMetadata(MetadataKeys.EVENT_HANDLERS, target);
             expect(handlers).to.be.undefined;
 
             let methodName = "onSomething";
@@ -26,7 +26,7 @@ describe("EventListenerDecorator", () => {
 
             EventListener(target, methodName, descriptor);
 
-            handlers = Reflect.getMetadata(ANNOTATIONS_EVENTLISTENERS_METADATA_KEY, target);
+            handlers = Reflect.getMetadata(MetadataKeys.EVENT_HANDLERS, target);
             expect(handlers).not.to.be.undefined;
             expect(handlers["Something"]).to.equal(target[methodName]);
         });
@@ -60,17 +60,16 @@ describe("EventListenerDecorator", () => {
 
 class Something extends Event {}
 class EventListenerDecoratorSpecTarget extends AnnotatedEventListener {
-    @Reflect.metadata("design:paramtypes", [Something])
+    @Reflect.metadata(MetadataKeys.PARAM_TYPES, [Something])
     public onSomething(event: Something): void {
     }
 }
 
 class EventListenerDecoratorSpecInvalidTarget extends AnnotatedEventListener {
-    @Reflect.metadata("design:paramtypes", [])
+    @Reflect.metadata(MetadataKeys.PARAM_TYPES, [])
     public onNothing(): void {
     }
 }
 
 class EventListenerDecoratorSpecNoHandler extends AnnotatedEventListener {
 }
-

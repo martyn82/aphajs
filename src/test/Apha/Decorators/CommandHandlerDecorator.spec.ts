@@ -1,20 +1,19 @@
 
 import "reflect-metadata";
 import {expect} from "chai";
+import {MetadataKeys} from "../../../main/Apha/Decorators/MetadataKeys";
 import {AnnotatedCommandHandler} from "../../../main/Apha/CommandHandling/AnnotatedCommandHandler";
 import {Command} from "../../../main/Apha/Message/Command";
 import {CommandHandler} from "../../../main/Apha/Decorators/CommandHandlerDecorator";
 import {DecoratorException} from "../../../main/Apha/Decorators/DecoratorException";
 import {UnsupportedCommandException} from "../../../main/Apha/CommandHandling/UnsupportedCommandException";
 
-const ANNOTATIONS_COMMANDHANDLERS_METADATA_KEY = "annotations:commandhandlers";
-
 describe("CommandHandlerDecorator", () => {
     describe("CommandHandler", () => {
         it("defines method as a command handler", () => {
             let target = new CommandHandlerDecoratorSpecTarget();
 
-            let handlers = Reflect.getMetadata(ANNOTATIONS_COMMANDHANDLERS_METADATA_KEY, target);
+            let handlers = Reflect.getMetadata(MetadataKeys.COMMAND_HANDLERS, target);
             expect(handlers).to.be.undefined;
 
             let methodName = "handleSomething";
@@ -27,7 +26,7 @@ describe("CommandHandlerDecorator", () => {
 
             CommandHandler(target, methodName, descriptor);
 
-            handlers = Reflect.getMetadata(ANNOTATIONS_COMMANDHANDLERS_METADATA_KEY, target);
+            handlers = Reflect.getMetadata(MetadataKeys.COMMAND_HANDLERS, target);
             expect(handlers).not.to.be.undefined;
             expect(handlers["Something"]).to.equal(target[methodName]);
         });
@@ -61,13 +60,13 @@ describe("CommandHandlerDecorator", () => {
 
 class Something extends Command {}
 class CommandHandlerDecoratorSpecTarget extends AnnotatedCommandHandler {
-    @Reflect.metadata("design:paramtypes", [Something])
+    @Reflect.metadata(MetadataKeys.PARAM_TYPES, [Something])
     public handleSomething(command: Something): void {
     }
 }
 
 class CommandHandlerDecoratorSpecInvalidTarget extends AnnotatedCommandHandler {
-    @Reflect.metadata("design:paramtypes", [])
+    @Reflect.metadata(MetadataKeys.PARAM_TYPES, [])
     public handleNothing(): void {
     }
 }
