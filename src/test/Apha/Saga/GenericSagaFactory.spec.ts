@@ -60,4 +60,3 @@ class GenericSagaFactorySpecSaga2 extends Saga {
         return true;
     }
 }
-

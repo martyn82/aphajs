@@ -15,6 +15,11 @@ describe("ClassNameInflector", () => {
             expect(ClassNameInflector.classOf(object)).to.equal("ClassNameInflectorSpecChild");
         });
 
+        it("inflects class name from namspaced class", () => {
+            let object = new ClassNameInflectorSpecNamespace.ClassNameInflectorSpecNamespacedClass();
+            expect(ClassNameInflector.classOf(object)).to.equal("ClassNameInflectorSpecNamespacedClass");
+        });
+
         it("throws exception if no name can be inflected", () => {
             expect(() => {
                 ClassNameInflector.classOf("");
@@ -30,8 +35,18 @@ describe("ClassNameInflector", () => {
         it("inflects class name from inherited type", () => {
             expect(ClassNameInflector.className(ClassNameInflectorSpecChild)).to.equal("ClassNameInflectorSpecChild");
         });
+
+        it("inflects class name from namespaced type", () => {
+            expect(
+                ClassNameInflector.className(ClassNameInflectorSpecNamespace.ClassNameInflectorSpecNamespacedClass)
+            ).to.equal("ClassNameInflectorSpecNamespacedClass");
+        });
     });
 });
 
 class ClassNameInflectorSpecClass {}
 class ClassNameInflectorSpecChild extends ClassNameInflectorSpecClass {}
+
+namespace ClassNameInflectorSpecNamespace {
+    export class ClassNameInflectorSpecNamespacedClass {}
+}

@@ -1,3 +1,5 @@
 
-export class InflectionException extends Error {
+import {Exception} from "../../Exception";
+
+export class InflectionException extends Exception {
 }
