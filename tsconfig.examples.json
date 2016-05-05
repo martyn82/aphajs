@@ -6,7 +6,12 @@
     "noImplicitAny": false,
     "noImplicitReturns": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    "removeComments": true,
+    "stripInternal": true,
+    "charset": "utf-8"
   },
   "files": [
     "examples/commands-events.ts"
