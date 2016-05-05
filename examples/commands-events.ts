@@ -17,7 +17,7 @@ import {CommandHandler} from "../src/main/Apha/Decorators/CommandHandlerDecorato
 import {AnnotatedEventListener} from "../src/main/Apha/EventHandling/AnnotatedEventListener";
 import {EventListener} from "../src/main/Apha/Decorators/EventListenerDecorator";
 
-class Demonstration extends AggregateRoot {
+export class Demonstration extends AggregateRoot {
     private id: string;
     private isDemonstrated: boolean = false;
 
@@ -37,7 +37,7 @@ class Demonstration extends AggregateRoot {
     }
 }
 
-namespace Demonstration {
+export namespace Demonstration {
     export class Demonstrate extends Command {
         constructor(public id: string) {
             super();
