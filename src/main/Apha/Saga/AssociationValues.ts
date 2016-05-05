@@ -1,7 +1,7 @@
 
 import {AssociationValue} from "./AssociationValue";
 
-export class AssociationValues {
+export class AssociationValues implements Iterable<AssociationValue> {
     constructor(private items: AssociationValue[] = []) {}
 
     public add(item: AssociationValue): void {
@@ -28,5 +28,16 @@ export class AssociationValues {
 
     public getArrayCopy(): AssociationValue[] {
         return this.items.slice(0, this.items.length);
+    }
+
+    public [Symbol.iterator](): Iterator<AssociationValue> {
+        let items: AssociationValue[] = this.getArrayCopy();
+        let cursor: number = 0;
+
+        return {
+            next: (value?: any): IteratorResult<AssociationValue> => {
+                return (cursor === items.length) ? {done: true} : {done: false, value: items[cursor++]};
+            }
+        };
     }
 }

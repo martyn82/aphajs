@@ -13,9 +13,9 @@ export namespace AssociationValueDescriptor {
 
     export function fromValues(values: AssociationValues): AssociationValueDescriptor {
         let descriptor: AssociationValueDescriptor = {};
-        values.getArrayCopy().forEach((value: AssociationValue) => {
+        for (let value of values) {
             descriptor[value.getKey()] = value.getValue();
-        });
+        }
         return descriptor;
     }
 }

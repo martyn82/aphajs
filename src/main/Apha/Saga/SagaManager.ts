@@ -28,7 +28,7 @@ export abstract class SagaManager<T extends Saga> implements EventListener {
         this.sagaTypes.forEach((sagaType) => {
             let associationValues = this.extractAssociationValues(sagaType, event);
 
-            associationValues.getArrayCopy().forEach((associationValue) => {
+            for (let associationValue of associationValues) {
                 let sagaIds = this.repository.find(sagaType, associationValue);
 
                 sagaIds.forEach((sagaId) => {
@@ -37,7 +37,7 @@ export abstract class SagaManager<T extends Saga> implements EventListener {
                     this.commit(saga);
                     handled = true;
                 });
-            });
+            }
 
             if (
                 this.getSagaCreationPolicy(sagaType, event) === SagaCreationPolicy.Always ||

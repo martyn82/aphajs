@@ -15,6 +15,23 @@ describe("AssociationValues", () => {
         expect(collection.size()).to.equal(1);
     });
 
+    it("is iterable", () => {
+        let innerValues = [
+            new AssociationValue("foo", "bar"),
+            new AssociationValue("baz", "boo")
+        ];
+
+        let values = new AssociationValues(innerValues);
+        let iteration = 0;
+
+        for (let value of values) {
+            expect(value).to.eql(innerValues[iteration]);
+            iteration++;
+        }
+
+        expect(iteration).to.equal(innerValues.length);
+    });
+
     describe("contains", () => {
         it("returns false if item does not exist in collection", () => {
             let item = new AssociationValue("foo", "bar");
