@@ -1,8 +1,13 @@
 
-// import * as uuid from "UUID";
-
 export class IdentityProvider {
     public static generateNew(): string {
-        return ""; // uuid.genV4().toString();
+        function s4(): string {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+        }
+
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
     }
 }
