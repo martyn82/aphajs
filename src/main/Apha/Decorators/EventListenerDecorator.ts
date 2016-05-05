@@ -7,14 +7,14 @@ import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {Event} from "../Message/Event";
 import {UnsupportedEventException} from "../EventHandling/UnsupportedEventException";
 
-type AnnotatedEventListeners = {[eventClass: string]: Function};
+export type AnnotatedEventListeners = {[eventClass: string]: Function};
 
 export function EventListener(
     target: AnnotatedEventListener,
     methodName: string,
     descriptor: TypedPropertyDescriptor<Function>
 ): void {
-    let paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName) || [];
+    let paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName);
 
     if (paramTypes.length === 0) {
         let targetClass = ClassNameInflector.classOf(target);

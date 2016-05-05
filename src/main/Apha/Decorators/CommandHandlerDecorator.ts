@@ -7,14 +7,14 @@ import {DecoratorException} from "./DecoratorException";
 import {Command} from "../Message/Command";
 import {UnsupportedCommandException} from "../CommandHandling/UnsupportedCommandException";
 
-type AnnotatedCommandHandlers = {[commandClass: string]: Function};
+export type AnnotatedCommandHandlers = {[commandClass: string]: Function};
 
 export function CommandHandler(
     target: AnnotatedCommandHandler,
     methodName: string,
     descriptor: TypedPropertyDescriptor<Function>
 ): void {
-    let paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName) || [];
+    let paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName);
 
     if (paramTypes.length === 0) {
         let targetClass = ClassNameInflector.classOf(target);
