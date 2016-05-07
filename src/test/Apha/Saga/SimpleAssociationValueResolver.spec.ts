@@ -17,11 +17,8 @@ describe("SimpleAssociationValueResolver", () => {
             let associationValues = resolver.extractAssociationValues(event);
             let associationValueArray = associationValues.getArrayCopy();
 
-            expect(associationValueArray).to.have.lengthOf(4);
-            expect(associationValueArray[0]).to.eql(new AssociationValue("version", 0));
-            expect(associationValueArray[1]).to.eql(new AssociationValue("id", "idValue"));
-            expect(associationValueArray[2]).to.eql(new AssociationValue("isSomething", false));
-            expect(associationValueArray[3]).to.eql(new AssociationValue("aNumber", 432));
+            expect(associationValueArray).to.have.lengthOf(1);
+            expect(associationValueArray[0]).to.eql(new AssociationValue("id", "idValue"));
         });
     });
 });
@@ -29,5 +26,6 @@ describe("SimpleAssociationValueResolver", () => {
 class SimpleAssociationValueResolverSpecEvent extends Event {
     constructor(public id: string, public isSomething: boolean, public aNumber: number) {
         super();
+        this.setId(id);
     }
 }

@@ -6,12 +6,8 @@ import {AssociationValue} from "./AssociationValue";
 
 export class SimpleAssociationValueResolver implements AssociationValueResolver {
     public extractAssociationValues(event: Event): AssociationValues {
-        let associationValues = new AssociationValues();
-
-        for (let property in event) {
-            associationValues.add(new AssociationValue(property, event[property]));
-        }
-
-        return associationValues;
+        return new AssociationValues([
+            new AssociationValue("id", event.getId())
+        ]);
     }
 }
