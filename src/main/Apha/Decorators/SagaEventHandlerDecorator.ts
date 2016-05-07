@@ -10,8 +10,11 @@ import {AnnotatedSagaStarters} from "./StartSagaDecorator";
 import {AnnotatedSagaEndings} from "./EndSagaDecorator";
 
 export type AnnotatedSagaEventHandlers = {[eventClass: string]: [Function, string]};
+export type SagaEventHandlerOptions = {
+    associationProperty?: string
+};
 
-export function SagaEventHandler(associationProperty?: string) {
+export function SagaEventHandler(options?: SagaEventHandlerOptions) {
     return (
         target: AnnotatedSaga,
         methodName: string,
@@ -28,7 +31,7 @@ export function SagaEventHandler(associationProperty?: string) {
             Reflect.getOwnMetadata(MetadataKeys.SAGA_EVENT_HANDLERS, target) || {};
         let eventClass = ClassNameInflector.className(paramTypes[0]);
 
-        handlers[eventClass] = [descriptor.value, associationProperty];
+        handlers[eventClass] = [descriptor.value, options ? options.associationProperty : undefined];
         Reflect.defineMetadata(MetadataKeys.SAGA_EVENT_HANDLERS, handlers, target);
     };
 }
@@ -51,8 +54,8 @@ export function SagaEventHandlerDispatcher(
         let starters: AnnotatedSagaStarters = Reflect.getMetadata(MetadataKeys.SAGA_STARTERS, this) || {};
         let endings: AnnotatedSagaEndings = Reflect.getMetadata(MetadataKeys.SAGA_ENDINGS, this) || {};
 
-        // resolve parameter values to associate
-        // associate with values
+        let associatedValue = this.parameterResolver.resolveParameterValue(event, handler[1]);
+        this.associateWith(associatedValue);
 
         if (starters.has(handler[0].name)) {
             this.start();

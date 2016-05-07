@@ -7,6 +7,7 @@ import {MetadataKeys} from "../../../main/Apha/Decorators/MetadataKeys";
 import {SagaEventHandler} from "../../../main/Apha/Decorators/SagaEventHandlerDecorator";
 import {DecoratorException} from "../../../main/Apha/Decorators/DecoratorException";
 import {UnsupportedEventException} from "../../../main/Apha/EventHandling/UnsupportedEventException";
+import {DefaultParameterResolver} from "../../../main/Apha/Decorators/DefaultParameterResolver";
 
 describe("SagaEventHandlerDecorator", () => {
     describe("SagaEventHandler", () => {
@@ -29,6 +30,28 @@ describe("SagaEventHandlerDecorator", () => {
             handlers = Reflect.getMetadata(MetadataKeys.SAGA_EVENT_HANDLERS, target);
             expect(handlers).not.to.be.undefined;
             expect(handlers["Something"]).to.eql([target[methodName], undefined]);
+        });
+
+        it("associates a saga with a property if specified", () => {
+            let target = new SagaEventHandlerDecoratorSpecTarget("id");
+            target.setParameterResolver(new DefaultParameterResolver());
+
+            let handlers = Reflect.getMetadata(MetadataKeys.SAGA_EVENT_HANDLERS, target);
+            expect(handlers).to.be.undefined;
+
+            let methodName = "onSomething";
+            let descriptor = {
+                value: target[methodName],
+                writable: true,
+                enumerable: false,
+                configurable: false
+            };
+
+            SagaEventHandler({associationProperty: "id"})(target, methodName, descriptor);
+
+            handlers = Reflect.getMetadata(MetadataKeys.SAGA_EVENT_HANDLERS, target);
+            expect(handlers).not.to.be.undefined;
+            expect(handlers["Something"]).to.eql([target[methodName], "id"]);
         });
 
         it("throws exception if no parameter can be found", () => {

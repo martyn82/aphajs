@@ -5,12 +5,14 @@ import {SagaEventHandler} from "../../../../main/Apha/Decorators/SagaEventHandle
 import {Event} from "../../../../main/Apha/Message/Event";
 import {StartSaga} from "../../../../main/Apha/Decorators/StartSagaDecorator";
 import {EndSaga} from "../../../../main/Apha/Decorators/EndSagaDecorator";
+import {DefaultParameterResolver} from "../../../../main/Apha/Decorators/DefaultParameterResolver";
 
 describe("AnnotatedSaga", () => {
     describe("on", () => {
         it("invokes correct handler", () => {
             let event = new AnnotatedSagaSpecEvent();
             let saga = new AnnotatedSagaSpecSaga("id");
+            saga.setParameterResolver(new DefaultParameterResolver());
 
             saga.on(event);
 
@@ -20,6 +22,7 @@ describe("AnnotatedSaga", () => {
         it("starts saga if handler is supposed to", () => {
             let event = new AnnotatedSagaSpecEventStart();
             let saga = new AnnotatedSagaSpecSaga("id");
+            saga.setParameterResolver(new DefaultParameterResolver());
 
             saga.on(event);
 
@@ -29,6 +32,7 @@ describe("AnnotatedSaga", () => {
         it("ends saga if handler is supposed to", () => {
             let event = new AnnotatedSagaSpecEventEnd();
             let saga = new AnnotatedSagaSpecSaga("id");
+            saga.setParameterResolver(new DefaultParameterResolver());
 
             saga.on(event);
 
