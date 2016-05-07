@@ -8,7 +8,7 @@ import {AssociationValue} from "../AssociationValue";
 
 export abstract class AnnotatedSaga extends Saga {
     private active: boolean = false;
-    private parameterResolver: ParameterResolver;
+    protected parameterResolver: ParameterResolver;
 
     constructor(id: string) {
         super(id, new AssociationValues());
