@@ -1,7 +1,5 @@
 
 import * as sinon from "sinon";
-import * as chai from "chai";
-import * as chaiAsPromised from "chai-as-promised";
 import {expect} from "chai";
 import {SimpleEventScheduler} from "../../../main/Apha/Scheduling/SimpleEventScheduler";
 import {EventBus} from "../../../main/Apha/EventHandling/EventBus";
@@ -18,7 +16,6 @@ describe("SimpleEventScheduler", () => {
     let storageMock;
 
     before(() => {
-        chai.use(chaiAsPromised);
         clock = sinon.useFakeTimers(Date.now());
     });
 
