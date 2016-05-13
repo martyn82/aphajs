@@ -41,6 +41,8 @@ export abstract class AggregateRoot {
     protected apply(event: Event, change: boolean = true): void {
         if (change) {
             this.eventLog.push(event);
+        } else {
+            this.version = event.getVersion();
         }
 
         this.on(event);
