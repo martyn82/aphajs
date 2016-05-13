@@ -22,4 +22,8 @@ export class GenericSagaFactory<T extends Saga> implements SagaFactory<T> {
     public hydrate(saga: T): void {
         // no-op
     }
+
+    public dehydrate(saga: T): void {
+        // no-op
+    }
 }

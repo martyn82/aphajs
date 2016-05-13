@@ -59,4 +59,5 @@ class SagaSerializerSpecSagaFactory implements SagaFactory<SagaSerializerSpecSag
     }
 
     public hydrate(saga: SagaSerializerSpecSaga): void {}
+    public dehydrate(saga: SagaSerializerSpecSaga): void {}
 }

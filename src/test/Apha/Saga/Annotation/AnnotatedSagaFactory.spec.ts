@@ -58,7 +58,7 @@ describe("AnnotatedSagaFactory", () => {
             let saga = new AnnotatedSagaFactorySpecSaga("id");
             saga.setParameterResolver(parameterResolver);
 
-            factory.dehydrate();
+            factory.dehydrate(saga);
             expect(saga.getParameterResolver()).to.be.null;
         });
     });

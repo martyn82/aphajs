@@ -12,6 +12,7 @@ describe("AnnotatedSaga", () => {
         it("invokes correct handler", () => {
             let event = new AnnotatedSagaSpecEvent();
             let saga = new AnnotatedSagaSpecSaga("id");
+            saga.setActive();
             saga.setParameterResolver(new DefaultParameterResolver());
 
             saga.on(event);
@@ -47,6 +48,10 @@ class AnnotatedSagaSpecEventEnd extends Event {}
 
 class AnnotatedSagaSpecSaga extends AnnotatedSaga {
     public onSomethingCalled: boolean = false;
+
+    public setActive(): void {
+        this.start();
+    }
 
     @StartSaga
     @SagaEventHandler()

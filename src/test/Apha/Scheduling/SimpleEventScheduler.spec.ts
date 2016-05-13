@@ -33,6 +33,10 @@ describe("SimpleEventScheduler", () => {
         scheduler = new SimpleEventScheduler(storage, eventBus);
     });
 
+    afterEach(() => {
+        scheduler.destroy();
+    });
+
     it("schedules all scheduled events from storage upon initialization", () => {
         let eventBus = new SimpleEventSchedulerSpecEventBus();
         let storage = new SimpleEventSchedulerSpecScheduleStorage();
