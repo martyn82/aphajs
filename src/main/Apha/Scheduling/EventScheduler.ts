@@ -13,4 +13,5 @@ export interface EventScheduler {
     cancelSchedule(token: ScheduleToken): void;
     scheduleAt(dateTime: Date, event: Event): ScheduleToken;
     scheduleAfter(timeout: number, event: Event, timeUnit: TimeUnit): ScheduleToken;
+    destroy(): void;
 }

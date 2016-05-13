@@ -4,19 +4,23 @@ import {ScheduleStorage, ScheduledEvent} from "./Storage/ScheduleStorage";
 import {EventBus} from "../EventHandling/EventBus";
 import {ScheduleToken} from "./ScheduleToken";
 import {Event} from "../Message/Event";
-import Timer = NodeJS.Timer;
 import {IdentityProvider} from "../Domain/IdentityProvider";
 
-type Schedule = {[token: string]: Timer};
+type Schedule = {[token: string]: any};
 
 export class SimpleEventScheduler implements EventScheduler {
     private static MAX_TIMEOUT = 2147483647;
     private static REFRESH_TIMEOUT = 864000000;
 
+    private refresh = null;
     private schedule: Schedule = {};
 
     constructor(private storage: ScheduleStorage, private eventBus: EventBus) {
         this.scheduleStoredEvents(this);
+    }
+
+    public destroy() {
+        clearTimeout(this.refresh);
     }
 
     private scheduleStoredEvents(sender: SimpleEventScheduler) {
@@ -29,7 +33,7 @@ export class SimpleEventScheduler implements EventScheduler {
             sender.schedule[scheduledEvent.token] = setTimeout(sender.onTimeout, timeout, sender, scheduledEvent);
         }
 
-        setTimeout(sender.scheduleStoredEvents, SimpleEventScheduler.REFRESH_TIMEOUT, sender);
+        this.refresh = setTimeout(sender.scheduleStoredEvents, SimpleEventScheduler.REFRESH_TIMEOUT, sender);
     }
 
     public cancelSchedule(token: ScheduleToken): void {
