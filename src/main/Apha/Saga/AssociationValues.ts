@@ -13,8 +13,8 @@ export class AssociationValues implements Iterable<AssociationValue> {
     }
 
     public contains(item: AssociationValue): boolean {
-        return this.items.filter((i) => {
-                return i === item;
+        return this.items.filter((i: AssociationValue) => {
+                return i.getKey() === item.getKey() && i.getValue() === item.getValue();
             }).length > 0;
     }
 
