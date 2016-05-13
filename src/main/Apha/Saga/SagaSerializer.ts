@@ -7,6 +7,7 @@ export class SagaSerializer<T extends Saga> implements Serializer {
     constructor(private serializer: Serializer, private factory: SagaFactory<T>) {}
 
     public serialize(value: any): string {
+        this.factory.dehydrate(value);
         return this.serializer.serialize(value);
     }
 
