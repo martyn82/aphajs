@@ -52,6 +52,16 @@ describe("AnnotatedSagaFactory", () => {
             expect(saga.getParameterResolver()).to.eql(parameterResolver);
         });
     });
+
+    describe("dehydrate", () => {
+        it("dehydrates the saga", () => {
+            let saga = new AnnotatedSagaFactorySpecSaga("id");
+            saga.setParameterResolver(parameterResolver);
+
+            factory.dehydrate();
+            expect(saga.getParameterResolver()).to.be.null;
+        });
+    });
 });
 
 class AnnotatedSagaFactorySpecSaga extends AnnotatedSaga {

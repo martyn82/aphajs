@@ -22,6 +22,7 @@ export class AnnotatedSagaFactory<T extends AnnotatedSaga | AnnotatedSaga> imple
             saga.associateWith(associationValue);
         }
 
+        this.hydrate(saga);
         return saga;
     }
 
@@ -31,5 +32,9 @@ export class AnnotatedSagaFactory<T extends AnnotatedSaga | AnnotatedSaga> imple
 
     public hydrate(saga: T): void {
         saga.setParameterResolver(this.parameterResolver);
+    }
+
+    public dehydrate(saga: T): void {
+        saga.setParameterResolver(null);
     }
 }
