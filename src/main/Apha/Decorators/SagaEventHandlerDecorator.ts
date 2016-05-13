@@ -8,6 +8,7 @@ import {Event} from "../Message/Event";
 import {UnsupportedEventException} from "../EventHandling/UnsupportedEventException";
 import {AnnotatedSagaStarters} from "./StartSagaDecorator";
 import {AnnotatedSagaEndings} from "./EndSagaDecorator";
+import {AssociationValue} from "../Saga/AssociationValue";
 
 export type AnnotatedSagaEventHandlers = {[eventClass: string]: [Function, string]};
 export type SagaEventHandlerOptions = {
@@ -55,13 +56,15 @@ export function SagaEventHandlerDispatcher(
         let endings: AnnotatedSagaEndings = Reflect.getMetadata(MetadataKeys.SAGA_ENDINGS, this) || {};
 
         let associatedValue = this.parameterResolver.resolveParameterValue(event, handler[1]);
-        this.associateWith(associatedValue);
+        this.associateWith(new AssociationValue(handler[1], associatedValue));
 
         if (starters.has(handler[0].name)) {
             this.start();
         }
 
-        handler[0].call(this, event);
+        if (this.isActive()) {
+            handler[0].call(this, event);
+        }
 
         if (endings.has(handler[0].name)) {
             this.end();
