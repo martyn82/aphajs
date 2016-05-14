@@ -37,7 +37,7 @@ describe("JsonSerializer", () => {
             expect(serializer.serialize(str)).to.equal("\"some string\"");
             expect(serializer.serialize(num)).to.equal("42");
             expect(serializer.serialize(bool)).to.equal("true");
-            expect(serializer.serialize(nil)).to.equal("");
+            expect(serializer.serialize(nil)).to.equal(null);
         });
 
         it("serializes typed objects", () => {
@@ -51,7 +51,7 @@ describe("JsonSerializer", () => {
             let obj = new SomethingComplex("fozvalue", null);
             let serialized = serializer.serialize(obj);
 
-            expect(serialized).to.equal("{\"boz\":null}");
+            expect(serialized).to.equal("{\"boz\":null,\"foo\":null}");
         });
     });
 
@@ -90,15 +90,23 @@ describe("JsonSerializer", () => {
         it("deserializes complex types", () => {
             let nested = new Something("foo", true, [3, 2, 1]);
             let obj = new SomethingComplex("defaultfoz", nested);
+
+            let smallObjs = [new SmallObj("first"), new SmallObj("second")];
+            obj.setFoo(smallObjs);
+
             let serialized = serializer.serialize(obj);
 
-            expect(serialized).to.equal("{\"boz\":{\"foo\":\"foo\",\"bar\":true,\"baz\":[3,2,1]}}");
+            expect(serialized).to.equal(
+                "{\"boz\":{\"foo\":\"foo\",\"bar\":true,\"baz\":[3,2,1]}," +
+                "\"foo\":[{\"prop\":\"first\"},{\"prop\":\"second\"}]}"
+            );
 
             let deserialized = serializer.deserialize(serialized, SomethingComplex);
             expect(deserialized.foz).to.equal("defaultfoz");
             expect(deserialized.boz.bar).to.be.true;
             expect(deserialized.boz.baz).to.eql([3, 2, 1]);
             expect(deserialized.boz.foo).to.equal("foo");
+            expect(deserialized.foo).to.eql(smallObjs);
         });
     });
 });
@@ -113,6 +121,10 @@ class Something implements SomethingInterface {
     constructor(public foo: string, public bar: boolean, public baz: number[]) {}
 }
 
+class SmallObj {
+    constructor(private prop: string) {}
+}
+
 class SomethingComplex {
     @Serializer.Ignore()
     private foz: string;
@@ -120,8 +132,16 @@ class SomethingComplex {
     @Serializer.Serializable()
     private boz: Something;
 
+    @Serializer.Serializable({genericType: SmallObj})
+    private foo: SmallObj[];
+
     constructor(foz: string = "defaultfoz", boz: Something) {
         this.foz = foz;
         this.boz = boz;
+        this.foo = null;
+    }
+
+    public setFoo(foo: SmallObj[]): void {
+        this.foo = foo;
     }
 }

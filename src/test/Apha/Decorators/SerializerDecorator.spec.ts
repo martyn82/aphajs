@@ -20,7 +20,9 @@ describe("SerializerDecorator", () => {
             let target = new SerializerDecoratorSpecClass2();
             let serializables = Reflect.getMetadata(MetadataKeys.SERIALIZABLE_PROPERTIES, target);
 
-            expect(serializables["bar"]).to.eql(SerializerDecoratorSpecClass);
+            expect(serializables["bar"]).to.eql({
+                primaryType: SerializerDecoratorSpecClass
+            });
         });
     });
 });

@@ -4,14 +4,15 @@ import {Serializer} from "./Serializer";
 import {AnyType} from "../../Inflect";
 import {
     AnnotatedSerializableProperties,
-    AnnotatedIgnoreSerializationProperties
+    AnnotatedIgnoreSerializationProperties, SerializableType
 } from "../Decorators/SerializerDecorator";
 import {MetadataKeys} from "../Decorators/MetadataKeys";
+import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 
 export class JsonSerializer implements Serializer {
     public serialize(value: any): string {
         if (value === null) {
-            return "";
+            return null;
         }
 
         if (typeof value !== "object") {
@@ -31,16 +32,32 @@ export class JsonSerializer implements Serializer {
 
         let instance = new type();
         let dataObject = JSON.parse(data, (name: string, value: any): any => {
-            let typeInstance = new type();
-            let propertyType = this.getPropertyType(typeInstance, name);
-
-            if (propertyType === null) {
+            if (name === "") {
                 return value;
             }
 
-            let object = new propertyType();
-            this.hydrate(object, value);
-            return object;
+            let serializableType = this.getSerializableType(instance, name);
+
+            if (serializableType === null || serializableType.primaryType === null || typeof value !== "object") {
+                return value;
+            }
+
+            let propertyInstance = new serializableType.primaryType();
+
+            if (
+                ClassNameInflector.className(serializableType.primaryType) === "Array" &&
+                serializableType.secondaryType !== null
+            ) {
+                for (let i = 0; i < value.length; i++) {
+                    let itemInstance = new serializableType.secondaryType();
+                    this.hydrate(itemInstance, value[i]);
+                    propertyInstance.push(itemInstance);
+                }
+            } else {
+                this.hydrate(propertyInstance, value);
+            }
+
+            return propertyInstance;
         });
 
         this.hydrate(instance, dataObject);
@@ -55,7 +72,7 @@ export class JsonSerializer implements Serializer {
         }
     }
 
-    private getPropertyType(target: Object, propertyName: string): AnyType {
+    private getSerializableType(target: Object, propertyName: string): SerializableType {
         let propertyTypes: AnnotatedSerializableProperties =
             Reflect.getMetadata(MetadataKeys.SERIALIZABLE_PROPERTIES, target) || {};
 
