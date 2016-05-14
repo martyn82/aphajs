@@ -4,7 +4,7 @@ import {expect} from "chai";
 import {EventStore} from "../../../main/Apha/EventStore/EventStore";
 import {EventBus} from "../../../main/Apha/EventHandling/EventBus";
 import {EventStorage} from "../../../main/Apha/EventStore/Storage/EventStorage";
-import {Serializer, AnyType} from "../../../main/Apha/Serialization/Serializer";
+import {Serializer} from "../../../main/Apha/Serialization/Serializer";
 import {EventDescriptor} from "../../../main/Apha/EventStore/EventDescriptor";
 import {Event, EventType} from "../../../main/Apha/Message/Event";
 import {EventClassMap} from "../../../main/Apha/EventStore/EventClassMap";
@@ -12,6 +12,7 @@ import {ClassNameInflector} from "../../../main/Apha/Inflection/ClassNameInflect
 import {AggregateNotFoundException} from "../../../main/Apha/EventStore/AggregateNotFoundException";
 import {EventListener} from "../../../main/Apha/EventHandling/EventListener";
 import {ConcurrencyException} from "../../../main/Apha/EventStore/ConcurrencyException";
+import {AnyType} from "../../../main/Inflect";
 
 describe("EventStore", () => {
     let eventStore;

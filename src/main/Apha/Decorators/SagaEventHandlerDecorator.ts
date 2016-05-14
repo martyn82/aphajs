@@ -15,7 +15,7 @@ export type SagaEventHandlerOptions = {
     associationProperty?: string
 };
 
-export function SagaEventHandler(options?: SagaEventHandlerOptions) {
+export function SagaEventHandler(options?: SagaEventHandlerOptions): Function {
     return (
         target: AnnotatedSaga,
         methodName: string,

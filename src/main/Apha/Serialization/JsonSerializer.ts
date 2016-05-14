@@ -1,5 +1,6 @@
 
-import {Serializer, AnyType} from "./Serializer";
+import {Serializer} from "./Serializer";
+import {AnyType} from "../../Inflect";
 
 export class JsonSerializer implements Serializer {
     public serialize(value: any): string {

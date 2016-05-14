@@ -1,7 +1,8 @@
 
-import {Serializer, AnyType} from "../Serialization/Serializer";
+import {Serializer} from "../Serialization/Serializer";
 import {SagaFactory} from "./SagaFactory";
 import {Saga} from "./Saga";
+import {AnyType} from "../../Inflect";
 
 export class SagaSerializer<T extends Saga> implements Serializer {
     constructor(private serializer: Serializer, private factory: SagaFactory<T>) {}

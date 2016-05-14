@@ -1,5 +1,5 @@
 
-export type AnyType = {new(...args: any[]): any};
+import {AnyType} from "../../Inflect";
 
 export interface Serializer {
     serialize(value: any): string;

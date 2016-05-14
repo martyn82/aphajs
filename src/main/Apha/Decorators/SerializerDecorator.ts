@@ -1,19 +1,30 @@
 
 import "reflect-metadata";
-import {AnyType} from "../Serializer";
+import {AnyType} from "../../Inflect";
+import {MetadataKeys} from "./MetadataKeys";
+
+export type AnnotatedIgnoreSerializationProperties = string[];
+export type AnnotatedSerializableProperties = {[propertyName: string]: AnyType};
 
 export namespace Serializer {
-    export function Ignore(target: Object, propertyName: string, descriptor: TypedPropertyDescriptor): void {
-        let propertyType = Reflect.getMetadata();
+    export function Ignore(): Function {
+        return (target: Object, propertyName: string): void => {
+            let ignores: AnnotatedIgnoreSerializationProperties =
+                Reflect.getOwnMetadata(MetadataKeys.IGNORE_SERIALIZATION_PROPERTIES, target) || [];
+
+            ignores.push(propertyName);
+            Reflect.defineMetadata(MetadataKeys.IGNORE_SERIALIZATION_PROPERTIES, ignores, target);
+        }
     }
 
-    export function Type(type?: AnyType): Function {
-        return (
-            target: Object,
-            propertyName: string,
-            descriptor: TypedPropertyDescriptor
-        ): void => {
+    export function Serializable(): Function {
+        return (target: Object, propertyName: string): void => {
+            let propertyType = Reflect.getMetadata(MetadataKeys.PROPERTY_TYPE, target, propertyName);
+            let serializables: AnnotatedSerializableProperties =
+                Reflect.getOwnMetadata(MetadataKeys.SERIALIZABLE_PROPERTIES, target) || {};
 
+            serializables[propertyName] = propertyType;
+            Reflect.defineMetadata(MetadataKeys.SERIALIZABLE_PROPERTIES, serializables, target);
         }
     }
 }
