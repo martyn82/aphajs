@@ -14,7 +14,8 @@
     "charset": "utf-8"
   },
   "files": [
-    "examples/commands-events.ts"
+    "examples/commands-events.ts",
+    "examples/saga.ts"
   ],
   "exclude": [
     "node_modules",
