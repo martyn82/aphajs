@@ -11,7 +11,7 @@ export namespace Serializer {
         return (target: Object, propertyName: string): void => {
             let ignores: AnnotatedIgnoreSerializationProperties =
                 Reflect.getOwnMetadata(MetadataKeys.IGNORE_SERIALIZATION_PROPERTIES, target) || [];
-
+            
             ignores.push(propertyName);
             Reflect.defineMetadata(MetadataKeys.IGNORE_SERIALIZATION_PROPERTIES, ignores, target);
         }

@@ -1,5 +1,6 @@
 
 import {expect} from "chai";
+import {Serializer} from "../../../main/Apha/Decorators/SerializerDecorator";
 import {JsonSerializer} from "../../../main/Apha/Serialization/JsonSerializer";
 
 describe("JsonSerializer", () => {
@@ -27,11 +28,30 @@ describe("JsonSerializer", () => {
             );
         });
 
+        it("serializes primitives", () => {
+            let str = "some string";
+            let num = 42;
+            let bool = true;
+            let nil = null;
+
+            expect(serializer.serialize(str)).to.equal("\"some string\"");
+            expect(serializer.serialize(num)).to.equal("42");
+            expect(serializer.serialize(bool)).to.equal("true");
+            expect(serializer.serialize(nil)).to.equal("");
+        });
+
         it("serializes typed objects", () => {
             let obj = new Something("foo", false, [1, 2, 3]);
             let serialized = serializer.serialize(obj);
 
             expect(serialized).to.equal("{\"foo\":\"foo\",\"bar\":false,\"baz\":[1,2,3]}");
+        });
+
+        it("serializes only properties that are not ignored", () => {
+            let obj = new SomethingComplex("fozvalue", null);
+            let serialized = serializer.serialize(obj);
+
+            expect(serialized).to.equal("{\"boz\":null}");
         });
     });
 
@@ -53,6 +73,12 @@ describe("JsonSerializer", () => {
             });
         });
 
+        it("deserializes primitives", () => {
+            expect(serializer.deserialize("\"some string\"")).to.equal("some string");
+            expect(serializer.deserialize("42")).to.equal(42);
+            expect(serializer.deserialize("true")).to.be.true;
+        });
+
         it("deserializes values to type", () => {
             let obj = new Something("foo", false, [1, 2, 3]);
             let deserialized = serializer.deserialize("{\"foo\":\"foo\",\"bar\":false,\"baz\":[1,2,3]}", Something);
@@ -63,13 +89,16 @@ describe("JsonSerializer", () => {
 
         it("deserializes complex types", () => {
             let nested = new Something("foo", true, [3, 2, 1]);
-            let obj = new SomethingComplex(nested);
+            let obj = new SomethingComplex("defaultfoz", nested);
             let serialized = serializer.serialize(obj);
 
             expect(serialized).to.equal("{\"boz\":{\"foo\":\"foo\",\"bar\":true,\"baz\":[3,2,1]}}");
 
             let deserialized = serializer.deserialize(serialized, SomethingComplex);
-            expect(deserialized).to.eql(obj);
+            expect(deserialized.foz).to.equal("defaultfoz");
+            expect(deserialized.boz.bar).to.be.true;
+            expect(deserialized.boz.baz).to.eql([3, 2, 1]);
+            expect(deserialized.boz.foo).to.equal("foo");
         });
     });
 });
@@ -85,5 +114,14 @@ class Something implements SomethingInterface {
 }
 
 class SomethingComplex {
-    constructor(private boz: Something) {}
+    @Serializer.Ignore()
+    private foz: string;
+
+    @Serializer.Serializable()
+    private boz: Something;
+
+    constructor(foz: string = "defaultfoz", boz: Something) {
+        this.foz = foz;
+        this.boz = boz;
+    }
 }
