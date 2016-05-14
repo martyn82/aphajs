@@ -106,7 +106,12 @@ describe("JsonSerializer", () => {
             expect(deserialized.boz.bar).to.be.true;
             expect(deserialized.boz.baz).to.eql([3, 2, 1]);
             expect(deserialized.boz.foo).to.equal("foo");
+
             expect(deserialized.foo).to.eql(smallObjs);
+            expect(deserialized.foo[0]).to.be.an.instanceOf(SmallObj);
+            expect(deserialized.foo[1]).to.be.an.instanceOf(SmallObj);
+            expect(deserialized.foo[0].getProp()).to.equal("first");
+            expect(deserialized.foo[1].getProp()).to.equal("second");
         });
     });
 });
@@ -123,6 +128,10 @@ class Something implements SomethingInterface {
 
 class SmallObj {
     constructor(private prop: string) {}
+
+    public getProp(): string {
+        return this.prop;
+    }
 }
 
 class SomethingComplex {

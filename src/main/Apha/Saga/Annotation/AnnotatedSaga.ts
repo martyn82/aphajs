@@ -5,9 +5,12 @@ import {Event} from "../../Message/Event";
 import {SagaEventHandlerDispatcher} from "../../Decorators/SagaEventHandlerDecorator";
 import {ParameterResolver} from "./ParameterResolver";
 import {AssociationValue} from "../AssociationValue";
+import {Serializer} from "../../Decorators/SerializerDecorator";
 
 export abstract class AnnotatedSaga extends Saga {
     private active: boolean = false;
+
+    @Serializer.Ignore()
     protected parameterResolver: ParameterResolver;
 
     constructor(id: string) {

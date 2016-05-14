@@ -36,28 +36,32 @@ export class JsonSerializer implements Serializer {
                 return value;
             }
 
+            if (!instance.hasOwnProperty(name)) {
+                return value;
+            }
+
             let serializableType = this.getSerializableType(instance, name);
 
             if (serializableType === null || serializableType.primaryType === null || typeof value !== "object") {
                 return value;
             }
 
-            let propertyInstance = new serializableType.primaryType();
-
             if (
                 ClassNameInflector.className(serializableType.primaryType) === "Array" &&
                 serializableType.secondaryType !== null
             ) {
+                let propertyInstance = new serializableType.primaryType();
+
                 for (let i = 0; i < value.length; i++) {
                     let itemInstance = new serializableType.secondaryType();
                     this.hydrate(itemInstance, value[i]);
                     propertyInstance.push(itemInstance);
                 }
-            } else {
-                this.hydrate(propertyInstance, value);
+
+                return propertyInstance;
             }
 
-            return propertyInstance;
+            return this.deserialize(this.serialize(value), serializableType.primaryType);
         });
 
         this.hydrate(instance, dataObject);

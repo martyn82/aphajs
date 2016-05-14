@@ -1,8 +1,14 @@
 
+import {Serializer} from "./../Decorators/SerializerDecorator";
 import {AssociationValue} from "./AssociationValue";
 
 export class AssociationValues implements Iterable<AssociationValue> {
-    constructor(private items: AssociationValue[] = []) {}
+    @Serializer.Serializable({genericType: AssociationValue})
+    private items : AssociationValue[];
+
+    constructor(items: AssociationValue[] = []) {
+        this.items = items;
+    }
 
     public add(item: AssociationValue): void {
         if (this.contains(item)) {
