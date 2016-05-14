@@ -1,7 +1,7 @@
 
 import {SagaFactory} from "../SagaFactory";
 import {AnnotatedSaga} from "./AnnotatedSaga";
-import {ParameterResolver} from "../../Decorators/ParameterResolver";
+import {ParameterResolver} from "./ParameterResolver";
 import {ClassNameInflector} from "../../Inflection/ClassNameInflector";
 import {SagaType} from "../Saga";
 import {AssociationValues} from "../AssociationValues";

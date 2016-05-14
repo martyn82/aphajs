@@ -3,7 +3,7 @@ import {Saga} from "../Saga";
 import {AssociationValues} from "../AssociationValues";
 import {Event} from "../../Message/Event";
 import {SagaEventHandlerDispatcher} from "../../Decorators/SagaEventHandlerDecorator";
-import {ParameterResolver} from "../../Decorators/ParameterResolver";
+import {ParameterResolver} from "./ParameterResolver";
 import {AssociationValue} from "../AssociationValue";
 
 export abstract class AnnotatedSaga extends Saga {

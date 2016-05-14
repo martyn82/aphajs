@@ -5,8 +5,8 @@ import {AnnotatedSaga} from "../../../../main/Apha/Saga/Annotation/AnnotatedSaga
 import {AnnotatedSagaFactory} from "../../../../main/Apha/Saga/Annotation/AnnotatedSagaFactory";
 import {UnsupportedSagaException} from "../../../../main/Apha/Saga/UnsupportedSagaException";
 import {AssociationValues} from "../../../../main/Apha/Saga/AssociationValues";
-import {ParameterResolver} from "../../../../main/Apha/Decorators/ParameterResolver";
-import {DefaultParameterResolver} from "../../../../main/Apha/Decorators/DefaultParameterResolver";
+import {ParameterResolver} from "./../../../../main/Apha/Saga/Annotation/ParameterResolver";
+import {DefaultParameterResolver} from "./../../../../main/Apha/Saga/Annotation/DefaultParameterResolver";
 import {AssociationValue} from "../../../../main/Apha/Saga/AssociationValue";
 
 describe("AnnotatedSagaFactory", () => {

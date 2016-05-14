@@ -3,7 +3,7 @@ import * as sinon from "sinon";
 import {SimpleSagaManager} from "../../../main/Apha/Saga/SimpleSagaManager";
 import {SagaRepository} from "../../../main/Apha/Saga/SagaRepository";
 import {GenericSagaFactory} from "../../../main/Apha/Saga/GenericSagaFactory";
-import {AssociationValueResolver} from "../../../main/Apha/Saga/AssociationValueResolver";
+import {AssociationValueResolver} from "./../../../main/Apha/Saga/Annotation/AssociationValueResolver";
 import {Event} from "../../../main/Apha/Message/Event";
 import {AssociationValues} from "../../../main/Apha/Saga/AssociationValues";
 import {Saga} from "../../../main/Apha/Saga/Saga";

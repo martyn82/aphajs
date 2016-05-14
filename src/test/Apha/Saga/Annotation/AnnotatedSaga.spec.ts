@@ -5,7 +5,7 @@ import {SagaEventHandler} from "../../../../main/Apha/Decorators/SagaEventHandle
 import {Event} from "../../../../main/Apha/Message/Event";
 import {StartSaga} from "../../../../main/Apha/Decorators/StartSagaDecorator";
 import {EndSaga} from "../../../../main/Apha/Decorators/EndSagaDecorator";
-import {DefaultParameterResolver} from "../../../../main/Apha/Decorators/DefaultParameterResolver";
+import {DefaultParameterResolver} from "./../../../../main/Apha/Saga/Annotation/DefaultParameterResolver";
 
 describe("AnnotatedSaga", () => {
     describe("on", () => {

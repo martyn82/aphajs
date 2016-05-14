@@ -1,8 +1,8 @@
 
 import {expect} from "chai";
-import {Event} from "../../../main/Apha/Message/Event";
-import {SimpleAssociationValueResolver} from "../../../main/Apha/Saga/SimpleAssociationValueResolver";
-import {AssociationValue} from "../../../main/Apha/Saga/AssociationValue";
+import {Event} from "../../../../main/Apha/Message/Event";
+import {SimpleAssociationValueResolver} from "./../../../../main/Apha/Saga/Annotation/SimpleAssociationValueResolver";
+import {AssociationValue} from "../../../../main/Apha/Saga/AssociationValue";
 
 describe("SimpleAssociationValueResolver", () => {
     let resolver;

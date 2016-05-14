@@ -7,7 +7,7 @@ import {MetadataKeys} from "../../../main/Apha/Decorators/MetadataKeys";
 import {SagaEventHandler} from "../../../main/Apha/Decorators/SagaEventHandlerDecorator";
 import {DecoratorException} from "../../../main/Apha/Decorators/DecoratorException";
 import {UnsupportedEventException} from "../../../main/Apha/EventHandling/UnsupportedEventException";
-import {DefaultParameterResolver} from "../../../main/Apha/Decorators/DefaultParameterResolver";
+import {DefaultParameterResolver} from "../../../main/Apha/Saga/Annotation/DefaultParameterResolver";
 
 describe("SagaEventHandlerDecorator", () => {
     describe("SagaEventHandler", () => {

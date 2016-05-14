@@ -6,7 +6,7 @@ import {SagaRepository} from "./SagaRepository";
 import {Event} from "../Message/Event";
 import {AssociationValues} from "./AssociationValues";
 import {IdentityProvider} from "../Domain/IdentityProvider";
-import {AssociationValueResolver} from "./AssociationValueResolver";
+import {AssociationValueResolver} from "./Annotation/AssociationValueResolver";
 
 export enum SagaCreationPolicy {
     Never,
