@@ -77,42 +77,74 @@ export class ToDoItem extends AggregateRoot {
 
 export namespace ToDoItem {
     export class Create extends Command {
-        constructor(public id: string, public description: string, public expireSeconds: number) {
+        constructor(private _id: string, private _description: string, private _expireSeconds: number) {
             super();
+        }
+
+        public get id(): string {
+            return this._id;
+        }
+
+        public get description(): string {
+            return this._description;
+        }
+
+        public get expireSeconds(): number {
+            return this._expireSeconds;
         }
     }
     export class Created extends Event {
-        constructor(public id: string, public description: string, public expireSeconds: number) {
+        constructor(id: string, private _description: string, private _expireSeconds: number) {
             super();
+            this._id = id;
+        }
+
+        public get description(): string {
+            return this._description;
+        }
+
+        public get expireSeconds(): number {
+            return this._expireSeconds;
         }
     }
 
     export class MarkAsDone extends Command {
-        constructor(public id: string) {
+        constructor(private _id: string) {
             super();
+        }
+
+        public get id(): string {
+            return this._id;
         }
     }
     export class MarkedAsDone extends Event {
-        constructor(public id: string) {
+        constructor(id: string) {
             super();
+            this._id = id;
         }
     }
 
     export class Expire extends Command {
-        constructor(public id: string) {
+        constructor(private _id: string) {
             super();
+        }
+
+        public get id(): string {
+            return this._id;
         }
     }
     export class Expired extends Event {
-        constructor(public id: string) {
+        constructor(id: string) {
             super();
+            this._id = id;
         }
     }
 }
 
 export class ToDoItemTimeout extends Event {
-    constructor(public id: string) {
+    constructor(id: string) {
         super();
+        this._id = id;
     }
 }
 
@@ -175,21 +207,21 @@ export class ToDoItemCommandHandler extends AnnotatedCommandHandler {
     public handleCreateToDoItem(command: ToDoItem.Create): void {
         let item = new ToDoItem();
         item.create(command);
-        this.repository.store(item, item.getVersion());
+        this.repository.store(item, item.version);
     }
 
     @CommandHandler()
     public handleMarkItemAsDone(command: ToDoItem.MarkAsDone): void {
         let item = this.repository.findById(command.id);
         item.markAsDone(command);
-        this.repository.store(item, item.getVersion());
+        this.repository.store(item, item.version);
     }
 
     @CommandHandler()
     public handleExpire(command: ToDoItem.Expire): void {
         let item = this.repository.findById(command.id);
         item.expire(command);
-        this.repository.store(item, item.getVersion());
+        this.repository.store(item, item.version);
     }
 }
 

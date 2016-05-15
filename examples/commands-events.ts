@@ -39,13 +39,18 @@ export class Demonstration extends AggregateRoot {
 
 export namespace Demonstration {
     export class Demonstrate extends Command {
-        constructor(public id: string) {
+        constructor(private _id: string) {
             super();
+        }
+
+        public get id(): string {
+            return this._id;
         }
     }
     export class Demonstrated extends Event {
-        constructor(public id: string) {
+        constructor(id: string) {
             super();
+            this._id = id;
         }
     }
 }
@@ -67,7 +72,7 @@ class DemonstrateHandler extends AnnotatedCommandHandler {
         }
 
         aggregate.demonstrate(command);
-        this.repository.store(aggregate, aggregate.getVersion());
+        this.repository.store(aggregate, aggregate.version);
     }
 }
 
