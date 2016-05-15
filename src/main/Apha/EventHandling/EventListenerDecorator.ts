@@ -9,7 +9,9 @@ import {UnsupportedEventException} from "./UnsupportedEventException";
 
 export type AnnotatedEventListeners = {[eventClass: string]: Function};
 
-export const EVENT_HANDLERS = "annotations:eventhandlers";
+export namespace EventListenerDecorator {
+    export const EVENT_HANDLERS = "annotations:eventhandlers";
+}
 
 export function EventListener(
     target: AnnotatedEventListener,
@@ -23,11 +25,11 @@ export function EventListener(
         throw new DecoratorException(targetClass, methodName, "EventListener");
     }
 
-    let handlers: AnnotatedEventListeners = Reflect.getMetadata(EVENT_HANDLERS, target) || {};
+    let handlers: AnnotatedEventListeners = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, target) || {};
     let eventClass = ClassNameInflector.className(paramTypes[0]);
 
     handlers[eventClass] = descriptor.value;
-    Reflect.defineMetadata(EVENT_HANDLERS, handlers, target);
+    Reflect.defineMetadata(EventListenerDecorator.EVENT_HANDLERS, handlers, target);
 }
 
 export function EventListenerDispatcher(
@@ -36,7 +38,7 @@ export function EventListenerDispatcher(
     descriptor: TypedPropertyDescriptor<Function>
 ): void {
     descriptor.value = function (event: Event) {
-        let handlers: AnnotatedEventListeners = Reflect.getMetadata(EVENT_HANDLERS, this) || {};
+        let handlers: AnnotatedEventListeners = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, this) || {};
         let eventClass = ClassNameInflector.classOf(event);
 
         if (!handlers[eventClass]) {

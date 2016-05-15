@@ -9,7 +9,9 @@ import {UnsupportedCommandException} from "./UnsupportedCommandException";
 
 export type AnnotatedCommandHandlers = {[commandClass: string]: Function};
 
-export const COMMAND_HANDLERS = "annotations:commandhandlers";
+export namespace CommandHandlerDecorator {
+    export const COMMAND_HANDLERS = "annotations:commandhandlers";
+}
 
 export function CommandHandler(
     target: AnnotatedCommandHandler,
@@ -23,11 +25,12 @@ export function CommandHandler(
         throw new DecoratorException(targetClass, methodName, "CommandHandler");
     }
 
-    let handlers: AnnotatedCommandHandlers = Reflect.getOwnMetadata(COMMAND_HANDLERS, target) || {};
+    let handlers: AnnotatedCommandHandlers =
+        Reflect.getOwnMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, target) || {};
     let commandClass = ClassNameInflector.className(paramTypes[0]);
 
     handlers[commandClass] = descriptor.value;
-    Reflect.defineMetadata(COMMAND_HANDLERS, handlers, target);
+    Reflect.defineMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, handlers, target);
 }
 
 export function CommandHandlerDispatcher(
@@ -36,7 +39,8 @@ export function CommandHandlerDispatcher(
     descriptor: TypedPropertyDescriptor<Function>
 ): void {
     descriptor.value = function (command: Command) {
-        let handlers: AnnotatedCommandHandlers = Reflect.getMetadata(COMMAND_HANDLERS, this) || {};
+        let handlers: AnnotatedCommandHandlers =
+            Reflect.getMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, this) || {};
         let commandClass = ClassNameInflector.classOf(command);
 
         if (!handlers[commandClass]) {
