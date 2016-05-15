@@ -6,8 +6,7 @@ import {
     AnnotatedSerializableProperties,
     AnnotatedIgnoreSerializationProperties,
     SerializableType,
-    SERIALIZABLE_PROPERTIES,
-    IGNORE_SERIALIZATION_PROPERTIES
+    Serializer as SerializerDecorator
 } from "./SerializerDecorator";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 
@@ -80,7 +79,7 @@ export class JsonSerializer implements Serializer {
 
     private getSerializableType(target: Object, propertyName: string): SerializableType {
         let propertyTypes: AnnotatedSerializableProperties =
-            Reflect.getMetadata(SERIALIZABLE_PROPERTIES, target) || {};
+            Reflect.getMetadata(SerializerDecorator.SERIALIZABLE_PROPERTIES, target) || {};
 
         if (!propertyTypes[propertyName]) {
             return null;
@@ -90,6 +89,6 @@ export class JsonSerializer implements Serializer {
     }
 
     private getIgnoredProperties(value: Object): AnnotatedIgnoreSerializationProperties {
-        return Reflect.getMetadata(IGNORE_SERIALIZATION_PROPERTIES, value) || [];
+        return Reflect.getMetadata(SerializerDecorator.IGNORE_SERIALIZATION_PROPERTIES, value) || [];
     }
 }

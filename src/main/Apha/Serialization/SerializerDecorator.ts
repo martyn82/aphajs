@@ -3,6 +3,7 @@ import "reflect-metadata";
 import {AnyType} from "../../Inflect";
 import {MetadataKeys} from "../Decorators/MetadataKeys";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
+import {DecoratorException} from "../Decorators/DecoratorException";
 
 export type AnnotatedIgnoreSerializationProperties = string[];
 export type SerializableType = {
@@ -14,12 +15,16 @@ export type SerializableTypeOptions = {
     genericType?: AnyType
 };
 
-export const IGNORE_SERIALIZATION_PROPERTIES = "annotations:serialize:ignore";
-export const SERIALIZABLE_PROPERTIES = "annotations:serializables";
-
 export namespace Serializer {
+    export const IGNORE_SERIALIZATION_PROPERTIES = "annotations:serialize:ignore";
+    export const SERIALIZABLE_PROPERTIES = "annotations:serializables";
+
     export function Ignore(): Function {
         return (target: Object, propertyName: string): void => {
+            if (!propertyName) {
+                throw new DecoratorException(ClassNameInflector.classOf(target), propertyName, "Serializer.Ignore");
+            }
+
             let ignores: AnnotatedIgnoreSerializationProperties =
                 Reflect.getOwnMetadata(IGNORE_SERIALIZATION_PROPERTIES, target) || [];
 
@@ -30,6 +35,14 @@ export namespace Serializer {
 
     export function Serializable(options?: SerializableTypeOptions): Function {
         return (target: Object, propertyName: string): void => {
+            if (!propertyName) {
+                throw new DecoratorException(
+                    ClassNameInflector.classOf(target),
+                    propertyName,
+                    "Serializer.Serializable"
+                );
+            }
+
             let propertyType: AnyType = Reflect.getMetadata(MetadataKeys.PROPERTY_TYPE, target, propertyName);
             let serializableType: SerializableType = {
                 primaryType: undefined
