@@ -2,6 +2,7 @@
 import "reflect-metadata";
 import {expect} from "chai";
 import {Serializer} from "../../../main/Apha/Serialization/SerializerDecorator";
+import {DecoratorException} from "../../../main/Apha/Decorators/DecoratorException";
 
 describe("SerializerDecorator", () => {
     describe("Ignore", () => {
@@ -11,6 +12,14 @@ describe("SerializerDecorator", () => {
 
             expect(ignores).to.have.lengthOf(1);
             expect(ignores[0]).to.eql("bar");
+        });
+
+        it("throws exception if no property name was passed", () => {
+            let target = new SerializerDecoratorSpecClassSerializable();
+
+            expect(() => {
+                Serializer.Ignore()(target, undefined);
+            }).to.throw(DecoratorException);
         });
     });
 
@@ -22,6 +31,14 @@ describe("SerializerDecorator", () => {
             expect(serializables["bar"]).to.eql({
                 primaryType: SerializerDecoratorSpecClassIgnore
             });
+        });
+
+        it("throws exception if no property name was passed", () => {
+            let target = new SerializerDecoratorSpecClassIgnore();
+
+            expect(() => {
+                Serializer.Serializable()(target, undefined);
+            }).to.throw(DecoratorException);
         });
     });
 });
