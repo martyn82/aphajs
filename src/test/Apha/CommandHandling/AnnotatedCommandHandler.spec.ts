@@ -1,6 +1,6 @@
 
 import {expect} from "chai";
-import {CommandHandler} from "../../../main/Apha/Decorators/CommandHandlerDecorator";
+import {CommandHandler} from "../../../main/Apha/CommandHandling/CommandHandlerDecorator";
 import {Command} from "../../../main/Apha/Message/Command";
 import {AnnotatedCommandHandler} from "../../../main/Apha/CommandHandling/AnnotatedCommandHandler";
 

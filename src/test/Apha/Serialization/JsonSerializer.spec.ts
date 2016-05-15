@@ -1,6 +1,6 @@
 
 import {expect} from "chai";
-import {Serializer} from "../../../main/Apha/Decorators/SerializerDecorator";
+import {Serializer} from "../../../main/Apha/Serialization/SerializerDecorator";
 import {JsonSerializer} from "../../../main/Apha/Serialization/JsonSerializer";
 
 describe("JsonSerializer", () => {

@@ -1,5 +1,5 @@
 
-import {Serializer} from "./../Decorators/SerializerDecorator";
+import {Serializer} from "../Serialization/SerializerDecorator";
 import {AssociationValue} from "./AssociationValue";
 
 export class AssociationValues implements Iterable<AssociationValue> {

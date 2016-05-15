@@ -1,10 +1,10 @@
 
 import {expect} from "chai";
 import {AnnotatedSaga} from "../../../../main/Apha/Saga/Annotation/AnnotatedSaga";
-import {SagaEventHandler} from "../../../../main/Apha/Decorators/SagaEventHandlerDecorator";
+import {SagaEventHandler} from "../../../../main/Apha/Saga/Annotation/SagaEventHandlerDecorator";
 import {Event} from "../../../../main/Apha/Message/Event";
-import {StartSaga} from "../../../../main/Apha/Decorators/StartSagaDecorator";
-import {EndSaga} from "../../../../main/Apha/Decorators/EndSagaDecorator";
+import {StartSaga} from "../../../../main/Apha/Saga/Annotation/StartSagaDecorator";
+import {EndSaga} from "../../../../main/Apha/Saga/Annotation/EndSagaDecorator";
 import {DefaultParameterResolver} from "./../../../../main/Apha/Saga/Annotation/DefaultParameterResolver";
 
 describe("AnnotatedSaga", () => {

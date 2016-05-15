@@ -1,7 +1,7 @@
 
 import {EventListener} from "./EventListener";
 import {Event} from "../Message/Event";
-import {EventListenerDispatcher} from "../Decorators/EventListenerDecorator";
+import {EventListenerDispatcher} from "./EventListenerDecorator";
 
 export abstract class AnnotatedEventListener implements EventListener {
     @EventListenerDispatcher

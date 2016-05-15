@@ -1,20 +1,20 @@
 
 import "reflect-metadata";
 import {expect} from "chai";
-import {AnnotatedSaga} from "../../../main/Apha/Saga/Annotation/AnnotatedSaga";
-import {Event} from "../../../main/Apha/Message/Event";
-import {MetadataKeys} from "../../../main/Apha/Decorators/MetadataKeys";
-import {SagaEventHandler} from "../../../main/Apha/Decorators/SagaEventHandlerDecorator";
-import {DecoratorException} from "../../../main/Apha/Decorators/DecoratorException";
-import {UnsupportedEventException} from "../../../main/Apha/EventHandling/UnsupportedEventException";
-import {DefaultParameterResolver} from "../../../main/Apha/Saga/Annotation/DefaultParameterResolver";
+import {AnnotatedSaga} from "./../../../../main/Apha/Saga/Annotation/AnnotatedSaga";
+import {Event} from "../../../../main/Apha/Message/Event";
+import {MetadataKeys} from "../../../../main/Apha/Decorators/MetadataKeys";
+import {SagaEventHandler, SAGA_EVENT_HANDLERS} from "../../../../main/Apha/Saga/Annotation/SagaEventHandlerDecorator";
+import {DecoratorException} from "../../../../main/Apha/Decorators/DecoratorException";
+import {UnsupportedEventException} from "../../../../main/Apha/EventHandling/UnsupportedEventException";
+import {DefaultParameterResolver} from "../../../../main/Apha/Saga/Annotation/DefaultParameterResolver";
 
 describe("SagaEventHandlerDecorator", () => {
     describe("SagaEventHandler", () => {
         it("defines method as saga event handler", () => {
             let target = new SagaEventHandlerDecoratorSpecTarget("id");
 
-            let handlers = Reflect.getMetadata(MetadataKeys.SAGA_EVENT_HANDLERS, target);
+            let handlers = Reflect.getMetadata(SAGA_EVENT_HANDLERS, target);
             expect(handlers).to.be.undefined;
 
             let methodName = "onSomething";
@@ -27,7 +27,7 @@ describe("SagaEventHandlerDecorator", () => {
 
             SagaEventHandler()(target, methodName, descriptor);
 
-            handlers = Reflect.getMetadata(MetadataKeys.SAGA_EVENT_HANDLERS, target);
+            handlers = Reflect.getMetadata(SAGA_EVENT_HANDLERS, target);
             expect(handlers).not.to.be.undefined;
             expect(handlers["Something"]).to.eql([target[methodName], undefined]);
         });
@@ -36,7 +36,7 @@ describe("SagaEventHandlerDecorator", () => {
             let target = new SagaEventHandlerDecoratorSpecTarget("id");
             target.setParameterResolver(new DefaultParameterResolver());
 
-            let handlers = Reflect.getMetadata(MetadataKeys.SAGA_EVENT_HANDLERS, target);
+            let handlers = Reflect.getMetadata(SAGA_EVENT_HANDLERS, target);
             expect(handlers).to.be.undefined;
 
             let methodName = "onSomething";
@@ -49,7 +49,7 @@ describe("SagaEventHandlerDecorator", () => {
 
             SagaEventHandler({associationProperty: "id"})(target, methodName, descriptor);
 
-            handlers = Reflect.getMetadata(MetadataKeys.SAGA_EVENT_HANDLERS, target);
+            handlers = Reflect.getMetadata(SAGA_EVENT_HANDLERS, target);
             expect(handlers).not.to.be.undefined;
             expect(handlers["Something"]).to.eql([target[methodName], "id"]);
         });

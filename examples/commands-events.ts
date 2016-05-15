@@ -13,9 +13,9 @@ import {EventClassMap} from "./../src/main/Apha/EventStore/EventClassMap";
 import {MemoryEventStorage} from "./../src/main/Apha/EventStore/Storage/MemoryEventStorage";
 import {EventStorage} from "./../src/main/Apha/EventStore/Storage/EventStorage";
 import {AnnotatedCommandHandler} from "../src/main/Apha/CommandHandling/AnnotatedCommandHandler";
-import {CommandHandler} from "../src/main/Apha/Decorators/CommandHandlerDecorator";
+import {CommandHandler} from "../src/main/Apha/CommandHandling/CommandHandlerDecorator";
 import {AnnotatedEventListener} from "../src/main/Apha/EventHandling/AnnotatedEventListener";
-import {EventListener} from "../src/main/Apha/Decorators/EventListenerDecorator";
+import {EventListener} from "../src/main/Apha/EventHandling/EventListenerDecorator";
 
 export class Demonstration extends AggregateRoot {
     private id: string;

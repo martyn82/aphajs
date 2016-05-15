@@ -1,5 +1,5 @@
 
-import {Serializer} from "../Decorators/SerializerDecorator";
+import {Serializer} from "../Serialization/SerializerDecorator";
 import {EventListener} from "../EventHandling/EventListener";
 import {AssociationValues} from "./AssociationValues";
 import {Event} from "../Message/Event";

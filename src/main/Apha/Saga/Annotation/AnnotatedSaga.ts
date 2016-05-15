@@ -2,10 +2,10 @@
 import {Saga} from "../Saga";
 import {AssociationValues} from "../AssociationValues";
 import {Event} from "../../Message/Event";
-import {SagaEventHandlerDispatcher} from "../../Decorators/SagaEventHandlerDecorator";
+import {SagaEventHandlerDispatcher} from "./SagaEventHandlerDecorator";
 import {ParameterResolver} from "./ParameterResolver";
 import {AssociationValue} from "../AssociationValue";
-import {Serializer} from "../../Decorators/SerializerDecorator";
+import {Serializer} from "../../Serialization/SerializerDecorator";
 
 export abstract class AnnotatedSaga extends Saga {
     private active: boolean = false;

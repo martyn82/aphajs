@@ -1,11 +1,11 @@
 
 import {AnnotatedSaga} from "../src/main/Apha/Saga/Annotation/AnnotatedSaga";
-import {SagaEventHandler} from "../src/main/Apha/Decorators/SagaEventHandlerDecorator";
-import {StartSaga} from "../src/main/Apha/Decorators/StartSagaDecorator";
+import {SagaEventHandler} from "../src/main/Apha/Saga/Annotation/SagaEventHandlerDecorator";
+import {StartSaga} from "../src/main/Apha/Saga/Annotation/StartSagaDecorator";
 import {Event} from "../src/main/Apha/Message/Event";
 import {Command} from "../src/main/Apha/Message/Command";
 import {AggregateRoot} from "../src/main/Apha/Domain/AggregateRoot";
-import {EndSaga} from "../src/main/Apha/Decorators/EndSagaDecorator";
+import {EndSaga} from "../src/main/Apha/Saga/Annotation/EndSagaDecorator";
 import {EventScheduler, TimeUnit} from "../src/main/Apha/Scheduling/EventScheduler";
 import {ScheduleToken} from "../src/main/Apha/Scheduling/ScheduleToken";
 import {DefaultCommandGateway} from "../src/main/Apha/CommandHandling/Gateway/DefaultCommandGateway";
@@ -23,7 +23,7 @@ import {SagaRepository} from "../src/main/Apha/Saga/SagaRepository";
 import {SagaSerializer} from "../src/main/Apha/Saga/SagaSerializer";
 import {MemorySagaStorage} from "../src/main/Apha/Saga/Storage/MemorySagaStorage";
 import {IdentityProvider} from "../src/main/Apha/Domain/IdentityProvider";
-import {CommandHandler} from "../src/main/Apha/Decorators/CommandHandlerDecorator";
+import {CommandHandler} from "../src/main/Apha/CommandHandling/CommandHandlerDecorator";
 import {SimpleAssociationValueResolver} from "../src/main/Apha/Saga/Annotation/SimpleAssociationValueResolver";
 import {SimpleEventScheduler} from "../src/main/Apha/Scheduling/SimpleEventScheduler";
 import {MemoryScheduleStorage} from "../src/main/Apha/Scheduling/Storage/MemoryScheduleStorage";

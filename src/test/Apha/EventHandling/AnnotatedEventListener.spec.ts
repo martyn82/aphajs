@@ -2,7 +2,7 @@
 import {expect} from "chai";
 import {AnnotatedEventListener} from "../../../main/Apha/EventHandling/AnnotatedEventListener";
 import {Event} from "../../../main/Apha/Message/Event";
-import {EventListener} from "../../../main/Apha/Decorators/EventListenerDecorator";
+import {EventListener} from "../../../main/Apha/EventHandling/EventListenerDecorator";
 
 describe("AnnotatedEventListener", () => {
     describe("on", () => {

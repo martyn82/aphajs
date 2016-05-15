@@ -1,13 +1,15 @@
 
 import "reflect-metadata";
-import {MetadataKeys} from "./MetadataKeys";
-import {AnnotatedCommandHandler} from "../CommandHandling/AnnotatedCommandHandler";
+import {MetadataKeys} from "../Decorators/MetadataKeys";
+import {AnnotatedCommandHandler} from "./AnnotatedCommandHandler";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
-import {DecoratorException} from "./DecoratorException";
+import {DecoratorException} from "../Decorators/DecoratorException";
 import {Command} from "../Message/Command";
-import {UnsupportedCommandException} from "../CommandHandling/UnsupportedCommandException";
+import {UnsupportedCommandException} from "./UnsupportedCommandException";
 
 export type AnnotatedCommandHandlers = {[commandClass: string]: Function};
+
+export const COMMAND_HANDLERS = "annotations:commandhandlers";
 
 export function CommandHandler(
     target: AnnotatedCommandHandler,
@@ -21,11 +23,11 @@ export function CommandHandler(
         throw new DecoratorException(targetClass, methodName, "CommandHandler");
     }
 
-    let handlers: AnnotatedCommandHandlers = Reflect.getOwnMetadata(MetadataKeys.COMMAND_HANDLERS, target) || {};
+    let handlers: AnnotatedCommandHandlers = Reflect.getOwnMetadata(COMMAND_HANDLERS, target) || {};
     let commandClass = ClassNameInflector.className(paramTypes[0]);
 
     handlers[commandClass] = descriptor.value;
-    Reflect.defineMetadata(MetadataKeys.COMMAND_HANDLERS, handlers, target);
+    Reflect.defineMetadata(COMMAND_HANDLERS, handlers, target);
 }
 
 export function CommandHandlerDispatcher(
@@ -34,7 +36,7 @@ export function CommandHandlerDispatcher(
     descriptor: TypedPropertyDescriptor<Function>
 ): void {
     descriptor.value = function (command: Command) {
-        let handlers: AnnotatedCommandHandlers = Reflect.getMetadata(MetadataKeys.COMMAND_HANDLERS, this) || {};
+        let handlers: AnnotatedCommandHandlers = Reflect.getMetadata(COMMAND_HANDLERS, this) || {};
         let commandClass = ClassNameInflector.classOf(command);
 
         if (!handlers[commandClass]) {

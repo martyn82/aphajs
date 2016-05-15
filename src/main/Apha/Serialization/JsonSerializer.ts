@@ -4,9 +4,11 @@ import {Serializer} from "./Serializer";
 import {AnyType} from "../../Inflect";
 import {
     AnnotatedSerializableProperties,
-    AnnotatedIgnoreSerializationProperties, SerializableType
-} from "../Decorators/SerializerDecorator";
-import {MetadataKeys} from "../Decorators/MetadataKeys";
+    AnnotatedIgnoreSerializationProperties,
+    SerializableType,
+    SERIALIZABLE_PROPERTIES,
+    IGNORE_SERIALIZATION_PROPERTIES
+} from "./SerializerDecorator";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 
 export class JsonSerializer implements Serializer {
@@ -78,7 +80,7 @@ export class JsonSerializer implements Serializer {
 
     private getSerializableType(target: Object, propertyName: string): SerializableType {
         let propertyTypes: AnnotatedSerializableProperties =
-            Reflect.getMetadata(MetadataKeys.SERIALIZABLE_PROPERTIES, target) || {};
+            Reflect.getMetadata(SERIALIZABLE_PROPERTIES, target) || {};
 
         if (!propertyTypes[propertyName]) {
             return null;
@@ -88,6 +90,6 @@ export class JsonSerializer implements Serializer {
     }
 
     private getIgnoredProperties(value: Object): AnnotatedIgnoreSerializationProperties {
-        return Reflect.getMetadata(MetadataKeys.IGNORE_SERIALIZATION_PROPERTIES, value) || [];
+        return Reflect.getMetadata(IGNORE_SERIALIZATION_PROPERTIES, value) || [];
     }
 }
