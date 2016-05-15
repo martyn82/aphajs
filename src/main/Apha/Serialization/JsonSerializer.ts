@@ -21,6 +21,7 @@ export class JsonSerializer implements Serializer {
         }
 
         let ignored = this.getIgnoredProperties(value);
+
         return JSON.stringify(value, (name: string, value: any): any => {
             return (ignored.indexOf(name) > -1) ? undefined : value;
         });
@@ -34,10 +35,6 @@ export class JsonSerializer implements Serializer {
         let instance = new type();
         let dataObject = JSON.parse(data, (name: string, value: any): any => {
             if (name === "") {
-                return value;
-            }
-
-            if (!instance.hasOwnProperty(name)) {
                 return value;
             }
 
@@ -71,9 +68,7 @@ export class JsonSerializer implements Serializer {
 
     private hydrate(object: Object, data: Object) {
         for (let property in data) {
-            if (object.hasOwnProperty(property)) {
-                object[property] = data[property];
-            }
+            object[property] = data[property];
         }
     }
 

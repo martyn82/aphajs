@@ -106,6 +106,7 @@ describe("JsonSerializer", () => {
             expect(deserialized.boz.bar).to.be.true;
             expect(deserialized.boz.baz).to.eql([3, 2, 1]);
             expect(deserialized.boz.foo).to.equal("foo");
+            expect(deserialized.boz.getFoo()).to.equal("foo");
 
             expect(deserialized.foo).to.eql(smallObjs);
             expect(deserialized.foo[0]).to.be.an.instanceOf(SmallObj);
@@ -124,6 +125,10 @@ interface SomethingInterface {
 
 class Something implements SomethingInterface {
     constructor(public foo: string, public bar: boolean, public baz: number[]) {}
+
+    public getFoo(): string {
+        return this.foo;
+    }
 }
 
 class SmallObj {

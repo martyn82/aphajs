@@ -26,7 +26,7 @@ export namespace Serializer {
             }
 
             let ignores: AnnotatedIgnoreSerializationProperties =
-                Reflect.getOwnMetadata(IGNORE_SERIALIZATION_PROPERTIES, target) || [];
+                Reflect.getMetadata(IGNORE_SERIALIZATION_PROPERTIES, target) || [];
 
             ignores.push(propertyName);
             Reflect.defineMetadata(IGNORE_SERIALIZATION_PROPERTIES, ignores, target);
@@ -56,7 +56,7 @@ export namespace Serializer {
             }
 
             let serializables: AnnotatedSerializableProperties =
-                Reflect.getOwnMetadata(SERIALIZABLE_PROPERTIES, target) || {};
+                Reflect.getMetadata(SERIALIZABLE_PROPERTIES, target) || {};
 
             serializables[propertyName] = serializableType;
             Reflect.defineMetadata(SERIALIZABLE_PROPERTIES, serializables, target);
