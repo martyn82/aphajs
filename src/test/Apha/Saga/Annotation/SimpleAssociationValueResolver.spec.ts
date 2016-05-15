@@ -24,8 +24,8 @@ describe("SimpleAssociationValueResolver", () => {
 });
 
 class SimpleAssociationValueResolverSpecEvent extends Event {
-    constructor(public id: string, public isSomething: boolean, public aNumber: number) {
+    constructor(id: string, public isSomething: boolean, public aNumber: number) {
         super();
-        this.setId(id);
+        this._id = id;
     }
 }

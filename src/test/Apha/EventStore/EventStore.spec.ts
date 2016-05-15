@@ -119,9 +119,9 @@ describe("EventStore", () => {
             let aggregateType = "aggregatetype";
 
             let firstEvent = new EventStoreEvent();
-            firstEvent.setVersion(1);
+            firstEvent.version = 1;
             let secondEvent = new EventStoreEvent();
-            secondEvent.setVersion(2);
+            secondEvent.version = 2;
 
             let history = [firstEvent, secondEvent];
             let events = [
@@ -139,7 +139,7 @@ describe("EventStore", () => {
                             aggregateType,
                             ClassNameInflector.classOf(event),
                             serializer.serialize(event),
-                            event.getVersion()
+                            event.version
                         );
                     }
                 ));

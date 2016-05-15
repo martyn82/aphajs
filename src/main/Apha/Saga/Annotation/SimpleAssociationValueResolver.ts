@@ -7,7 +7,7 @@ import {AssociationValue} from "../AssociationValue";
 export class SimpleAssociationValueResolver implements AssociationValueResolver {
     public extractAssociationValues(event: Event): AssociationValues {
         return new AssociationValues([
-            new AssociationValue("id", event.getId())
+            new AssociationValue("id", event.id)
         ]);
     }
 }

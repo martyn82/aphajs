@@ -42,7 +42,7 @@ export abstract class AggregateRoot {
         if (change) {
             this.eventLog.push(event);
         } else {
-            this.version = event.getVersion();
+            this.version = event.version;
         }
 
         this.on(event);

@@ -29,7 +29,7 @@ export class EventStore {
 
         events.forEach((event: Event) => {
             playhead++;
-            event.setVersion(playhead);
+            event.version = playhead;
 
             this.saveEvent(aggregateId, aggregateType, event);
             this.eventBus.publish(event);
@@ -54,7 +54,7 @@ export class EventStore {
             aggregateType,
             ClassNameInflector.classOf(event),
             this.serializer.serialize(event),
-            event.getVersion()
+            event.version
         );
 
         this.storage.append(descriptor);

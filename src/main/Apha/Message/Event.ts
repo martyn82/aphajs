@@ -4,22 +4,18 @@ import {Message} from "./Message";
 export type EventType = {new(...args: any[]): Event};
 
 export abstract class Event extends Message {
-    private version: number = 0;
-    protected id: string;
+    private _version: number;
+    protected _id: string;
 
-    public setVersion(version: number): void {
-        this.version = version;
+    public set version(version: number) {
+        this._version = version;
     }
 
-    public getVersion(): number {
-        return this.version;
+    public get version(): number {
+        return this._version;
     }
 
-    protected setId(id: string): void {
-        this.id = id;
-    }
-
-    public getId(): string {
-        return this.id;
+    public get id(): string {
+        return this._id;
     }
 }
