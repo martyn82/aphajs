@@ -18,7 +18,7 @@ describe("SimpleAssociationValueResolver", () => {
             let associationValueArray = associationValues.getArrayCopy();
 
             expect(associationValueArray).to.have.lengthOf(1);
-            expect(associationValueArray[0]).to.eql(new AssociationValue("id", "idValue"));
+            expect(associationValueArray[0]).to.eql(new AssociationValue("_id", "idValue"));
         });
     });
 });

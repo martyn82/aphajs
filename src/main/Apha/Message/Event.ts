@@ -1,11 +1,14 @@
 
 import {Message} from "./Message";
+import {AggregateIdentifier} from "../Domain/AggregateIdentifierDecorator";
 
 export type EventType = {new(...args: any[]): Event};
 
 export abstract class Event extends Message {
-    private _version: number;
+    @AggregateIdentifier()
     protected _id: string;
+
+    private _version: number;
 
     public set version(version: number) {
         this._version = version;
