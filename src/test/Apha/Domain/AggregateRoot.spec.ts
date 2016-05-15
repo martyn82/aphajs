@@ -68,7 +68,7 @@ describe("AggregateRoot", () => {
 
     describe("getVersion", () => {
         it("returns the aggregate version", () => {
-            expect(aggregate.getVersion()).to.equal(-1);
+            expect(aggregate.version).to.equal(-1);
         });
     });
 });

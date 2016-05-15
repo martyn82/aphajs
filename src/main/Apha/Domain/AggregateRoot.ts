@@ -6,7 +6,7 @@ import {UnsupportedEventException} from "./UnsupportedEventException";
 export type AggregateRootType<T extends AggregateRoot | AggregateRoot> = {new(...args: any[]): T};
 
 export abstract class AggregateRoot {
-    private version: number = -1;
+    private _version: number = -1;
     private eventLog: Event[] = [];
 
     constructor() {}
@@ -19,8 +19,8 @@ export abstract class AggregateRoot {
 
     public abstract getId(): string;
 
-    public getVersion(): number {
-        return this.version;
+    public get version(): number {
+        return this._version;
     }
 
     protected on(event: Event): void {
@@ -42,7 +42,7 @@ export abstract class AggregateRoot {
         if (change) {
             this.eventLog.push(event);
         } else {
-            this.version = event.version;
+            this._version = event.version;
         }
 
         this.on(event);
