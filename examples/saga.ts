@@ -31,6 +31,7 @@ import {AnnotatedSagaFactory} from "../src/main/Apha/Saga/Annotation/AnnotatedSa
 import {ParameterResolver} from "../src/main/Apha/Saga/Annotation/ParameterResolver";
 import {DefaultParameterResolver} from "../src/main/Apha/Saga/Annotation/DefaultParameterResolver";
 import {CommandGateway} from "../src/main/Apha/CommandHandling/Gateway/CommandGateway";
+import {Serializer} from "../src/main/Apha/Serialization/SerializerDecorator";
 
 export class ToDoItem extends AggregateRoot {
     private id: string;
@@ -116,9 +117,14 @@ export class ToDoItemTimeout extends Event {
 }
 
 export class ToDoSaga extends AnnotatedSaga {
+    @Serializer.Ignore()
     private scheduler: EventScheduler;
+
+    @Serializer.Ignore()
     private commandGateway: CommandGateway;
-    private token: ScheduleToken = null;
+
+    @Serializer.Serializable()
+    private token: ScheduleToken;
 
     public setEventScheduler(scheduler: EventScheduler): void {
         this.scheduler = scheduler;
@@ -137,12 +143,11 @@ export class ToDoSaga extends AnnotatedSaga {
             new ToDoItemTimeout(event.id),
             TimeUnit.Seconds
         );
-        console.log("expiry scheduled");
     }
 
     @SagaEventHandler({associationProperty: "id"})
     public onToDoItemTimeout(event: ToDoItemTimeout): void {
-        console.log("item timeout");
+        console.log("item timeout", event);
         this.commandGateway.send(new ToDoItem.Expire(event.id));
     }
 
@@ -157,12 +162,7 @@ export class ToDoSaga extends AnnotatedSaga {
     @SagaEventHandler({associationProperty: "id"})
     public onToDoItemMarkedAsDone(event: ToDoItem.MarkedAsDone): void {
         console.log("saga", event);
-        console.log("cancel schedule");
-
-        this.token = new ScheduleToken(this.token["value"]);
-
         this.scheduler.cancelSchedule(this.token);
-        console.log("schedule canceled");
     }
 }
 
