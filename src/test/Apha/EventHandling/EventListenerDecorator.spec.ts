@@ -24,7 +24,7 @@ describe("EventListenerDecorator", () => {
                 configurable: false
             };
 
-            EventListener(target, methodName, descriptor);
+            EventListener()(target, methodName, descriptor);
 
             handlers = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, target);
             expect(handlers).not.to.be.undefined;
@@ -42,7 +42,7 @@ describe("EventListenerDecorator", () => {
             };
 
             expect(() => {
-                EventListener(target, methodName, descriptor);
+                EventListener()(target, methodName, descriptor);
             }).to.throw(DecoratorException);
         });
     });

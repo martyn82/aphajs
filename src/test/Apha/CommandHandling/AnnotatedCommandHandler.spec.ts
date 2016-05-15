@@ -33,12 +33,12 @@ class CommandHandlerDecoratorSpecCommandHandler1 extends AnnotatedCommandHandler
     public handleSomethingCalled: boolean = false;
     public handleSomethingElseCalled: boolean = false;
 
-    @CommandHandler
+    @CommandHandler()
     public handleSomething(command: CommandHandlerDecoratorSpecCommand1): void {
         this.handleSomethingCalled = true;
     }
 
-    @CommandHandler
+    @CommandHandler()
     public handleSomethingElse(command: CommandHandlerDecoratorSpecCommand2): void {
         this.handleSomethingElseCalled = true;
     }
@@ -47,7 +47,7 @@ class CommandHandlerDecoratorSpecCommandHandler1 extends AnnotatedCommandHandler
 class CommandHandlerDecoratorSpecCommandHandler2 extends AnnotatedCommandHandler {
     public handleAnotherThingCalled: boolean = false;
 
-    @CommandHandler
+    @CommandHandler()
     public handleAnotherThing(command: CommandHandlerDecoratorSpecCommand1): void {
         this.handleAnotherThingCalled = true;
     }

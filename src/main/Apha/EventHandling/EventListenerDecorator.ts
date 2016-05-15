@@ -13,38 +13,42 @@ export namespace EventListenerDecorator {
     export const EVENT_HANDLERS = "annotations:eventhandlers";
 }
 
-export function EventListener(
-    target: AnnotatedEventListener,
-    methodName: string,
-    descriptor: TypedPropertyDescriptor<Function>
-): void {
-    let paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName);
+export function EventListener(): Function {
+    return (
+        target: AnnotatedEventListener,
+        methodName: string,
+        descriptor: TypedPropertyDescriptor<Function>
+    ): void => {
+        let paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName);
 
-    if (paramTypes.length === 0) {
-        let targetClass = ClassNameInflector.classOf(target);
-        throw new DecoratorException(targetClass, methodName, "EventListener");
-    }
-
-    let handlers: AnnotatedEventListeners = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, target) || {};
-    let eventClass = ClassNameInflector.className(paramTypes[0]);
-
-    handlers[eventClass] = descriptor.value;
-    Reflect.defineMetadata(EventListenerDecorator.EVENT_HANDLERS, handlers, target);
-}
-
-export function EventListenerDispatcher(
-    target: AnnotatedEventListener,
-    methodName: string,
-    descriptor: TypedPropertyDescriptor<Function>
-): void {
-    descriptor.value = function (event: Event) {
-        let handlers: AnnotatedEventListeners = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, this) || {};
-        let eventClass = ClassNameInflector.classOf(event);
-
-        if (!handlers[eventClass]) {
-            throw new UnsupportedEventException(eventClass);
+        if (paramTypes.length === 0) {
+            let targetClass = ClassNameInflector.classOf(target);
+            throw new DecoratorException(targetClass, methodName, "EventListener");
         }
 
-        handlers[eventClass].call(this, event);
+        let handlers: AnnotatedEventListeners = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, target) || {};
+        let eventClass = ClassNameInflector.className(paramTypes[0]);
+
+        handlers[eventClass] = descriptor.value;
+        Reflect.defineMetadata(EventListenerDecorator.EVENT_HANDLERS, handlers, target);
     };
+}
+
+export function EventListenerDispatcher(): Function {
+    return (
+        target: AnnotatedEventListener,
+        methodName: string,
+        descriptor: TypedPropertyDescriptor<Function>
+    ): void => {
+        descriptor.value = function (event: Event) {
+            let handlers: AnnotatedEventListeners = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, this) || {};
+            let eventClass = ClassNameInflector.classOf(event);
+
+            if (!handlers[eventClass]) {
+                throw new UnsupportedEventException(eventClass);
+            }
+
+            handlers[eventClass].call(this, event);
+        };
+    }
 }

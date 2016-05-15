@@ -25,7 +25,7 @@ export abstract class AnnotatedSaga extends Saga {
         this.associationValues.add(associationValue);
     }
 
-    @SagaEventHandlerDispatcher
+    @SagaEventHandlerDispatcher()
     public on(event: Event): void {
     }
 

@@ -41,38 +41,40 @@ export function SagaEventHandler(options?: SagaEventHandlerOptions): Function {
     };
 }
 
-export function SagaEventHandlerDispatcher(
-    target: AnnotatedSaga,
-    methodName: string,
-    descriptor: TypedPropertyDescriptor<Function>
-): void {
-    descriptor.value = function (event: Event) {
-        let handlers: AnnotatedSagaEventHandlers =
-            Reflect.getMetadata(SagaEventHandlerDecorator.SAGA_EVENT_HANDLERS, this) || {};
-        let eventClass = ClassNameInflector.classOf(event);
+export function SagaEventHandlerDispatcher(): Function {
+    return (
+        target: AnnotatedSaga,
+        methodName: string,
+        descriptor: TypedPropertyDescriptor<Function>
+    ): void => {
+        descriptor.value = function (event: Event) {
+            let handlers: AnnotatedSagaEventHandlers =
+                Reflect.getMetadata(SagaEventHandlerDecorator.SAGA_EVENT_HANDLERS, this) || {};
+            let eventClass = ClassNameInflector.classOf(event);
 
-        if (!handlers[eventClass]) {
-            throw new UnsupportedEventException(eventClass);
-        }
+            if (!handlers[eventClass]) {
+                throw new UnsupportedEventException(eventClass);
+            }
 
-        let handler = handlers[eventClass];
+            let handler = handlers[eventClass];
 
-        let starters: AnnotatedSagaStarters = Reflect.getMetadata(StartSagaDecorator.SAGA_STARTERS, this) || {};
-        let endings: AnnotatedSagaEndings = Reflect.getMetadata(EndSagaDecorator.SAGA_ENDINGS, this) || {};
+            let starters: AnnotatedSagaStarters = Reflect.getMetadata(StartSagaDecorator.SAGA_STARTERS, this) || {};
+            let endings: AnnotatedSagaEndings = Reflect.getMetadata(EndSagaDecorator.SAGA_ENDINGS, this) || {};
 
-        let associatedValue = this.parameterResolver.resolveParameterValue(event, handler[1]);
-        this.associateWith(new AssociationValue(handler[1], associatedValue));
+            let associatedValue = this.parameterResolver.resolveParameterValue(event, handler[1]);
+            this.associateWith(new AssociationValue(handler[1], associatedValue));
 
-        if (starters.has(handler[0].name)) {
-            this.start();
-        }
+            if (starters.has(handler[0].name)) {
+                this.start();
+            }
 
-        if (this.isActive()) {
-            handler[0].call(this, event);
-        }
+            if (this.isActive()) {
+                handler[0].call(this, event);
+            }
 
-        if (endings.has(handler[0].name)) {
-            this.end();
-        }
-    };
+            if (endings.has(handler[0].name)) {
+                this.end();
+            }
+        };
+    }
 }

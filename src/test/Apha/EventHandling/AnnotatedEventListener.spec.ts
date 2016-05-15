@@ -33,12 +33,12 @@ class EventListenerDecoratorSpecEventListener1 extends AnnotatedEventListener {
     public onSomethingCalled: boolean = false;
     public onSomethingElseCalled: boolean = false;
 
-    @EventListener
+    @EventListener()
     public onSomething(event: EventListenerDecoratorSpecEvent1): void {
         this.onSomethingCalled = true;
     }
 
-    @EventListener
+    @EventListener()
     public onSomethingElse(event: EventListenerDecoratorSpecEvent2): void {
         this.onSomethingElseCalled = true;
     }
@@ -47,7 +47,7 @@ class EventListenerDecoratorSpecEventListener1 extends AnnotatedEventListener {
 class EventListenerDecoratorSpecEventListener2 extends AnnotatedEventListener {
     public onAnotherThingCalled: boolean = false;
 
-    @EventListener
+    @EventListener()
     public onAnotherThing(event: EventListenerDecoratorSpecEvent1): void {
         this.onAnotherThingCalled = true;
     }

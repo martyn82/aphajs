@@ -9,10 +9,12 @@ export namespace StartSagaDecorator {
     export const SAGA_STARTERS = "annotations:sagastarters";
 }
 
-export function StartSaga(target: AnnotatedSaga, methodName: string): void {
-    let starters: AnnotatedSagaStarters = Reflect.getOwnMetadata(StartSagaDecorator.SAGA_STARTERS, target)
-        || new Set<string>();
+export function StartSaga(): Function {
+    return (target: AnnotatedSaga, methodName: string): void => {
+        let starters: AnnotatedSagaStarters = Reflect.getOwnMetadata(StartSagaDecorator.SAGA_STARTERS, target)
+            || new Set<string>();
 
-    starters.add(methodName);
-    Reflect.defineMetadata(StartSagaDecorator.SAGA_STARTERS, starters, target);
+        starters.add(methodName);
+        Reflect.defineMetadata(StartSagaDecorator.SAGA_STARTERS, starters, target);
+    };
 }

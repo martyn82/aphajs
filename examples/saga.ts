@@ -128,7 +128,7 @@ export class ToDoSaga extends AnnotatedSaga {
         this.commandGateway = commandGateway;
     }
 
-    @StartSaga
+    @StartSaga()
     @SagaEventHandler({associationProperty: "id"})
     public onTodoItemCreated(event: ToDoItem.Created): void {
         console.log("saga", event);
@@ -146,14 +146,14 @@ export class ToDoSaga extends AnnotatedSaga {
         this.commandGateway.send(new ToDoItem.Expire(event.id));
     }
 
-    @EndSaga
+    @EndSaga()
     @SagaEventHandler({associationProperty: "id"})
     public onToDoItemExpired(event: ToDoItem.Expired): void {
         console.log("saga", event);
         this.token = null;
     }
 
-    @EndSaga
+    @EndSaga()
     @SagaEventHandler({associationProperty: "id"})
     public onToDoItemMarkedAsDone(event: ToDoItem.MarkedAsDone): void {
         console.log("saga", event);
@@ -171,21 +171,21 @@ export class ToDoItemCommandHandler extends AnnotatedCommandHandler {
         super();
     }
 
-    @CommandHandler
+    @CommandHandler()
     public handleCreateToDoItem(command: ToDoItem.Create): void {
         let item = new ToDoItem();
         item.create(command);
         this.repository.store(item, item.getVersion());
     }
 
-    @CommandHandler
+    @CommandHandler()
     public handleMarkItemAsDone(command: ToDoItem.MarkAsDone): void {
         let item = this.repository.findById(command.id);
         item.markAsDone(command);
         this.repository.store(item, item.getVersion());
     }
 
-    @CommandHandler
+    @CommandHandler()
     public handleExpire(command: ToDoItem.Expire): void {
         let item = this.repository.findById(command.id);
         item.expire(command);

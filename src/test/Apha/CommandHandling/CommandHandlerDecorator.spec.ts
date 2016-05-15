@@ -24,7 +24,7 @@ describe("CommandHandlerDecorator", () => {
                 configurable: false
             };
 
-            CommandHandler(target, methodName, descriptor);
+            CommandHandler()(target, methodName, descriptor);
 
             handlers = Reflect.getMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, target);
             expect(handlers).not.to.be.undefined;
@@ -42,7 +42,7 @@ describe("CommandHandlerDecorator", () => {
             };
 
             expect(() => {
-                CommandHandler(target, methodName, descriptor);
+                CommandHandler()(target, methodName, descriptor);
             }).to.throw(DecoratorException);
         });
     });

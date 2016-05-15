@@ -53,7 +53,7 @@ class AnnotatedSagaSpecSaga extends AnnotatedSaga {
         this.start();
     }
 
-    @StartSaga
+    @StartSaga()
     @SagaEventHandler()
     public onStart(event: AnnotatedSagaSpecEventStart): void {
     }
@@ -63,7 +63,7 @@ class AnnotatedSagaSpecSaga extends AnnotatedSaga {
         this.onSomethingCalled = true;
     }
 
-    @EndSaga
+    @EndSaga()
     @SagaEventHandler()
     public onEnd(event: AnnotatedSagaSpecEventEnd): void {
     }

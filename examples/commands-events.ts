@@ -55,7 +55,7 @@ class DemonstrateHandler extends AnnotatedCommandHandler {
         super();
     }
 
-    @CommandHandler
+    @CommandHandler()
     public handleDemonstrate(command: Demonstration.Demonstrate): void {
         console.log("received command", command);
         let aggregate;
@@ -76,7 +76,7 @@ export class DemonstratedListener extends AnnotatedEventListener {
         super();
     }
 
-    @EventListener
+    @EventListener()
     public onDemonstrated(event: Demonstration.Demonstrated): void {
         console.log("received event", event);
 

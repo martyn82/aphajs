@@ -4,7 +4,7 @@ import {Command} from "../Message/Command";
 import {CommandHandlerDispatcher} from "./CommandHandlerDecorator";
 
 export abstract class AnnotatedCommandHandler implements CommandHandler {
-    @CommandHandlerDispatcher
+    @CommandHandlerDispatcher()
     public handle(command: Command): void {
     }
 }
