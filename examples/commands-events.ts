@@ -1,101 +1,15 @@
 
-import {SimpleCommandBus} from "./../src/main/Apha/CommandHandling/SimpleCommandBus";
-import {Command} from "./../src/main/Apha/Message/Command";
-import {Event} from "./../src/main/Apha/Message/Event";
-import {AggregateRoot} from "./../src/main/Apha/Domain/AggregateRoot";
-import {Repository} from "./../src/main/Apha/Repository/Repository";
-import {EventSourcingRepository} from "./../src/main/Apha/Repository/EventSourcingRepository";
-import {GenericAggregateFactory} from "./../src/main/Apha/Domain/GenericAggregateFactory";
-import {EventStore} from "./../src/main/Apha/EventStore/EventStore";
-import {SimpleEventBus} from "./../src/main/Apha/EventHandling/SimpleEventBus";
-import {JsonSerializer} from "./../src/main/Apha/Serialization/JsonSerializer";
-import {EventClassMap} from "./../src/main/Apha/EventStore/EventClassMap";
-import {MemoryEventStorage} from "./../src/main/Apha/EventStore/Storage/MemoryEventStorage";
-import {EventStorage} from "./../src/main/Apha/EventStore/Storage/EventStorage";
-import {AnnotatedCommandHandler} from "../src/main/Apha/CommandHandling/AnnotatedCommandHandler";
-import {CommandHandler} from "../src/main/Apha/CommandHandling/CommandHandlerDecorator";
-import {AnnotatedEventListener} from "../src/main/Apha/EventHandling/AnnotatedEventListener";
-import {EventListener} from "../src/main/Apha/EventHandling/EventListenerDecorator";
-
-export class Demonstration extends AggregateRoot {
-    private id: string;
-    private isDemonstrated: boolean = false;
-
-    public getId(): string {
-        return this.id;
-    }
-
-    public demonstrate(command: Demonstration.Demonstrate): void {
-        if (!this.isDemonstrated) {
-            this.apply(new Demonstration.Demonstrated(command.id));
-        }
-    }
-
-    public onDemonstrated(event: Demonstration.Demonstrated): void {
-        this.id = event.id;
-        this.isDemonstrated = true;
-    }
-}
-
-export namespace Demonstration {
-    export class Demonstrate extends Command {
-        constructor(private _id: string) {
-            super();
-        }
-
-        public get id(): string {
-            return this._id;
-        }
-    }
-    export class Demonstrated extends Event {
-        constructor(id: string) {
-            super();
-            this._id = id;
-        }
-    }
-}
-
-class DemonstrateHandler extends AnnotatedCommandHandler {
-    constructor(private repository: Repository<Demonstration>) {
-        super();
-    }
-
-    @CommandHandler()
-    public handleDemonstrate(command: Demonstration.Demonstrate): void {
-        console.log("received command", command);
-        let aggregate;
-
-        try {
-            aggregate = this.repository.findById(command.id);
-        } catch (e) {
-            aggregate = new Demonstration();
-        }
-
-        aggregate.demonstrate(command);
-        this.repository.store(aggregate, aggregate.version);
-    }
-}
-
-export class DemonstratedListener extends AnnotatedEventListener {
-    constructor(private storage: EventStorage) {
-        super();
-    }
-
-    @EventListener()
-    public onDemonstrated(event: Demonstration.Demonstrated): void {
-        console.log("received event", event);
-
-        let identities = this.storage.findIdentities();
-        console.log("stored aggregates:", identities);
-
-        identities.forEach((identity) => {
-            let events = this.storage.find(identity);
-            console.log(identity, "events:", events);
-        });
-    }
-}
-
-// ----
+import {MemoryEventStorage} from "../src/main/Apha/EventStore/Storage/MemoryEventStorage";
+import {SimpleEventBus} from "../src/main/Apha/EventHandling/SimpleEventBus";
+import {JsonSerializer} from "../src/main/Apha/Serialization/JsonSerializer";
+import {EventClassMap} from "../src/main/Apha/EventStore/EventClassMap";
+import {Demonstration} from "./CommandsEvents/Domain/Demonstration";
+import {DemonstratedListener} from "./CommandsEvents/Domain/DemonstratedListener";
+import {DemonstrateHandler} from "./CommandsEvents/Domain/DemonstrateHandler";
+import {EventStore} from "../src/main/Apha/EventStore/EventStore";
+import {GenericAggregateFactory} from "../src/main/Apha/Domain/GenericAggregateFactory";
+import {EventSourcingRepository} from "../src/main/Apha/Repository/EventSourcingRepository";
+import {SimpleCommandBus} from "../src/main/Apha/CommandHandling/SimpleCommandBus";
 
 let eventStorage = new MemoryEventStorage();
 let eventBus = new SimpleEventBus();
