@@ -13,8 +13,8 @@ describe("MemoryProjectionStorage", () => {
 
     describe("upsert", () => {
         it("inserts a new projection into storage", () => {
-            let projectionId = "id";
-            let projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
+            const projectionId = "id";
+            const projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
 
             storage.upsert(projectionId, projection);
 
@@ -22,7 +22,7 @@ describe("MemoryProjectionStorage", () => {
         });
 
         it("updates an existing projection in storage", () => {
-            let projectionId = "id";
+            const projectionId = "id";
             let projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
 
             // insert
@@ -37,8 +37,8 @@ describe("MemoryProjectionStorage", () => {
 
     describe("remove", () => {
         it("removes a projection from storage", () => {
-            let projectionId = "id";
-            let projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
+            const projectionId = "id";
+            const projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
             storage.upsert(projectionId, projection);
 
             storage.remove(projectionId);
@@ -57,11 +57,11 @@ describe("MemoryProjectionStorage", () => {
 
     describe("find", () => {
         it("retrieves a stored projection from storage", () => {
-            let projectionId = "id";
-            let projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
+            const projectionId = "id";
+            const projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
             storage.upsert(projectionId, projection);
 
-            let actual = storage.find(projectionId);
+            const actual = storage.find(projectionId);
             expect(actual).to.equal(projection);
         });
 
@@ -74,10 +74,10 @@ describe("MemoryProjectionStorage", () => {
 
     describe("findAll", () => {
         it("retrieves a page of projections from storage", () => {
-            let projections = [];
+            const projections = [];
 
             for (let i = 0; i < 4; i++) {
-                let projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
+                const projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
                 projections.push(projection);
                 storage.upsert(i.toString(), projection);
             }
@@ -90,15 +90,15 @@ describe("MemoryProjectionStorage", () => {
         });
 
         it("retrieves an empty page if no projections match", () => {
-            let page = storage.findAll(1, 2);
+            const page = storage.findAll(1, 2);
             expect(page).to.have.lengthOf(0);
         });
     });
 
     describe("clear", () => {
         it("clears all projections from storage", () => {
-            let projectionId = "id";
-            let projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
+            const projectionId = "id";
+            const projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
             storage.upsert(projectionId, projection);
 
             storage.clear();
@@ -115,7 +115,7 @@ describe("MemoryProjectionStorage", () => {
 
     describe("findBy", () => {
         it("retrieves projections matching criteria", () => {
-            let projections = [];
+            const projections = [];
 
             projections.push(new MemoryProjectionStorageSpecProjection("foo", "bar"));
             projections.push(new MemoryProjectionStorageSpecProjection("bar", "foo"));
@@ -126,7 +126,7 @@ describe("MemoryProjectionStorage", () => {
                 storage.upsert(i.toString(), projections[i]);
             }
 
-            let page = storage.findBy({foo: "foo"}, 0, 10);
+            const page = storage.findBy({foo: "foo"}, 0, 10);
 
             expect(page).to.have.lengthOf(2);
             expect(page[0]).to.equal(projections[0]);
@@ -134,7 +134,7 @@ describe("MemoryProjectionStorage", () => {
         });
 
         it("retrieves projections matching multiple criteria", () => {
-            let projections = [];
+            const projections = [];
 
             projections.push(new MemoryProjectionStorageSpecProjection("foo", "bar"));
             projections.push(new MemoryProjectionStorageSpecProjection("bar", "foo"));
@@ -145,7 +145,7 @@ describe("MemoryProjectionStorage", () => {
                 storage.upsert(i.toString(), projections[i]);
             }
 
-            let page = storage.findBy({foo: "foo", bar: "bar"}, 0, 10);
+            const page = storage.findBy({foo: "foo", bar: "bar"}, 0, 10);
 
             expect(page).to.have.lengthOf(1);
             expect(page[0]).to.equal(projections[0]);

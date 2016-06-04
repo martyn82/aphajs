@@ -7,15 +7,15 @@ import {DecoratorException} from "../../../main/Apha/Decorators/DecoratorExcepti
 describe("SerializerDecorator", () => {
     describe("Ignore", () => {
         it("registers a property to be ignored during (de-)serialization", () => {
-            let target = new SerializerDecoratorSpecClassIgnore();
-            let ignores = Reflect.getMetadata(Serializer.IGNORE_SERIALIZATION_PROPERTIES, target);
+            const target = new SerializerDecoratorSpecClassIgnore();
+            const ignores = Reflect.getMetadata(Serializer.IGNORE_SERIALIZATION_PROPERTIES, target);
 
             expect(ignores).to.have.lengthOf(1);
             expect(ignores[0]).to.eql("bar");
         });
 
         it("throws exception if no property name was passed", () => {
-            let target = new SerializerDecoratorSpecClassSerializable();
+            const target = new SerializerDecoratorSpecClassSerializable();
 
             expect(() => {
                 Serializer.Ignore()(target, undefined);
@@ -25,8 +25,8 @@ describe("SerializerDecorator", () => {
 
     describe("Serializable", () => {
         it("inspects a (complex) property for correct (de-)serialization", () => {
-            let target = new SerializerDecoratorSpecClassSerializable();
-            let serializables = Reflect.getMetadata(Serializer.SERIALIZABLE_PROPERTIES, target);
+            const target = new SerializerDecoratorSpecClassSerializable();
+            const serializables = Reflect.getMetadata(Serializer.SERIALIZABLE_PROPERTIES, target);
 
             expect(serializables["bar"]).to.eql({
                 primaryType: SerializerDecoratorSpecClassIgnore
@@ -34,7 +34,7 @@ describe("SerializerDecorator", () => {
         });
 
         it("throws exception if no property name was passed", () => {
-            let target = new SerializerDecoratorSpecClassIgnore();
+            const target = new SerializerDecoratorSpecClassIgnore();
 
             expect(() => {
                 Serializer.Serializable()(target, undefined);

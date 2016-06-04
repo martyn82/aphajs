@@ -9,7 +9,7 @@ export class EventSourcingRepository<T extends AggregateRoot> implements Reposit
     constructor(private factory: AggregateFactory<T>, private eventStore: EventStore) {}
 
     public findById(id: string): T {
-        let events = this.eventStore.getEventsForAggregate(id);
+        const events = this.eventStore.getEventsForAggregate(id);
         return this.factory.createAggregate(events);
     }
 

@@ -25,16 +25,16 @@ export function SagaEventHandler(options?: SagaEventHandlerOptions): Function {
         methodName: string,
         descriptor: TypedPropertyDescriptor<Function>
     ): void => {
-        let paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName);
+        const paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName);
 
         if (paramTypes.length === 0) {
-            let targetClass = ClassNameInflector.classOf(target);
+            const targetClass = ClassNameInflector.classOf(target);
             throw new DecoratorException(targetClass, methodName, "SagaEventHandler");
         }
 
-        let handlers: AnnotatedSagaEventHandlers =
+        const handlers: AnnotatedSagaEventHandlers =
             Reflect.getOwnMetadata(SagaEventHandlerDecorator.SAGA_EVENT_HANDLERS, target) || {};
-        let eventClass = ClassNameInflector.className(paramTypes[0]);
+        const eventClass = ClassNameInflector.className(paramTypes[0]);
 
         handlers[eventClass] = [descriptor.value, options ? options.associationProperty : undefined];
         Reflect.defineMetadata(SagaEventHandlerDecorator.SAGA_EVENT_HANDLERS, handlers, target);
@@ -48,20 +48,20 @@ export function SagaEventHandlerDispatcher(): Function {
         descriptor: TypedPropertyDescriptor<Function>
     ): void => {
         descriptor.value = function (event: Event) {
-            let handlers: AnnotatedSagaEventHandlers =
+            const handlers: AnnotatedSagaEventHandlers =
                 Reflect.getMetadata(SagaEventHandlerDecorator.SAGA_EVENT_HANDLERS, this) || {};
-            let eventClass = ClassNameInflector.classOf(event);
+            const eventClass = ClassNameInflector.classOf(event);
 
             if (!handlers[eventClass]) {
                 throw new UnsupportedEventException(eventClass);
             }
 
-            let handler = handlers[eventClass];
+            const handler = handlers[eventClass];
 
-            let starters: AnnotatedSagaStarters = Reflect.getMetadata(StartSagaDecorator.SAGA_STARTERS, this) || {};
-            let endings: AnnotatedSagaEndings = Reflect.getMetadata(EndSagaDecorator.SAGA_ENDINGS, this) || {};
+            const starters: AnnotatedSagaStarters = Reflect.getMetadata(StartSagaDecorator.SAGA_STARTERS, this) || {};
+            const endings: AnnotatedSagaEndings = Reflect.getMetadata(EndSagaDecorator.SAGA_ENDINGS, this) || {};
 
-            let associatedValue = this.parameterResolver.resolveParameterValue(event, handler[1]);
+            const associatedValue = this.parameterResolver.resolveParameterValue(event, handler[1]);
             this.associateWith(new AssociationValue(handler[1], associatedValue));
 
             if (starters.has(handler[0].name)) {

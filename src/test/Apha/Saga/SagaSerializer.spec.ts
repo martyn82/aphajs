@@ -11,16 +11,16 @@ describe("SagaSerializer", () => {
     let sagaSerializer;
 
     beforeEach(() => {
-        let serializer = new JsonSerializer();
-        let factory = new SagaSerializerSpecSagaFactory();
+        const serializer = new JsonSerializer();
+        const factory = new SagaSerializerSpecSagaFactory();
 
         sagaSerializer = new SagaSerializer(serializer, factory);
     });
 
     describe("serialize", () => {
         it("serializes saga to string", () => {
-            let saga = new SagaSerializerSpecSaga("id", new AssociationValues());
-            let serialized = sagaSerializer.serialize(saga);
+            const saga = new SagaSerializerSpecSaga("id", new AssociationValues());
+            const serialized = sagaSerializer.serialize(saga);
 
             expect(serialized).to.equal("{\"id\":\"id\",\"associationValues\":{\"items\":[]}}");
         });
@@ -28,8 +28,8 @@ describe("SagaSerializer", () => {
 
     describe("deserialize", () => {
         it("deserializes a string to saga", () => {
-            let serialized = "{\"id\":\"id\",\"associationValues\":{\"items\":[]}}";
-            let saga = sagaSerializer.deserialize(serialized, SagaSerializerSpecSaga);
+            const serialized = "{\"id\":\"id\",\"associationValues\":{\"items\":[]}}";
+            const saga = sagaSerializer.deserialize(serialized, SagaSerializerSpecSaga);
 
             expect(saga.getId()).to.equal("id");
         });

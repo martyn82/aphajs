@@ -20,7 +20,7 @@ export class JsonSerializer implements Serializer {
             return JSON.stringify(value);
         }
 
-        let ignored = this.getIgnoredProperties(value);
+        const ignored = this.getIgnoredProperties(value);
 
         return JSON.stringify(value, (name: string, value: any): any => {
             return (ignored.indexOf(name) > -1) ? undefined : value;
@@ -32,13 +32,13 @@ export class JsonSerializer implements Serializer {
             return JSON.parse(data);
         }
 
-        let instance = new type();
-        let dataObject = JSON.parse(data, (name: string, value: any): any => {
+        const instance = new type();
+        const dataObject = JSON.parse(data, (name: string, value: any): any => {
             if (name === "") {
                 return value;
             }
 
-            let serializableType = this.getSerializableType(instance, name);
+            const serializableType = this.getSerializableType(instance, name);
 
             if (serializableType === null || serializableType.primaryType === null || typeof value !== "object") {
                 return value;
@@ -48,10 +48,10 @@ export class JsonSerializer implements Serializer {
                 ClassNameInflector.className(serializableType.primaryType) === "Array" &&
                 serializableType.secondaryType !== null
             ) {
-                let propertyInstance = new serializableType.primaryType();
+                const propertyInstance = new serializableType.primaryType();
 
                 for (let i = 0; i < value.length; i++) {
-                    let itemInstance = new serializableType.secondaryType();
+                    const itemInstance = new serializableType.secondaryType();
                     this.hydrate(itemInstance, value[i]);
                     propertyInstance.push(itemInstance);
                 }
@@ -67,13 +67,13 @@ export class JsonSerializer implements Serializer {
     }
 
     private hydrate(object: Object, data: Object) {
-        for (let property in data) {
+        for (const property in data) {
             object[property] = data[property];
         }
     }
 
     private getSerializableType(target: Object, propertyName: string): SerializableType {
-        let propertyTypes: AnnotatedSerializableProperties =
+        const propertyTypes: AnnotatedSerializableProperties =
             Reflect.getMetadata(SerializerDecorator.SERIALIZABLE_PROPERTIES, target) || {};
 
         if (!propertyTypes[propertyName]) {

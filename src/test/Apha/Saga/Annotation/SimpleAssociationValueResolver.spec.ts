@@ -13,9 +13,9 @@ describe("SimpleAssociationValueResolver", () => {
 
     describe("extractAssociationValues", () => {
         it("extracts all properties of event", () => {
-            let event = new SimpleAssociationValueResolverSpecEvent("idValue", false, 432);
-            let associationValues = resolver.extractAssociationValues(event);
-            let associationValueArray = associationValues.getArrayCopy();
+            const event = new SimpleAssociationValueResolverSpecEvent("idValue", false, 432);
+            const associationValues = resolver.extractAssociationValues(event);
+            const associationValueArray = associationValues.getArrayCopy();
 
             expect(associationValueArray).to.have.lengthOf(1);
             expect(associationValueArray[0]).to.eql(new AssociationValue("_id", "idValue"));

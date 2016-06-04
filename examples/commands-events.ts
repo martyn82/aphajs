@@ -11,17 +11,17 @@ import {GenericAggregateFactory} from "../src/main/Apha/Domain/GenericAggregateF
 import {EventSourcingRepository} from "../src/main/Apha/Repository/EventSourcingRepository";
 import {SimpleCommandBus} from "../src/main/Apha/CommandHandling/SimpleCommandBus";
 
-let eventStorage = new MemoryEventStorage();
-let eventBus = new SimpleEventBus();
+const eventStorage = new MemoryEventStorage();
+const eventBus = new SimpleEventBus();
 eventBus.subscribe(new DemonstratedListener(eventStorage));
 
-let serializer = new JsonSerializer();
-let eventClassMap = new EventClassMap([Demonstration.Demonstrated]);
-let eventStore = new EventStore(eventBus, eventStorage, serializer, eventClassMap);
-let factory = new GenericAggregateFactory<Demonstration>(Demonstration);
-let repository = new EventSourcingRepository<Demonstration>(factory, eventStore);
+const serializer = new JsonSerializer();
+const eventClassMap = new EventClassMap([Demonstration.Demonstrated]);
+const eventStore = new EventStore(eventBus, eventStorage, serializer, eventClassMap);
+const factory = new GenericAggregateFactory<Demonstration>(Demonstration);
+const repository = new EventSourcingRepository<Demonstration>(factory, eventStore);
 
-let commandBus = new SimpleCommandBus();
+const commandBus = new SimpleCommandBus();
 commandBus.registerHandler(Demonstration.Demonstrate, new DemonstrateHandler(repository));
 
 commandBus.send(new Demonstration.Demonstrate("foo"));

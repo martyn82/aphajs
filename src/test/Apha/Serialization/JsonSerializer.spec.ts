@@ -12,7 +12,7 @@ describe("JsonSerializer", () => {
 
     describe("serialize", () => {
         it("serializes values", () => {
-            let serialized = serializer.serialize({
+            const serialized = serializer.serialize({
                 string: "some string",
                 numeric: 1.23,
                 nested: {
@@ -29,10 +29,10 @@ describe("JsonSerializer", () => {
         });
 
         it("serializes primitives", () => {
-            let str = "some string";
-            let num = 42;
-            let bool = true;
-            let nil = null;
+            const str = "some string";
+            const num = 42;
+            const bool = true;
+            const nil = null;
 
             expect(serializer.serialize(str)).to.equal("\"some string\"");
             expect(serializer.serialize(num)).to.equal("42");
@@ -41,15 +41,15 @@ describe("JsonSerializer", () => {
         });
 
         it("serializes typed objects", () => {
-            let obj = new Something("foo", false, [1, 2, 3]);
-            let serialized = serializer.serialize(obj);
+            const obj = new Something("foo", false, [1, 2, 3]);
+            const serialized = serializer.serialize(obj);
 
             expect(serialized).to.equal("{\"foo\":\"foo\",\"bar\":false,\"baz\":[1,2,3]}");
         });
 
         it("serializes only properties that are not ignored", () => {
-            let obj = new SomethingComplex("fozvalue", null);
-            let serialized = serializer.serialize(obj);
+            const obj = new SomethingComplex("fozvalue", null);
+            const serialized = serializer.serialize(obj);
 
             expect(serialized).to.equal("{\"boz\":null,\"foo\":null}");
         });
@@ -57,10 +57,10 @@ describe("JsonSerializer", () => {
 
     describe("deserialize", () => {
         it("deserializes values", () => {
-            let serialized = "{\"string\":\"some string\",\"numeric\":1.23,\"nested\"" +
+            const serialized = "{\"string\":\"some string\",\"numeric\":1.23,\"nested\"" +
                 ":{\"flag\":true,\"otherFlag\":false},\"things\":[1,\"2\",true,false]}";
 
-            let deserialized = serializer.deserialize(serialized);
+            const deserialized = serializer.deserialize(serialized);
 
             expect(deserialized).to.eql({
                 string: "some string",
@@ -80,18 +80,18 @@ describe("JsonSerializer", () => {
         });
 
         it("deserializes values to type", () => {
-            let obj = new Something("foo", false, [1, 2, 3]);
-            let deserialized = serializer.deserialize("{\"foo\":\"foo\",\"bar\":false,\"baz\":[1,2,3]}", Something);
+            const obj = new Something("foo", false, [1, 2, 3]);
+            const deserialized = serializer.deserialize("{\"foo\":\"foo\",\"bar\":false,\"baz\":[1,2,3]}", Something);
 
             expect(deserialized).to.be.an.instanceOf(Something);
             expect(deserialized).to.eql(obj);
         });
 
         it("deserializes complex types", () => {
-            let nested = new Something("foo", true, [3, 2, 1]);
-            let obj = new SomethingComplex("defaultfoz", nested);
+            const nested = new Something("foo", true, [3, 2, 1]);
+            const obj = new SomethingComplex("defaultfoz", nested);
 
-            let smallObjs = [new SmallObj("first"), new SmallObj("second")];
+            const smallObjs = [new SmallObj("first"), new SmallObj("second")];
             obj.setFoo(smallObjs);
 
             let serialized = serializer.serialize(obj);
@@ -101,7 +101,7 @@ describe("JsonSerializer", () => {
                 "\"foo\":[{\"prop\":\"first\"},{\"prop\":\"second\"}]}"
             );
 
-            let deserialized = serializer.deserialize(serialized, SomethingComplex);
+            const deserialized = serializer.deserialize(serialized, SomethingComplex);
             expect(deserialized.foz).to.equal("defaultfoz");
             expect(deserialized.boz.bar).to.be.true;
             expect(deserialized.boz.baz).to.eql([3, 2, 1]);

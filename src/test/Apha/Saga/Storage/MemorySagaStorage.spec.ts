@@ -16,7 +16,7 @@ describe("MemorySagaStorage", () => {
     let serializer;
 
     before(() => {
-        let factory = new GenericSagaFactory<MemorySagaStorageSpecSaga>();
+        const factory = new GenericSagaFactory<MemorySagaStorageSpecSaga>();
         serializer = new SagaSerializer<MemorySagaStorageSpecSaga>(new JsonSerializer(), factory);
     });
 
@@ -26,14 +26,14 @@ describe("MemorySagaStorage", () => {
 
     describe("insert", () => {
         it("inserts a saga and its associated values into storage", () => {
-            let sagaId = "id";
-            let associationValues = new AssociationValues([
+            const sagaId = "id";
+            const associationValues = new AssociationValues([
                 new AssociationValue("foo", "bar"),
                 new AssociationValue("baz", "boo")
             ]);
 
-            let saga = new MemorySagaStorageSpecSaga(sagaId, associationValues);
-            let serializedSaga = serializer.serialize(saga);
+            const saga = new MemorySagaStorageSpecSaga(sagaId, associationValues);
+            const serializedSaga = serializer.serialize(saga);
 
             storage.insert(
                 ClassNameInflector.classOf(saga),
@@ -42,20 +42,20 @@ describe("MemorySagaStorage", () => {
                 serializedSaga
             );
 
-            let sagaData = storage.findById(sagaId);
+            const sagaData = storage.findById(sagaId);
             expect(sagaData).to.equal(serializedSaga);
         });
 
         it("associates a saga only once for a associated value", () => {
-            let sagaId = "id";
-            let associationValues = new AssociationValues([
+            const sagaId = "id";
+            const associationValues = new AssociationValues([
                 new AssociationValue("foo", "bar"),
                 new AssociationValue("baz", "boo")
             ]);
 
-            let saga = new MemorySagaStorageSpecSaga(sagaId, associationValues);
-            let serializedSaga = serializer.serialize(saga);
-            let sagaClass = ClassNameInflector.classOf(saga);
+            const saga = new MemorySagaStorageSpecSaga(sagaId, associationValues);
+            const serializedSaga = serializer.serialize(saga);
+            const sagaClass = ClassNameInflector.classOf(saga);
 
             storage.insert(
                 sagaClass,
@@ -71,15 +71,15 @@ describe("MemorySagaStorage", () => {
                 serializedSaga
             );
 
-            let foundSagas = storage.find(sagaClass, AssociationValueDescriptor.fromValues(associationValues));
+            const foundSagas = storage.find(sagaClass, AssociationValueDescriptor.fromValues(associationValues));
             expect(foundSagas).to.have.lengthOf(1);
         });
     });
 
     describe("findById", () => {
         it("finds a stored saga by ID", () => {
-            let saga = new MemorySagaStorageSpecSaga("id", new AssociationValues());
-            let serializedSaga = serializer.serialize(saga);
+            const saga = new MemorySagaStorageSpecSaga("id", new AssociationValues());
+            const serializedSaga = serializer.serialize(saga);
 
             storage.insert(
                 ClassNameInflector.classOf(saga),
@@ -88,7 +88,7 @@ describe("MemorySagaStorage", () => {
                 serializedSaga
             );
 
-            let sagaData = storage.findById(saga.getId());
+            const sagaData = storage.findById(saga.getId());
             expect(sagaData).to.equal(serializedSaga);
         });
 
@@ -100,21 +100,19 @@ describe("MemorySagaStorage", () => {
     describe("find", () => {
         it("retrieves sagas by type and associated values", () => {
             // matching saga
-            let saga1 = new MemorySagaStorageSpecSaga("id1", new AssociationValues([
+            const saga1 = new MemorySagaStorageSpecSaga("id1", new AssociationValues([
                 new AssociationValue("foo", "bar")
             ]));
 
             // non-matching: same associationValue, but other type, at insert()
-            let saga2 = new MemorySagaStorageSpecSaga("id2", new AssociationValues([
+            const saga2 = new MemorySagaStorageSpecSaga("id2", new AssociationValues([
                 new AssociationValue("foo", "bar")
             ]));
 
             // non-matching: other associationValue (same key)
-            let saga3 = new MemorySagaStorageSpecSaga("id3", new AssociationValues([
+            const saga3 = new MemorySagaStorageSpecSaga("id3", new AssociationValues([
                 new AssociationValue("foo", "baz")
             ]));
-
-            let sagaClass = ClassNameInflector.classOf(saga1);
 
             storage.insert(
                 "SomeSaga",
@@ -137,7 +135,7 @@ describe("MemorySagaStorage", () => {
                 serializer.serialize(saga3)
             );
 
-            let foundSagas = storage.find(
+            const foundSagas = storage.find(
                 "SomeSaga",
                 AssociationValueDescriptor.fromValues(saga1.getAssociationValues())
             );
@@ -147,7 +145,7 @@ describe("MemorySagaStorage", () => {
         });
 
         it("returns empty result if no sagas can be found with given type and associated values", () => {
-            let foundSagas = storage.find("SomeSaga", AssociationValueDescriptor.fromValues(new AssociationValues([
+            const foundSagas = storage.find("SomeSaga", AssociationValueDescriptor.fromValues(new AssociationValues([
                 new AssociationValue("foo", "bar")
             ])));
 
@@ -159,12 +157,12 @@ describe("MemorySagaStorage", () => {
     describe("remove", () => {
         it("removes a previously stored saga", () => {
             // to-be-removed saga
-            let saga1 = new MemorySagaStorageSpecSaga("id1", new AssociationValues([
+            const saga1 = new MemorySagaStorageSpecSaga("id1", new AssociationValues([
                 new AssociationValue("foo", "bar")
             ]));
 
             // like-saga, different associations
-            let saga2 = new MemorySagaStorageSpecSaga("id2", new AssociationValues([
+            const saga2 = new MemorySagaStorageSpecSaga("id2", new AssociationValues([
                 new AssociationValue("foo", "baz")
             ]));
 
@@ -194,8 +192,8 @@ describe("MemorySagaStorage", () => {
 
     describe("update", () => {
         it("updates the saga", () => {
-            let associationValue = new AssociationValue("foo", "bar");
-            let associationValue2 = new AssociationValue("baz", "boo");
+            const associationValue = new AssociationValue("foo", "bar");
+            const associationValue2 = new AssociationValue("baz", "boo");
             let saga = new MemorySagaStorageSpecSaga("id", new AssociationValues([associationValue]));
 
             storage.insert(
@@ -205,7 +203,7 @@ describe("MemorySagaStorage", () => {
                 serializer.serialize(saga)
             );
 
-            let updatedAssociationValues = new AssociationValues([associationValue, associationValue2]);
+            const updatedAssociationValues = new AssociationValues([associationValue, associationValue2]);
             saga = new MemorySagaStorageSpecSaga("id", updatedAssociationValues);
 
             storage.update(
@@ -215,14 +213,14 @@ describe("MemorySagaStorage", () => {
                 serializer.serialize(saga)
             );
 
-            let serializedSaga = storage.findById(saga.getId());
-            let actualSaga = serializer.deserialize(serializedSaga, MemorySagaStorageSpecSaga);
+            const serializedSaga = storage.findById(saga.getId());
+            const actualSaga = serializer.deserialize(serializedSaga, MemorySagaStorageSpecSaga);
 
             expect(actualSaga.getAssociationValues()).to.eql(updatedAssociationValues);
         });
 
         it("inserts the saga if it does not exist", () => {
-            let saga = new MemorySagaStorageSpecSaga("id", new AssociationValues([]));
+            const saga = new MemorySagaStorageSpecSaga("id", new AssociationValues([]));
 
             storage.update(
                 "SomeSaga",
@@ -231,8 +229,8 @@ describe("MemorySagaStorage", () => {
                 serializer.serialize(saga)
             );
 
-            let serializedSaga = storage.findById(saga.getId());
-            let actualSaga = serializer.deserialize(serializedSaga);
+            const serializedSaga = storage.findById(saga.getId());
+            const actualSaga = serializer.deserialize(serializedSaga);
 
             expect(actualSaga).to.eql(saga);
         });

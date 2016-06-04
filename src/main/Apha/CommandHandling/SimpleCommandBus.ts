@@ -10,7 +10,7 @@ export class SimpleCommandBus extends CommandBus {
     private handlers: {[commandClass: string]: CommandHandler} = {};
 
     public registerHandler(commandType: CommandType, handler: CommandHandler) {
-        let commandClass = ClassNameInflector.className(commandType);
+        const commandClass = ClassNameInflector.className(commandType);
 
         if (this.handlers[commandClass]) {
             throw new CommandHandlerAlreadyExistsException(commandClass);
@@ -20,7 +20,7 @@ export class SimpleCommandBus extends CommandBus {
     }
 
     public unregisterHandler(commandType: CommandType) {
-        let commandClass = ClassNameInflector.className(commandType);
+        const commandClass = ClassNameInflector.className(commandType);
 
         if (!this.handlers[commandClass]) {
             return;
@@ -30,7 +30,7 @@ export class SimpleCommandBus extends CommandBus {
     }
 
     public send(command: Command) {
-        let commandClass = ClassNameInflector.classOf(command);
+        const commandClass = ClassNameInflector.classOf(command);
 
         if (!this.handlers[commandClass]) {
             throw new NoCommandHandlerException(commandClass);

@@ -17,20 +17,20 @@ describe("SagaRepository", () => {
     let storageMock;
 
     beforeEach(() => {
-        let storage = new SagaRepositorySpecSagaStorage();
+        const storage = new SagaRepositorySpecSagaStorage();
         storageMock = sinon.mock(storage);
 
-        let factory = new GenericSagaFactory();
-        let serializer = new SagaSerializer(new JsonSerializer(), factory);
+        const factory = new GenericSagaFactory();
+        const serializer = new SagaSerializer(new JsonSerializer(), factory);
 
         repository = new SagaRepository(storage, serializer);
     });
 
     describe("add", () => {
         it("adds an active saga to the repository", () => {
-            let sagaId = "id";
-            let saga = new SagaRepositorySpecSaga(sagaId, new AssociationValues());
-            let descriptors = AssociationValueDescriptor.fromValues(saga.getAssociationValues());
+            const sagaId = "id";
+            const saga = new SagaRepositorySpecSaga(sagaId, new AssociationValues());
+            const descriptors = AssociationValueDescriptor.fromValues(saga.getAssociationValues());
 
             storageMock.expects("insert")
                 .once()
@@ -47,8 +47,8 @@ describe("SagaRepository", () => {
         });
 
         it("does not add saga to the repository if it is inactive", () => {
-            let saga = new SagaRepositorySpecSaga("id", new AssociationValues());
-            let sagaMock = sinon.mock(saga);
+            const saga = new SagaRepositorySpecSaga("id", new AssociationValues());
+            const sagaMock = sinon.mock(saga);
 
             sagaMock.expects("isActive").returns(false);
             storageMock.expects("insert").never();
@@ -61,9 +61,9 @@ describe("SagaRepository", () => {
 
     describe("commit", () => {
         it("updates existing active saga in repository", () => {
-            let sagaId = "id";
-            let saga = new SagaRepositorySpecSaga(sagaId, new AssociationValues());
-            let descriptors = AssociationValueDescriptor.fromValues(saga.getAssociationValues());
+            const sagaId = "id";
+            const saga = new SagaRepositorySpecSaga(sagaId, new AssociationValues());
+            const descriptors = AssociationValueDescriptor.fromValues(saga.getAssociationValues());
 
             storageMock.expects("update")
                 .once()
@@ -80,9 +80,9 @@ describe("SagaRepository", () => {
         });
 
         it("removes an existing saga from repository if it is inactive", () => {
-            let sagaId = "id";
-            let saga = new SagaRepositorySpecSaga(sagaId, new AssociationValues());
-            let sagaMock = sinon.mock(saga);
+            const sagaId = "id";
+            const saga = new SagaRepositorySpecSaga(sagaId, new AssociationValues());
+            const sagaMock = sinon.mock(saga);
 
             sagaMock.expects("isActive").returns(false);
             storageMock.expects("remove")
@@ -97,8 +97,8 @@ describe("SagaRepository", () => {
 
     describe("find", () => {
         it("retrieves all matching saga IDs for given saga type and association value", () => {
-            let associationValue = new AssociationValue("foo", "bar");
-            let descriptor = AssociationValueDescriptor.fromValue(associationValue);
+            const associationValue = new AssociationValue("foo", "bar");
+            const descriptor = AssociationValueDescriptor.fromValue(associationValue);
 
             storageMock.expects("find")
                 .once()
@@ -120,7 +120,7 @@ describe("SagaRepository", () => {
                 .withArgs("id")
                 .returns("{\"id\":\"id\",\"associationValues\":{\"items\":[]}}");
 
-            let saga = repository.load("id", SagaRepositorySpecSaga);
+            const saga = repository.load("id", SagaRepositorySpecSaga);
 
             expect(saga).to.be.an.instanceOf(SagaRepositorySpecSaga);
             expect(saga.getId()).to.equal("id");
@@ -131,7 +131,7 @@ describe("SagaRepository", () => {
         it("returns null if saga cannot be loaded", () => {
             storageMock.expects("findById").returns(null);
 
-            let saga = repository.load("id", SagaRepositorySpecSaga);
+            const saga = repository.load("id", SagaRepositorySpecSaga);
             expect(saga).to.be.null;
 
             storageMock.verify();

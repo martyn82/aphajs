@@ -23,7 +23,7 @@ export function AggregateIdentifier(): Function {
             throw new DecoratorException(ClassNameInflector.classOf(target), name, "AggregateIdentifier");
         }
 
-        let identifierType: AnyType = Reflect.getOwnMetadata(MetadataKeys.PROPERTY_TYPE, target, name);
+        const identifierType: AnyType = Reflect.getOwnMetadata(MetadataKeys.PROPERTY_TYPE, target, name);
         identifier = {
             name: name,
             type: identifierType

@@ -15,7 +15,7 @@ export function EndSaga(): Function {
         methodName: string,
         descriptor: TypedPropertyDescriptor<Function>
     ): void => {
-        let endings: AnnotatedSagaEndings =
+        const endings: AnnotatedSagaEndings =
             Reflect.getOwnMetadata(EndSagaDecorator.SAGA_ENDINGS, target) || new Set<string>();
 
         endings.add(methodName);

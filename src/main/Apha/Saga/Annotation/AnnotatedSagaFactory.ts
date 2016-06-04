@@ -12,13 +12,13 @@ export class AnnotatedSagaFactory<T extends AnnotatedSaga | AnnotatedSaga> imple
 
     public createSaga(sagaType: SagaType<T>, id: string, associationValues: AssociationValues): T {
         if (!this.supports(sagaType)) {
-            let sagaClass = ClassNameInflector.className(sagaType);
+            const sagaClass = ClassNameInflector.className(sagaType);
             throw new UnsupportedSagaException(sagaClass);
         }
 
-        let saga = new sagaType(id, associationValues);
+        const saga = new sagaType(id, associationValues);
 
-        for (let associationValue of associationValues) {
+        for (const associationValue of associationValues) {
             saga.associateWith(associationValue);
         }
 

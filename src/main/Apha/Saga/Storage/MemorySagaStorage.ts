@@ -28,8 +28,8 @@ export class MemorySagaStorage implements SagaStorage {
     }
 
     private associateSaga(id: string, associationValues: AssociationValueDescriptor): void {
-        for (let field in associationValues) {
-            let value = associationValues[field];
+        for (const field in associationValues) {
+            const value = associationValues[field];
 
             if (!this.associations[field]) {
                 this.associations[field] = {};
@@ -60,8 +60,8 @@ export class MemorySagaStorage implements SagaStorage {
             return;
         }
 
-        for (let field in this.associations) {
-            for (let value in this.associations[field]) {
+        for (const field in this.associations) {
+            for (const value in this.associations[field]) {
                 if (this.associations[field][value].indexOf(id) > -1) {
                     this.associations[field][value] = this.associations[field][value].filter((sagaId: string) => {
                         return id !== sagaId;
@@ -84,19 +84,19 @@ export class MemorySagaStorage implements SagaStorage {
     public find(sagaClass: string, associationValue: AssociationValueDescriptor): string[] {
         let foundIdentities = [];
 
-        for (let field in associationValue) {
+        for (const field in associationValue) {
             if (!this.associations[field]) {
                 return [];
             }
 
-            for (let value in this.associations[field]) {
+            for (const value in this.associations[field]) {
                 if (associationValue[field] === value) {
                     foundIdentities = foundIdentities.concat(this.associations[field][value]);
                 }
             }
         }
 
-        let ids = foundIdentities.filter((value, index, self) => {
+        const ids = foundIdentities.filter((value, index, self) => {
             return self.indexOf(value) === index;
         });
 

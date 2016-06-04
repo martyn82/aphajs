@@ -19,16 +19,16 @@ export function CommandHandler(): Function {
         methodName: string,
         descriptor: TypedPropertyDescriptor<Function>
     ): void => {
-        let paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName);
+        const paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName);
 
         if (paramTypes.length === 0) {
-            let targetClass = ClassNameInflector.classOf(target);
+            const targetClass = ClassNameInflector.classOf(target);
             throw new DecoratorException(targetClass, methodName, "CommandHandler");
         }
 
-        let handlers: AnnotatedCommandHandlers =
+        const handlers: AnnotatedCommandHandlers =
             Reflect.getOwnMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, target) || {};
-        let commandClass = ClassNameInflector.className(paramTypes[0]);
+        const commandClass = ClassNameInflector.className(paramTypes[0]);
 
         handlers[commandClass] = descriptor.value;
         Reflect.defineMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, handlers, target);
@@ -42,9 +42,9 @@ export function CommandHandlerDispatcher(): Function {
         descriptor: TypedPropertyDescriptor<Function>
     ): void => {
         descriptor.value = function (command: Command) {
-            let handlers: AnnotatedCommandHandlers =
+            const handlers: AnnotatedCommandHandlers =
                 Reflect.getMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, this) || {};
-            let commandClass = ClassNameInflector.classOf(command);
+            const commandClass = ClassNameInflector.classOf(command);
 
             if (!handlers[commandClass]) {
                 throw new UnsupportedCommandException(commandClass);

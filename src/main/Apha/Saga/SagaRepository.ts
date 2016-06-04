@@ -37,12 +37,12 @@ export class SagaRepository<T extends Saga> {
     }
 
     public find(sagaType: SagaType<T>, associationValue: AssociationValue): string[] {
-        let sagaClass = ClassNameInflector.className(sagaType);
+        const sagaClass = ClassNameInflector.className(sagaType);
         return this.storage.find(sagaClass, AssociationValueDescriptor.fromValue(associationValue));
     }
 
     public load(id: string, sagaType: SagaType<T>): T {
-        let sagaData = this.storage.findById(id);
+        const sagaData = this.storage.findById(id);
 
         if (!sagaData) {
             return null;

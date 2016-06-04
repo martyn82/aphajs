@@ -7,10 +7,10 @@ import {AssociationValues} from "../../../../main/Apha/Saga/AssociationValues";
 describe("AssociationValueDescriptor", () => {
     describe("fromValue", () => {
         it("converts an AssociationValue to an AssociationValueDescriptor", () => {
-            let value = new AssociationValue("foo", "bar");
-            let descriptor = AssociationValueDescriptor.fromValue(value);
+            const value = new AssociationValue("foo", "bar");
+            const descriptor = AssociationValueDescriptor.fromValue(value);
 
-            let keys = Object.keys(descriptor);
+            const keys = Object.keys(descriptor);
 
             expect(keys).to.have.lengthOf(1);
             expect(keys[0]).to.equal("foo");
@@ -19,12 +19,12 @@ describe("AssociationValueDescriptor", () => {
     });
 
     describe("fromValues", () => {
-        let value1 = new AssociationValue("foo", "bar");
-        let value2 = new AssociationValue("bar", "baz");
-        let values = new AssociationValues([value1, value2]);
-        let descriptor = AssociationValueDescriptor.fromValues(values);
+        const value1 = new AssociationValue("foo", "bar");
+        const value2 = new AssociationValue("bar", "baz");
+        const values = new AssociationValues([value1, value2]);
+        const descriptor = AssociationValueDescriptor.fromValues(values);
 
-        let keys = Object.keys(descriptor);
+        const keys = Object.keys(descriptor);
 
         expect(keys).to.have.lengthOf(2);
 

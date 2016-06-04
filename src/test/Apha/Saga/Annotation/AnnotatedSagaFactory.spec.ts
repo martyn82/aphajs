@@ -20,7 +20,7 @@ describe("AnnotatedSagaFactory", () => {
 
     describe("createSaga", () => {
         it("creates a saga of given type", () => {
-            let saga = factory.createSaga(AnnotatedSagaFactorySpecSaga, "id", new AssociationValues([
+            const saga = factory.createSaga(AnnotatedSagaFactorySpecSaga, "id", new AssociationValues([
                 new AssociationValue("foo", "bar")
             ]));
 
@@ -28,8 +28,8 @@ describe("AnnotatedSagaFactory", () => {
         });
 
         it("throws exception for unsupported saga type", () => {
-            let factory = new AnnotatedSagaFactory<AnnotatedSagaFactorySpecSaga>(parameterResolver);
-            let factoryMock = sinon.mock(factory);
+            const factory = new AnnotatedSagaFactory<AnnotatedSagaFactorySpecSaga>(parameterResolver);
+            const factoryMock = sinon.mock(factory);
 
             factoryMock.expects("supports")
                 .once()
@@ -44,7 +44,7 @@ describe("AnnotatedSagaFactory", () => {
 
     describe("hydrate", () => {
         it("hydrates the saga", () => {
-            let saga = new AnnotatedSagaFactorySpecSaga("id");
+            const saga = new AnnotatedSagaFactorySpecSaga("id");
             factory.hydrate(saga);
 
             expect(saga.getId()).to.equal("id");
@@ -55,7 +55,7 @@ describe("AnnotatedSagaFactory", () => {
 
     describe("dehydrate", () => {
         it("dehydrates the saga", () => {
-            let saga = new AnnotatedSagaFactorySpecSaga("id");
+            const saga = new AnnotatedSagaFactorySpecSaga("id");
             saga.setParameterResolver(parameterResolver);
 
             factory.dehydrate(saga);

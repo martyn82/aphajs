@@ -7,8 +7,8 @@ import {AnnotatedCommandHandler} from "../../../main/Apha/CommandHandling/Annota
 describe("AnnotatedCommandHandler", () => {
     describe("handle", () => {
         it("invokes correct handler", () => {
-            let handler = new CommandHandlerDecoratorSpecCommandHandler1();
-            let command = new CommandHandlerDecoratorSpecCommand1();
+            const handler = new CommandHandlerDecoratorSpecCommandHandler1();
+            const command = new CommandHandlerDecoratorSpecCommand1();
 
             handler.handle(command);
 
@@ -16,8 +16,8 @@ describe("AnnotatedCommandHandler", () => {
         });
 
         it("invokes correct handlers", () => {
-            let handler = new CommandHandlerDecoratorSpecCommandHandler1();
-            let command = new CommandHandlerDecoratorSpecCommand2();
+            const handler = new CommandHandlerDecoratorSpecCommandHandler1();
+            const command = new CommandHandlerDecoratorSpecCommand2();
 
             handler.handle(command);
 

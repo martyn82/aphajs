@@ -4,7 +4,7 @@ import {InflectionException} from "./InflectionException";
 
 export class ClassNameInflector {
     public static classOf(object: Object): string {
-        let name = Inflect.classOf(object);
+        const name = Inflect.classOf(object);
 
         if (name === "") {
             throw new InflectionException("Unable to inflect class name of a non-object.");

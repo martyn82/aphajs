@@ -9,8 +9,8 @@ import {DecoratorException} from "../../../main/Apha/Decorators/DecoratorExcepti
 
 describe("AggregateIdentifierDecorator", () => {
     it("registers a property as aggregate identifier", () => {
-        let target = new AggregateIdentifierDecoratorSpecClass();
-        let identifier = Reflect.getMetadata(AggregateIdentifierDecorator.AGGREGATE_IDENTIFIER, target);
+        const target = new AggregateIdentifierDecoratorSpecClass();
+        const identifier = Reflect.getMetadata(AggregateIdentifierDecorator.AGGREGATE_IDENTIFIER, target);
 
         expect(identifier).to.eql({
             name: "identifier",
@@ -19,7 +19,7 @@ describe("AggregateIdentifierDecorator", () => {
     });
 
     it("throws exception if an aggregate identifier is already registered", () => {
-        let target = new AggregateIdentifierDecoratorSpecClassInvalid();
+        const target = new AggregateIdentifierDecoratorSpecClassInvalid();
 
         AggregateIdentifier()(target, "id");
 

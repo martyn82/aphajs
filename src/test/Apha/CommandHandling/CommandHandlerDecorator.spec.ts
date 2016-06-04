@@ -11,13 +11,13 @@ import {UnsupportedCommandException} from "../../../main/Apha/CommandHandling/Un
 describe("CommandHandlerDecorator", () => {
     describe("CommandHandler", () => {
         it("defines method as a command handler", () => {
-            let target = new CommandHandlerDecoratorSpecTarget();
+            const target = new CommandHandlerDecoratorSpecTarget();
 
             let handlers = Reflect.getMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, target);
             expect(handlers).to.be.undefined;
 
-            let methodName = "handleSomething";
-            let descriptor = {
+            const methodName = "handleSomething";
+            const descriptor = {
                 value: target[methodName],
                 writable: true,
                 enumerable: false,
@@ -32,9 +32,9 @@ describe("CommandHandlerDecorator", () => {
         });
 
         it("throws exception if no parameter can be found", () => {
-            let target = new CommandHandlerDecoratorSpecInvalidTarget();
-            let methodName = "handleNothing";
-            let descriptor = {
+            const target = new CommandHandlerDecoratorSpecInvalidTarget();
+            const methodName = "handleNothing";
+            const descriptor = {
                 value: target[methodName],
                 writable: true,
                 enumerable: false,
@@ -49,7 +49,7 @@ describe("CommandHandlerDecorator", () => {
 
     describe("CommandHandlerDispatcher", () => {
         it("throws exception if no handlers are defined", () => {
-            let target = new CommandHandlerDecoratorSpecNoHandler();
+            const target = new CommandHandlerDecoratorSpecNoHandler();
 
             expect(() => {
                 target.handle(new Something());

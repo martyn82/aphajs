@@ -13,14 +13,14 @@ describe("MemoryScheduleStorage", () => {
 
     describe("add", () => {
         it("stores a scheduled event into storage", () => {
-            let schedule: ScheduledEvent = {
+            const schedule: ScheduledEvent = {
                 event: new MemoryScheduleStorageSpecEvent(),
                 timestamp: 1,
                 token: "foo"
             };
 
             storage.add(schedule);
-            let allSchedule = storage.findAll();
+            const allSchedule = storage.findAll();
 
             expect(allSchedule[0]).to.eql(schedule);
         });
@@ -48,7 +48,7 @@ describe("MemoryScheduleStorage", () => {
 
     describe("findAll", () => {
         it("retrieves all scheduled events from storage", () => {
-            let schedule: ScheduledEvent = {
+            const schedule: ScheduledEvent = {
                 event: new MemoryScheduleStorageSpecEvent(),
                 timestamp: 1,
                 token: "foo"

@@ -16,7 +16,7 @@ describe("TypedCommandHandler", () => {
 
     describe("handle", () => {
         it("dispatches command to appropriate handler", () => {
-            let command = new TypedCommandHandlerSpecCommand();
+            const command = new TypedCommandHandlerSpecCommand();
             handlerMock.expects("handleTypedCommandHandlerSpecCommand")
                 .once()
                 .withArgs(command);
@@ -26,7 +26,7 @@ describe("TypedCommandHandler", () => {
         });
 
         it("throws exception if no appropriate handler can be found", () => {
-            let command = new TypedCommandHandlerSpecCommand2();
+            const command = new TypedCommandHandlerSpecCommand2();
 
             expect(() => {
                 handler.handle(command);

@@ -14,10 +14,10 @@ describe("SimpleEventBus", () => {
 
     describe("publish", () => {
         it("publishes event to subscribed listener", () => {
-            let event = new SimpleEventBusEvent();
-            let listener = new SimpleEventBusEventListener();
+            const event = new SimpleEventBusEvent();
+            const listener = new SimpleEventBusEventListener();
 
-            let listenerMock = sinon.mock(listener);
+            const listenerMock = sinon.mock(listener);
             listenerMock.expects("on").once().withArgs(event);
 
             eventBus.subscribe(listener, SimpleEventBusEvent);
@@ -28,10 +28,10 @@ describe("SimpleEventBus", () => {
         });
 
         it("publishes event only once to the same listener", () => {
-            let event = new SimpleEventBusEvent();
-            let listener = new SimpleEventBusEventListener();
+            const event = new SimpleEventBusEvent();
+            const listener = new SimpleEventBusEventListener();
 
-            let listenerMock = sinon.mock(listener);
+            const listenerMock = sinon.mock(listener);
             listenerMock.expects("on").once().withArgs(event);
 
             eventBus.subscribe(listener);
@@ -43,19 +43,19 @@ describe("SimpleEventBus", () => {
         });
 
         it("returns false if no listener subscribed to the event", () => {
-            let event = new SimpleEventBusEvent();
+            const event = new SimpleEventBusEvent();
             expect(eventBus.publish(event)).to.equal(false);
         });
 
         it("publishes event to multiple listeners", () => {
-            let event = new SimpleEventBusEvent();
-            let listener1 = new SimpleEventBusEventListener();
-            let listener2 = new SimpleEventBusEventListener();
+            const event = new SimpleEventBusEvent();
+            const listener1 = new SimpleEventBusEventListener();
+            const listener2 = new SimpleEventBusEventListener();
 
-            let listenerMock1 = sinon.mock(listener1);
+            const listenerMock1 = sinon.mock(listener1);
             listenerMock1.expects("on").once().withArgs(event);
 
-            let listenerMock2 = sinon.mock(listener2);
+            const listenerMock2 = sinon.mock(listener2);
             listenerMock2.expects("on").once().withArgs(event);
 
             eventBus.subscribe(listener1, SimpleEventBusEvent);
@@ -70,8 +70,8 @@ describe("SimpleEventBus", () => {
 
     describe("unsubscribe", () => {
         it("unsubscribes a previously subscribed listener", () => {
-            let event = new SimpleEventBusEvent();
-            let listener = new SimpleEventBusEventListener();
+            const event = new SimpleEventBusEvent();
+            const listener = new SimpleEventBusEventListener();
 
             eventBus.subscribe(listener, SimpleEventBusEvent);
             eventBus.unsubscribe(listener, SimpleEventBusEvent);
@@ -80,7 +80,7 @@ describe("SimpleEventBus", () => {
         });
 
         it("is idempotent", () => {
-            let listener = new SimpleEventBusEventListener();
+            const listener = new SimpleEventBusEventListener();
 
             eventBus.subscribe(new SimpleEventBusEventListener(), SimpleEventBusEvent);
 

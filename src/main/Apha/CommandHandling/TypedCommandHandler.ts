@@ -10,8 +10,8 @@ export abstract class TypedCommandHandler implements CommandHandler {
     }
 
     private handleByInflection(command: Command): void {
-        let commandClass = ClassNameInflector.classOf(command);
-        let handler = this["handle" + commandClass];
+        const commandClass = ClassNameInflector.classOf(command);
+        const handler = this["handle" + commandClass];
 
         if (typeof handler !== "function") {
             throw new UnsupportedCommandException(commandClass);

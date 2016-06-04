@@ -16,46 +16,46 @@ describe("DefaultCommandGateway", () => {
 
     describe("send", () => {
         it("sends a command to the command bus", () => {
-            let commandBusMock = sinon.mock(commandBus);
+            const commandBusMock = sinon.mock(commandBus);
             commandBusMock.expects("send")
                 .once()
                 .withArgs(command);
 
-            let gateway = new DefaultCommandGateway(commandBus);
+            const gateway = new DefaultCommandGateway(commandBus);
             gateway.send(command);
 
             commandBusMock.verify();
         });
 
         it("notifies interceptors before dispatch", () => {
-            let interceptor = new DefaultCommandGatewaySpecCommandDispatchInterceptor();
-            let interceptorMock = sinon.mock(interceptor);
+            const interceptor = new DefaultCommandGatewaySpecCommandDispatchInterceptor();
+            const interceptorMock = sinon.mock(interceptor);
 
             interceptorMock.expects("onBeforeDispatch")
                 .once()
                 .withArgs(command);
 
-            let gateway = new DefaultCommandGateway(commandBus, [interceptor]);
+            const gateway = new DefaultCommandGateway(commandBus, [interceptor]);
             gateway.send(command);
 
             interceptorMock.verify();
         });
 
         it("notifies interceptors of successful dispatch", () => {
-            let commandBusMock = sinon.mock(commandBus);
+            const commandBusMock = sinon.mock(commandBus);
 
             commandBusMock.expects("send")
                 .once()
                 .withArgs(command);
 
-            let interceptor = new DefaultCommandGatewaySpecCommandDispatchInterceptor();
-            let interceptorMock = sinon.mock(interceptor);
+            const interceptor = new DefaultCommandGatewaySpecCommandDispatchInterceptor();
+            const interceptorMock = sinon.mock(interceptor);
 
             interceptorMock.expects("onDispatchSuccessful")
                 .once()
                 .withArgs(command);
 
-            let gateway = new DefaultCommandGateway(commandBus, [interceptor]);
+            const gateway = new DefaultCommandGateway(commandBus, [interceptor]);
             gateway.send(command);
 
             interceptorMock.verify();

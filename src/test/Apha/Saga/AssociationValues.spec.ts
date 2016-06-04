@@ -11,20 +11,20 @@ describe("AssociationValues", () => {
     });
 
     it("can be constructed with items", () => {
-        let collection = new AssociationValues([new AssociationValue("foo", "bar")]);
+        const collection = new AssociationValues([new AssociationValue("foo", "bar")]);
         expect(collection.size()).to.equal(1);
     });
 
     it("is iterable", () => {
-        let innerValues = [
+        const innerValues = [
             new AssociationValue("foo", "bar"),
             new AssociationValue("baz", "boo")
         ];
 
-        let values = new AssociationValues(innerValues);
+        const values = new AssociationValues(innerValues);
         let iteration = 0;
 
-        for (let value of values) {
+        for (const value of values) {
             expect(value).to.eql(innerValues[iteration]);
             iteration++;
         }
@@ -34,12 +34,12 @@ describe("AssociationValues", () => {
 
     describe("contains", () => {
         it("returns false if item does not exist in collection", () => {
-            let item = new AssociationValue("foo", "bar");
+            const item = new AssociationValue("foo", "bar");
             expect(collection.contains(item)).to.be.false;
         });
 
         it("returns true if item does exist in collection", () => {
-            let item = new AssociationValue("foo", "bar");
+            const item = new AssociationValue("foo", "bar");
             collection.add(item);
             expect(collection.contains(item)).to.be.true;
         });
@@ -47,13 +47,13 @@ describe("AssociationValues", () => {
 
     describe("add", () => {
         it("adds an item to the collection", () => {
-            let item = new AssociationValue("foo", "bar");
+            const item = new AssociationValue("foo", "bar");
             collection.add(item);
             expect(collection.size()).to.equal(1);
         });
 
         it("adds no item twice to the collection", () => {
-            let item = new AssociationValue("foo", "bar");
+            const item = new AssociationValue("foo", "bar");
 
             collection.add(item);
             collection.add(item);
@@ -64,7 +64,7 @@ describe("AssociationValues", () => {
 
     describe("clear", () => {
         it("clears all items from collection", () => {
-            let item = new AssociationValue("foo", "bar");
+            const item = new AssociationValue("foo", "bar");
             collection.add(item);
 
             collection.clear();
@@ -74,10 +74,10 @@ describe("AssociationValues", () => {
 
     describe("getArrayCopy", () => {
         it("retrieves an array copy of the inner items", () => {
-            let item = new AssociationValue("foo", "bar");
+            const item = new AssociationValue("foo", "bar");
             collection.add(item);
 
-            let items = collection.getArrayCopy();
+            const items = collection.getArrayCopy();
             expect(items).to.have.lengthOf(1);
         });
     });

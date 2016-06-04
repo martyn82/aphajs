@@ -16,7 +16,7 @@ describe("TypedEventListener", () => {
 
     describe("on", () => {
         it("dispatches event to appropriate handler", () => {
-            let event = new TypedEventListenerSpecEvent();
+            const event = new TypedEventListenerSpecEvent();
             listenerMock.expects("onTypedEventListenerSpecEvent")
                 .once()
                 .withArgs(event);
@@ -26,7 +26,7 @@ describe("TypedEventListener", () => {
         });
 
         it("throws exception if event cannot be handled", () => {
-            let event = new TypedEventListenerSpecEvent2();
+            const event = new TypedEventListenerSpecEvent2();
 
             expect(() => {
                 listener.on(event);

@@ -26,13 +26,13 @@ export abstract class SagaManager<T extends Saga> implements EventListener {
         let handled = false;
 
         this.sagaTypes.forEach((sagaType) => {
-            let associationValues = this.extractAssociationValues(sagaType, event);
+            const associationValues = this.extractAssociationValues(sagaType, event);
 
-            for (let associationValue of associationValues) {
-                let sagaIds = this.repository.find(sagaType, associationValue);
+            for (const associationValue of associationValues) {
+                const sagaIds = this.repository.find(sagaType, associationValue);
 
                 sagaIds.forEach((sagaId) => {
-                    let saga = this.repository.load(sagaId, sagaType);
+                    const saga = this.repository.load(sagaId, sagaType);
                     saga.on(event);
                     this.commit(saga);
                     handled = true;
@@ -43,7 +43,7 @@ export abstract class SagaManager<T extends Saga> implements EventListener {
                 this.getSagaCreationPolicy(sagaType, event) === SagaCreationPolicy.Always ||
                 (!handled && this.getSagaCreationPolicy(sagaType, event) === SagaCreationPolicy.IFNoneFound)
             ) {
-                let saga = this.factory.createSaga(sagaType, IdentityProvider.generateNew(), associationValues);
+                const saga = this.factory.createSaga(sagaType, IdentityProvider.generateNew(), associationValues);
                 saga.on(event);
                 this.commit(saga);
             }

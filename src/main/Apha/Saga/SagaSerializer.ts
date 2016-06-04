@@ -13,7 +13,7 @@ export class SagaSerializer<T extends Saga> implements Serializer {
     }
 
     public deserialize(data: string, type?: AnyType): any {
-        let deserialized = this.serializer.deserialize(data, type);
+        const deserialized = this.serializer.deserialize(data, type);
         this.factory.hydrate(deserialized);
         return deserialized;
     }

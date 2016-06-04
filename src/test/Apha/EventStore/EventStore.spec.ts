@@ -23,8 +23,8 @@ describe("EventStore", () => {
     let serializerMock;
 
     beforeEach(() => {
-        let eventBus = new EventStoreEventBus();
-        let storage = new EventStoreEventStorage();
+        const eventBus = new EventStoreEventBus();
+        const storage = new EventStoreEventStorage();
         serializer = new EventStoreSerializer();
 
         eventBusMock = sinon.mock(eventBus);
@@ -45,9 +45,9 @@ describe("EventStore", () => {
 
     describe("getEventsForAggregate", () => {
         it("retrieves all events for aggregate with given ID", () => {
-            let aggregateId = "id";
-            let event = new EventStoreEvent();
-            let descriptors = [
+            const aggregateId = "id";
+            const event = new EventStoreEvent();
+            const descriptors = [
                 EventDescriptor.record(
                     aggregateId,
                     "aggregatetype",
@@ -71,7 +71,7 @@ describe("EventStore", () => {
                 .once()
                 .returns(event);
 
-            let events = eventStore.getEventsForAggregate(aggregateId);
+            const events = eventStore.getEventsForAggregate(aggregateId);
 
             expect(events).to.have.lengthOf(1);
             expect(events[0]).to.be.an.instanceOf(EventStoreEvent);
@@ -81,7 +81,7 @@ describe("EventStore", () => {
         });
 
         it("throws exception if aggregate cannot be found", () => {
-            let aggregateId = "id";
+            const aggregateId = "id";
 
             storageMock.expects("contains")
                 .once()
@@ -96,9 +96,9 @@ describe("EventStore", () => {
 
     describe("save", () => {
         it("stores a series of events for a new aggregate to storage", () => {
-            let aggregateId = "id";
-            let aggregateType = "aggregatetype";
-            let events = [
+            const aggregateId = "id";
+            const aggregateType = "aggregatetype";
+            const events = [
                 new EventStoreEvent(),
                 new EventStoreEvent()
             ];
@@ -115,16 +115,16 @@ describe("EventStore", () => {
         });
 
         it("stores a series of events for an existing aggregate to storage", () => {
-            let aggregateId = "id";
-            let aggregateType = "aggregatetype";
+            const aggregateId = "id";
+            const aggregateType = "aggregatetype";
 
-            let firstEvent = new EventStoreEvent();
+            const firstEvent = new EventStoreEvent();
             firstEvent.version = 1;
-            let secondEvent = new EventStoreEvent();
+            const secondEvent = new EventStoreEvent();
             secondEvent.version = 2;
 
-            let history = [firstEvent, secondEvent];
-            let events = [
+            const history = [firstEvent, secondEvent];
+            const events = [
                 new EventStoreEvent(),
                 new EventStoreEvent()
             ];
@@ -151,8 +151,8 @@ describe("EventStore", () => {
         });
 
         it("throws exception if expected playhead is invalid", () => {
-            let aggregateId = "id";
-            let aggregateType = "aggregatetype";
+            const aggregateId = "id";
+            const aggregateType = "aggregatetype";
 
             storageMock.expects("find")
                 .once()

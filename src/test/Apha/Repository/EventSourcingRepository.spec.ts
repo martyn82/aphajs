@@ -19,13 +19,13 @@ describe("EventSourcingRepository", () => {
     let eventStoreMock;
 
     beforeEach(() => {
-        let eventBus = new SimpleEventBus();
-        let storage = new EventSourcingRepositoryEventStorage();
-        let serializer = new JsonSerializer();
-        let eventClassMap = new EventClassMap([EventSourcingRepositoryEvent]);
+        const eventBus = new SimpleEventBus();
+        const storage = new EventSourcingRepositoryEventStorage();
+        const serializer = new JsonSerializer();
+        const eventClassMap = new EventClassMap([EventSourcingRepositoryEvent]);
 
-        let factory = new EventSourcingRepositoryAggregateFactory();
-        let eventStore = new EventStore(eventBus, storage, serializer, eventClassMap);
+        const factory = new EventSourcingRepositoryAggregateFactory();
+        const eventStore = new EventStore(eventBus, storage, serializer, eventClassMap);
 
         factoryMock = sinon.mock(factory);
         eventStoreMock = sinon.mock(eventStore);
@@ -35,11 +35,11 @@ describe("EventSourcingRepository", () => {
 
     describe("findById", () => {
         it("retrieves aggregate by ID", () => {
-            let aggregateId = "id";
-            let events = [
+            const aggregateId = "id";
+            const events = [
                 new EventSourcingRepositoryEvent()
             ];
-            let aggregate = new EventSourcingRepositoryAggregateRoot();
+            const aggregate = new EventSourcingRepositoryAggregateRoot();
 
             eventStoreMock.expects("getEventsForAggregate")
                 .once()
@@ -51,22 +51,22 @@ describe("EventSourcingRepository", () => {
                 .withArgs()
                 .returns(aggregate);
 
-            let actual = repository.findById(aggregateId);
+            const actual = repository.findById(aggregateId);
             expect(actual).to.be.an.instanceOf(EventSourcingRepositoryAggregateRoot);
         });
     });
 
     describe("store", () => {
         it("saves not yet committed changes of an aggregate", () => {
-            let expectedPlayhead = -1;
-            let aggregateId = "id";
+            const expectedPlayhead = -1;
+            const aggregateId = "id";
 
-            let changes = [
+            const changes = [
                 new EventSourcingRepositoryEvent()
             ];
 
-            let aggregate = new EventSourcingRepositoryAggregateRoot();
-            let aggregateMock = sinon.mock(aggregate);
+            const aggregate = new EventSourcingRepositoryAggregateRoot();
+            const aggregateMock = sinon.mock(aggregate);
 
             aggregateMock.expects("getId")
                 .once()

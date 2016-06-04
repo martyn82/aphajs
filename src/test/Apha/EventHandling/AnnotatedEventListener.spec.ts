@@ -7,8 +7,8 @@ import {EventListener} from "../../../main/Apha/EventHandling/EventListenerDecor
 describe("AnnotatedEventListener", () => {
     describe("on", () => {
         it("invokes correct handler", () => {
-            let handler = new EventListenerDecoratorSpecEventListener1();
-            let event = new EventListenerDecoratorSpecEvent1();
+            const handler = new EventListenerDecoratorSpecEventListener1();
+            const event = new EventListenerDecoratorSpecEvent1();
 
             handler.on(event);
 
@@ -16,8 +16,8 @@ describe("AnnotatedEventListener", () => {
         });
 
         it("invokes correct handlers", () => {
-            let handler = new EventListenerDecoratorSpecEventListener1();
-            let event = new EventListenerDecoratorSpecEvent2();
+            const handler = new EventListenerDecoratorSpecEventListener1();
+            const event = new EventListenerDecoratorSpecEvent2();
 
             handler.on(event);
 

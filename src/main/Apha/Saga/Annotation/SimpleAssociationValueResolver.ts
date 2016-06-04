@@ -8,7 +8,7 @@ import {AssociationValue} from "../AssociationValue";
 
 export class SimpleAssociationValueResolver implements AssociationValueResolver {
     public extractAssociationValues(event: Event): AssociationValues {
-        let identifier: AnnotatedAggregateIdentifier =
+        const identifier: AnnotatedAggregateIdentifier =
             Reflect.getMetadata(AggregateIdentifierDecorator.AGGREGATE_IDENTIFIER, event);
 
         return new AssociationValues([

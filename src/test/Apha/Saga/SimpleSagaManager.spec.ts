@@ -21,14 +21,14 @@ describe("SimpleSagaManager", () => {
     let factoryMock;
 
     beforeEach(() => {
-        let types = [SimpleSagaManagerSpecSaga];
-        let factory = new GenericSagaFactory<SimpleSagaManagerSpecSaga>();
+        const types = [SimpleSagaManagerSpecSaga];
+        const factory = new GenericSagaFactory<SimpleSagaManagerSpecSaga>();
 
-        let storage = new SimpleSagaManagerSpecSagaStorage();
-        let serializer = new SagaSerializer<SimpleSagaManagerSpecSaga>(new JsonSerializer(), factory);
-        let repository = new SagaRepository<SimpleSagaManagerSpecSaga>(storage, serializer);
+        const storage = new SimpleSagaManagerSpecSagaStorage();
+        const serializer = new SagaSerializer<SimpleSagaManagerSpecSaga>(new JsonSerializer(), factory);
+        const repository = new SagaRepository<SimpleSagaManagerSpecSaga>(storage, serializer);
 
-        let resolver = new SimpleSagaManagerSpecAssociationValueResolver();
+        const resolver = new SimpleSagaManagerSpecAssociationValueResolver();
 
         resolverMock = sinon.mock(resolver);
         repositoryMock = sinon.mock(repository);
@@ -39,14 +39,14 @@ describe("SimpleSagaManager", () => {
 
     describe("on", () => {
         it("delegates event to correct sagas", () => {
-            let associationValue = new AssociationValue("foo", "bar");
-            let associationValues = new AssociationValues([associationValue]);
-            let sagaId = "sagaId";
+            const associationValue = new AssociationValue("foo", "bar");
+            const associationValues = new AssociationValues([associationValue]);
+            const sagaId = "sagaId";
 
-            let saga = new SimpleSagaManagerSpecSaga(sagaId, associationValues);
-            let sagaMock = sinon.mock(saga);
+            const saga = new SimpleSagaManagerSpecSaga(sagaId, associationValues);
+            const sagaMock = sinon.mock(saga);
 
-            let event = new SimpleSagaManagerSpecEvent();
+            const event = new SimpleSagaManagerSpecEvent();
 
             resolverMock.expects("extractAssociationValues")
                 .once()
@@ -78,14 +78,14 @@ describe("SimpleSagaManager", () => {
         });
 
         it("create new saga if none found because of saga creation policy", () => {
-            let associationValue = new AssociationValue("foo", "bar");
-            let associationValues = new AssociationValues([associationValue]);
-            let sagaId = "sagaId";
+            const associationValue = new AssociationValue("foo", "bar");
+            const associationValues = new AssociationValues([associationValue]);
+            const sagaId = "sagaId";
 
-            let saga = new SimpleSagaManagerSpecSaga(sagaId, associationValues);
-            let sagaMock = sinon.mock(saga);
+            const saga = new SimpleSagaManagerSpecSaga(sagaId, associationValues);
+            const sagaMock = sinon.mock(saga);
 
-            let event = new SimpleSagaManagerSpecEvent();
+            const event = new SimpleSagaManagerSpecEvent();
 
             resolverMock.expects("extractAssociationValues")
                 .once()

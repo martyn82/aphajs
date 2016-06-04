@@ -11,7 +11,7 @@ export namespace StartSagaDecorator {
 
 export function StartSaga(): Function {
     return (target: AnnotatedSaga, methodName: string): void => {
-        let starters: AnnotatedSagaStarters = Reflect.getOwnMetadata(StartSagaDecorator.SAGA_STARTERS, target)
+        const starters: AnnotatedSagaStarters = Reflect.getOwnMetadata(StartSagaDecorator.SAGA_STARTERS, target)
             || new Set<string>();
 
         starters.add(methodName);

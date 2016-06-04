@@ -5,12 +5,12 @@ import {Event} from "../../../main/Apha/Message/Event";
 describe("Event", () => {
     describe("version", () => {
         it("can be 'get'", () => {
-            let event = new EventSpecEvent("id", 0);
+            const event = new EventSpecEvent("id", 0);
             expect(event.version).to.equal(0);
         });
 
         it("can be 'set'", () => {
-            let event = new EventSpecEvent("id", 0);
+            const event = new EventSpecEvent("id", 0);
             event.version = 1;
             expect(event.version).to.equal(1);
         });
@@ -18,7 +18,7 @@ describe("Event", () => {
 
     describe("id", () => {
         it("can be 'get'", () => {
-            let event = new EventSpecEvent("id", 0);
+            const event = new EventSpecEvent("id", 0);
             expect(event.id).to.equal("id");
         });
     });

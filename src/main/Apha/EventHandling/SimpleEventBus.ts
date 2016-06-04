@@ -25,13 +25,13 @@ export class SimpleEventBus extends EventBus {
     }
 
     public unsubscribe(listener: EventListener, eventType: EventType): void {
-        let eventClass = ClassNameInflector.className(eventType);
+        const eventClass = ClassNameInflector.className(eventType);
 
         if (!this.listeners[eventClass]) {
             return;
         }
 
-        let index = this.listeners[eventClass].indexOf(listener);
+        const index = this.listeners[eventClass].indexOf(listener);
 
         if (index > -1) {
             delete this.listeners[eventClass][index];
@@ -39,8 +39,8 @@ export class SimpleEventBus extends EventBus {
     }
 
     public publish(event: Event): boolean {
-        let eventClass = ClassNameInflector.classOf(event);
-        let listeners = this.findListeners([SimpleEventBus.wildcard, eventClass]);
+        const eventClass = ClassNameInflector.classOf(event);
+        const listeners = this.findListeners([SimpleEventBus.wildcard, eventClass]);
 
         if (listeners.length === 0) {
             return false;
@@ -54,7 +54,7 @@ export class SimpleEventBus extends EventBus {
     }
 
     private findListeners(eventClasses: string[]): EventListener[] {
-        let listeners = [];
+        const listeners = [];
 
         eventClasses.forEach((eventClass) => {
             if (!this.listeners[eventClass]) {

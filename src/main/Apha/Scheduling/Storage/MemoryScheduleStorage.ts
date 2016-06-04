@@ -17,9 +17,9 @@ export class MemoryScheduleStorage implements ScheduleStorage {
     }
 
     public findAll(): ScheduledEvent[] {
-        let schedule = [];
+        const schedule = [];
 
-        for (let id in this.data) {
+        for (const id in this.data) {
             schedule.push(this.data[id]);
         }
 

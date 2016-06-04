@@ -25,7 +25,7 @@ export namespace Serializer {
                 throw new DecoratorException(ClassNameInflector.classOf(target), propertyName, "Serializer.Ignore");
             }
 
-            let ignores: AnnotatedIgnoreSerializationProperties =
+            const ignores: AnnotatedIgnoreSerializationProperties =
                 Reflect.getMetadata(IGNORE_SERIALIZATION_PROPERTIES, target) || [];
 
             ignores.push(propertyName);
@@ -43,8 +43,8 @@ export namespace Serializer {
                 );
             }
 
-            let propertyType: AnyType = Reflect.getMetadata(MetadataKeys.PROPERTY_TYPE, target, propertyName);
-            let serializableType: SerializableType = {
+            const propertyType: AnyType = Reflect.getMetadata(MetadataKeys.PROPERTY_TYPE, target, propertyName);
+            const serializableType: SerializableType = {
                 primaryType: undefined
             };
 
@@ -55,7 +55,7 @@ export namespace Serializer {
                 serializableType.primaryType = propertyType;
             }
 
-            let serializables: AnnotatedSerializableProperties =
+            const serializables: AnnotatedSerializableProperties =
                 Reflect.getMetadata(SERIALIZABLE_PROPERTIES, target) || {};
 
             serializables[propertyName] = serializableType;

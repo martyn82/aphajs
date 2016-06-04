@@ -16,10 +16,10 @@ describe("SimpleCommandBus", () => {
 
     describe("handle", () => {
         it("handles command by registered handler", () => {
-            let command = new SimpleCommandBusCommand();
-            let handler = new SimpleCommandBusCommandHandler();
+            const command = new SimpleCommandBusCommand();
+            const handler = new SimpleCommandBusCommandHandler();
 
-            let handlerMock = sinon.mock(handler);
+            const handlerMock = sinon.mock(handler);
             handlerMock.expects("handle").once().withArgs(command);
 
             commandBus.registerHandler(SimpleCommandBusCommand, handler);
@@ -29,7 +29,7 @@ describe("SimpleCommandBus", () => {
         });
 
         it("throws exception if command cannot be handled", () => {
-            let command = new SimpleCommandBusCommand();
+            const command = new SimpleCommandBusCommand();
 
             expect(() => {
                 commandBus.send(command);
@@ -39,8 +39,8 @@ describe("SimpleCommandBus", () => {
 
     describe("registerHandler", () => {
         it("throws exception if a handler is already registered for a command type", () => {
-            let handler1 = new SimpleCommandBusCommandHandler();
-            let handler2 = new SimpleCommandBusCommandHandler();
+            const handler1 = new SimpleCommandBusCommandHandler();
+            const handler2 = new SimpleCommandBusCommandHandler();
 
             commandBus.registerHandler(SimpleCommandBusCommand, handler1);
 
@@ -52,10 +52,10 @@ describe("SimpleCommandBus", () => {
 
     describe("unregisterHandler", () => {
         it("unregisters a handler by command type", () => {
-            let command = new SimpleCommandBusCommand();
-            let handler = new SimpleCommandBusCommandHandler();
+            const command = new SimpleCommandBusCommand();
+            const handler = new SimpleCommandBusCommandHandler();
 
-            let handlerMock = sinon.mock(handler);
+            const handlerMock = sinon.mock(handler);
             handlerMock.expects("handle").never();
 
             commandBus.registerHandler(SimpleCommandBusCommand, handler);

@@ -24,8 +24,8 @@ describe("SimpleEventScheduler", () => {
     });
 
     beforeEach(() => {
-        let eventBus = new SimpleEventSchedulerSpecEventBus();
-        let storage = new SimpleEventSchedulerSpecScheduleStorage();
+        const eventBus = new SimpleEventSchedulerSpecEventBus();
+        const storage = new SimpleEventSchedulerSpecScheduleStorage();
 
         eventBusMock = sinon.mock(eventBus);
         storageMock = sinon.mock(storage);
@@ -38,14 +38,14 @@ describe("SimpleEventScheduler", () => {
     });
 
     it("schedules all scheduled events from storage upon initialization", () => {
-        let eventBus = new SimpleEventSchedulerSpecEventBus();
-        let storage = new SimpleEventSchedulerSpecScheduleStorage();
+        const eventBus = new SimpleEventSchedulerSpecEventBus();
+        const storage = new SimpleEventSchedulerSpecScheduleStorage();
 
-        let eventBusMock = sinon.mock(eventBus);
-        let storageMock = sinon.mock(storage);
+        const eventBusMock = sinon.mock(eventBus);
+        const storageMock = sinon.mock(storage);
 
-        let event = new SimpleEventSchedulerSpecEvent();
-        let scheduled = [
+        const event = new SimpleEventSchedulerSpecEvent();
+        const scheduled = [
             {
                 token: "id1",
                 event: event,
@@ -76,14 +76,14 @@ describe("SimpleEventScheduler", () => {
     });
 
     it("schedules all scheduled events from storage only once", () => {
-        let eventBus = new SimpleEventSchedulerSpecEventBus();
-        let storage = new SimpleEventSchedulerSpecScheduleStorage();
+        const eventBus = new SimpleEventSchedulerSpecEventBus();
+        const storage = new SimpleEventSchedulerSpecScheduleStorage();
 
-        let eventBusMock = sinon.mock(eventBus);
-        let storageMock = sinon.mock(storage);
+        const eventBusMock = sinon.mock(eventBus);
+        const storageMock = sinon.mock(storage);
 
-        let event = new SimpleEventSchedulerSpecEvent();
-        let scheduled = [
+        const event = new SimpleEventSchedulerSpecEvent();
+        const scheduled = [
             {
                 token: "id1",
                 event: event,
@@ -118,8 +118,8 @@ describe("SimpleEventScheduler", () => {
 
     describe("scheduleAt", () => {
         it("schedules an event at given time", () => {
-            let event = new SimpleEventSchedulerSpecEvent();
-            let scheduleDate = new Date("2050-04-05 03:01:20");
+            const event = new SimpleEventSchedulerSpecEvent();
+            const scheduleDate = new Date("2050-04-05 03:01:20");
 
             storageMock.expects("add")
                 .once()
@@ -129,15 +129,15 @@ describe("SimpleEventScheduler", () => {
                     timestamp: scheduleDate.getTime()
                 });
 
-            let scheduleToken = scheduler.scheduleAt(scheduleDate, event);
+            const scheduleToken = scheduler.scheduleAt(scheduleDate, event);
             expect(scheduleToken).not.to.be.undefined;
 
             storageMock.verify();
         });
 
         it("publishes event immediately if given datetime is in the past", () => {
-            let event = new SimpleEventSchedulerSpecEvent();
-            let scheduleDate = new Date("1990-06-04");
+            const event = new SimpleEventSchedulerSpecEvent();
+            const scheduleDate = new Date("1990-06-04");
 
             storageMock.expects("add")
                 .once()
@@ -166,8 +166,8 @@ describe("SimpleEventScheduler", () => {
 
     describe("scheduleAfter", () => {
         it("schedules event after timeout", () => {
-            let event = new SimpleEventSchedulerSpecEvent();
-            let timeout = 500;
+            const event = new SimpleEventSchedulerSpecEvent();
+            const timeout = 500;
 
             storageMock.expects("add")
                 .once()
@@ -194,8 +194,8 @@ describe("SimpleEventScheduler", () => {
         });
 
         it("schedules event after timeout in hours", () => {
-            let event = new SimpleEventSchedulerSpecEvent();
-            let timeout = 2;
+            const event = new SimpleEventSchedulerSpecEvent();
+            const timeout = 2;
 
             storageMock.expects("add")
                 .once()
@@ -211,8 +211,8 @@ describe("SimpleEventScheduler", () => {
         });
 
         it("schedules event after timeout in minutes", () => {
-            let event = new SimpleEventSchedulerSpecEvent();
-            let timeout = 2;
+            const event = new SimpleEventSchedulerSpecEvent();
+            const timeout = 2;
 
             storageMock.expects("add")
                 .once()
@@ -228,8 +228,8 @@ describe("SimpleEventScheduler", () => {
         });
 
         it("schedules event after timeout in seconds", () => {
-            let event = new SimpleEventSchedulerSpecEvent();
-            let timeout = 2;
+            const event = new SimpleEventSchedulerSpecEvent();
+            const timeout = 2;
 
             storageMock.expects("add")
                 .once()
@@ -245,8 +245,8 @@ describe("SimpleEventScheduler", () => {
         });
 
         it("schedules event after timeout in milliseconds", () => {
-            let event = new SimpleEventSchedulerSpecEvent();
-            let timeout = 2;
+            const event = new SimpleEventSchedulerSpecEvent();
+            const timeout = 2;
 
             storageMock.expects("add")
                 .once()
@@ -264,12 +264,12 @@ describe("SimpleEventScheduler", () => {
 
     describe("cancelSchedule", () => {
         it("cancels a scheduled event", () => {
-            let event = new SimpleEventSchedulerSpecEvent();
-            let timeout = 500;
+            const event = new SimpleEventSchedulerSpecEvent();
+            const timeout = 500;
 
             eventBusMock.expects("publish").never();
 
-            let token = scheduler.scheduleAfter(timeout, event);
+            const token = scheduler.scheduleAfter(timeout, event);
 
             storageMock.expects("remove")
                 .once()
@@ -284,12 +284,12 @@ describe("SimpleEventScheduler", () => {
         });
 
         it("is idempotent", () => {
-            let event = new SimpleEventSchedulerSpecEvent();
-            let timeout = 500;
+            const event = new SimpleEventSchedulerSpecEvent();
+            const timeout = 500;
 
             eventBusMock.expects("publish").never();
 
-            let token = scheduler.scheduleAfter(timeout, event);
+            const token = scheduler.scheduleAfter(timeout, event);
             clock.tick(300);
 
             scheduler.cancelSchedule(token);

@@ -16,14 +16,14 @@ describe("GenericSagaFactory", () => {
 
     describe("createSaga", () => {
         it("creates a saga of given type", () => {
-            let saga = factory.createSaga(GenericSagaFactorySpecSaga, "id", new AssociationValues());
+            const saga = factory.createSaga(GenericSagaFactorySpecSaga, "id", new AssociationValues());
 
             expect(saga instanceof GenericSagaFactorySpecSaga).to.be.true;
         });
 
         it("throws exception for unsupported saga type", () => {
-            let factory = new GenericSagaFactory<GenericSagaFactorySpecSaga>();
-            let factoryMock = sinon.mock(factory);
+            const factory = new GenericSagaFactory<GenericSagaFactorySpecSaga>();
+            const factoryMock = sinon.mock(factory);
 
             factoryMock.expects("supports")
                 .once()
@@ -38,7 +38,7 @@ describe("GenericSagaFactory", () => {
 
     describe("hydrate", () => {
        it("has no operation", () => {
-           let saga = new GenericSagaFactorySpecSaga("id", new AssociationValues());
+           const saga = new GenericSagaFactorySpecSaga("id", new AssociationValues());
            factory.hydrate(saga);
 
            expect(saga.getId()).to.equal("id");

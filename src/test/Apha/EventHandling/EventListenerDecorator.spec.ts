@@ -11,13 +11,13 @@ import {UnsupportedEventException} from "../../../main/Apha/EventHandling/Unsupp
 describe("EventListenerDecorator", () => {
     describe("EventListener", () => {
         it("defines method as an event handler", () => {
-            let target = new EventListenerDecoratorSpecTarget();
+            const target = new EventListenerDecoratorSpecTarget();
 
             let handlers = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, target);
             expect(handlers).to.be.undefined;
 
-            let methodName = "onSomething";
-            let descriptor = {
+            const methodName = "onSomething";
+            const descriptor = {
                 value: target[methodName],
                 writable: true,
                 enumerable: false,
@@ -32,9 +32,9 @@ describe("EventListenerDecorator", () => {
         });
 
         it("throws exception if no parameter can be found", () => {
-            let target = new EventListenerDecoratorSpecInvalidTarget();
-            let methodName = "onNothing";
-            let descriptor = {
+            const target = new EventListenerDecoratorSpecInvalidTarget();
+            const methodName = "onNothing";
+            const descriptor = {
                 value: target[methodName],
                 writable: true,
                 enumerable: false,
@@ -49,7 +49,7 @@ describe("EventListenerDecorator", () => {
 
     describe("EventListenerDispatcher", () => {
         it("throws exception if no handlers are defined", () => {
-            let target = new EventListenerDecoratorSpecNoHandler();
+            const target = new EventListenerDecoratorSpecNoHandler();
 
             expect(() => {
                 target.on(new Something());

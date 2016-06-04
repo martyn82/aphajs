@@ -12,7 +12,7 @@ export class GenericAggregateFactory<T extends AggregateRoot> implements Aggrega
     }
 
     public createAggregate(events: Event[]): T {
-        let instance = new this.aggregateRootType();
+        const instance = new this.aggregateRootType();
         instance.loadFromHistory(events);
         return instance;
     }

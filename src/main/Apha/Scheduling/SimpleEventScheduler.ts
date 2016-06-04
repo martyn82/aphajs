@@ -24,12 +24,12 @@ export class SimpleEventScheduler implements EventScheduler {
     }
 
     private scheduleStoredEvents(sender: SimpleEventScheduler) {
-        for (let scheduledEvent of sender.storage.findAll()) {
+        for (const scheduledEvent of sender.storage.findAll()) {
             if (sender.schedule[scheduledEvent.token]) {
                 continue;
             }
 
-            let timeout = scheduledEvent.timestamp - Date.now();
+            const timeout = scheduledEvent.timestamp - Date.now();
             sender.schedule[scheduledEvent.token] = setTimeout(sender.onTimeout, timeout, sender, scheduledEvent);
         }
 
@@ -46,15 +46,15 @@ export class SimpleEventScheduler implements EventScheduler {
     }
 
     public scheduleAt(dateTime: Date, event: Event): ScheduleToken {
-        let timeout = dateTime.getTime() - Date.now();
+        const timeout = dateTime.getTime() - Date.now();
         return this.scheduleAfter(timeout, event, TimeUnit.Milliseconds);
     }
 
     public scheduleAfter(timeout: number, event: Event, timeUnit: TimeUnit = TimeUnit.Milliseconds): ScheduleToken {
-        let timeoutMs = this.toMillis(timeout, timeUnit);
+        const timeoutMs = this.toMillis(timeout, timeUnit);
 
-        let token = new ScheduleToken(IdentityProvider.generateNew());
-        let scheduled = {
+        const token = new ScheduleToken(IdentityProvider.generateNew());
+        const scheduled = {
             token: token.getToken(),
             event: event,
             timestamp: (Date.now() + timeoutMs)

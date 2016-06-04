@@ -28,8 +28,8 @@ export abstract class AggregateRoot {
     }
 
     private handleByInflection(event: Event): void {
-        let eventClass = ClassNameInflector.classOf(event);
-        let handler = this["on" + eventClass];
+        const eventClass = ClassNameInflector.classOf(event);
+        const handler = this["on" + eventClass];
 
         if (typeof handler !== "function") {
             throw new UnsupportedEventException(eventClass, ClassNameInflector.classOf(this));

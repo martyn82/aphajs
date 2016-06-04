@@ -8,7 +8,7 @@ import {UnsupportedSagaException} from "./UnsupportedSagaException";
 export class GenericSagaFactory<T extends Saga> implements SagaFactory<T> {
     public createSaga(sagaType: SagaType<T>, id: string, associationValues: AssociationValues): T {
         if (!this.supports(sagaType)) {
-            let sagaClass = ClassNameInflector.className(sagaType);
+            const sagaClass = ClassNameInflector.className(sagaType);
             throw new UnsupportedSagaException(sagaClass);
         }
 

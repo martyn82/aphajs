@@ -15,13 +15,13 @@ import {DefaultParameterResolver} from "../../../../main/Apha/Saga/Annotation/De
 describe("SagaEventHandlerDecorator", () => {
     describe("SagaEventHandler", () => {
         it("defines method as saga event handler", () => {
-            let target = new SagaEventHandlerDecoratorSpecTarget("id");
+            const target = new SagaEventHandlerDecoratorSpecTarget("id");
 
             let handlers = Reflect.getMetadata(SagaEventHandlerDecorator.SAGA_EVENT_HANDLERS, target);
             expect(handlers).to.be.undefined;
 
-            let methodName = "onSomething";
-            let descriptor = {
+            const methodName = "onSomething";
+            const descriptor = {
                 value: target[methodName],
                 writable: true,
                 enumerable: false,
@@ -36,14 +36,14 @@ describe("SagaEventHandlerDecorator", () => {
         });
 
         it("associates a saga with a property if specified", () => {
-            let target = new SagaEventHandlerDecoratorSpecTarget("id");
+            const target = new SagaEventHandlerDecoratorSpecTarget("id");
             target.setParameterResolver(new DefaultParameterResolver());
 
             let handlers = Reflect.getMetadata(SagaEventHandlerDecorator.SAGA_EVENT_HANDLERS, target);
             expect(handlers).to.be.undefined;
 
-            let methodName = "onSomething";
-            let descriptor = {
+            const methodName = "onSomething";
+            const descriptor = {
                 value: target[methodName],
                 writable: true,
                 enumerable: false,
@@ -58,9 +58,9 @@ describe("SagaEventHandlerDecorator", () => {
         });
 
         it("throws exception if no parameter can be found", () => {
-            let target = new SagaEventHandlerDecoratorSpecInvalidTarget("id");
-            let methodName = "onNothing";
-            let descriptor = {
+            const target = new SagaEventHandlerDecoratorSpecInvalidTarget("id");
+            const methodName = "onNothing";
+            const descriptor = {
                 value: target[methodName],
                 writable: true,
                 enumerable: false,
@@ -75,7 +75,7 @@ describe("SagaEventHandlerDecorator", () => {
 
     describe("SagaEventHandlerDispatcher", () => {
         it("throws exception if no handlers are defined", () => {
-            let target = new SagaEventHandlerDecoratorSpecNoHandler("id");
+            const target = new SagaEventHandlerDecoratorSpecNoHandler("id");
 
             expect(() => {
                 target.on(new Something());

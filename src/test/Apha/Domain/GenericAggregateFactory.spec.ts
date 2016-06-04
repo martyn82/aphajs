@@ -7,19 +7,19 @@ import {Event} from "../../../main/Apha/Message/Event";
 describe("GenericAggregateFactory", () => {
     describe("createAggregate", () => {
         it("constructs an aggregate instance", () => {
-            let factory = new GenericAggregateFactory<GenericAggregateFactoryAggregate>(
+            const factory = new GenericAggregateFactory<GenericAggregateFactoryAggregate>(
                 GenericAggregateFactoryAggregate
             );
-            let events = [new GenericAggregateFactoryEvent()];
+            const events = [new GenericAggregateFactoryEvent()];
 
-            let aggregate = factory.createAggregate(events);
+            const aggregate = factory.createAggregate(events);
             expect(aggregate).to.be.an.instanceOf(GenericAggregateFactoryAggregate);
         });
     });
 
     describe("getAggregateType", () => {
         it("returns the aggregate type the factory is able to construct", () => {
-            let factory = new GenericAggregateFactory<GenericAggregateFactoryAggregate>(
+            const factory = new GenericAggregateFactory<GenericAggregateFactoryAggregate>(
                 GenericAggregateFactoryAggregate
             );
 

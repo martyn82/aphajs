@@ -37,7 +37,7 @@ export class EventStore {
     }
 
     private isValidPlayhead(aggregateId: string, playhead: number): boolean {
-        let descriptors = this.storage.find(aggregateId);
+        const descriptors = this.storage.find(aggregateId);
 
         if (descriptors.length > 0) {
             this.currents[aggregateId] = descriptors[descriptors.length - 1].playhead;
@@ -49,7 +49,7 @@ export class EventStore {
     }
 
     private saveEvent(aggregateId: string, aggregateType: string, event: Event): void {
-        let descriptor = EventDescriptor.record(
+        const descriptor = EventDescriptor.record(
             aggregateId,
             aggregateType,
             ClassNameInflector.classOf(event),
@@ -65,7 +65,7 @@ export class EventStore {
             throw new AggregateNotFoundException(aggregateId);
         }
 
-        let descriptors = this.storage.find(aggregateId);
+        const descriptors = this.storage.find(aggregateId);
 
         return descriptors.map((descriptor: EventDescriptor): Event => {
             return this.serializer.deserialize(

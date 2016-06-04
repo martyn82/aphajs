@@ -15,7 +15,7 @@ describe("AggregateRoot", () => {
 
     describe("getUncommittedChanges", () => {
         it("retrieves uncommitted events", () => {
-            let events = [
+            const events = [
                 new AggregateRootTest.Created()
             ];
             aggregate.hydrateWithChanges(events);
@@ -35,7 +35,7 @@ describe("AggregateRoot", () => {
 
     describe("loadFromHistory", () => {
         it("hydrates the aggregate with non-changing events", () => {
-            let events = [
+            const events = [
                 new AggregateRootTest.Created()
             ];
 

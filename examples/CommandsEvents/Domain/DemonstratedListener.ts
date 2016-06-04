@@ -13,11 +13,11 @@ export class DemonstratedListener extends AnnotatedEventListener {
     public onDemonstrated(event: Demonstration.Demonstrated): void {
         console.log("received event", event);
 
-        let identities = this.storage.findIdentities();
+        const identities = this.storage.findIdentities();
         console.log("stored aggregates:", identities);
 
         identities.forEach((identity) => {
-            let events = this.storage.find(identity);
+            const events = this.storage.find(identity);
             console.log(identity, "events:", events);
         });
     }

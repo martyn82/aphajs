@@ -22,39 +22,39 @@ import {ToDoSaga, ToDoItemTimeout} from "./Saga/Domain/ToDoSaga";
 import {ToDoItem} from "./Saga/Domain/ToDoItem";
 import {ToDoItemCommandHandler} from "./Saga/Domain/ToDoItemCommandHandler";
 
-let commandBus = new SimpleCommandBus();
-let eventBus = new SimpleEventBus();
+const commandBus = new SimpleCommandBus();
+const eventBus = new SimpleEventBus();
 
-let resolver = new SimpleAssociationValueResolver();
-let scheduleStorage = new MemoryScheduleStorage();
-let scheduler = new SimpleEventScheduler(scheduleStorage, eventBus);
-let commandGateway = new DefaultCommandGateway(commandBus);
+const resolver = new SimpleAssociationValueResolver();
+const scheduleStorage = new MemoryScheduleStorage();
+const scheduler = new SimpleEventScheduler(scheduleStorage, eventBus);
+const commandGateway = new DefaultCommandGateway(commandBus);
 
-let sagaFactory = new ToDoSagaFactory(
+const sagaFactory = new ToDoSagaFactory(
     scheduler,
     commandGateway,
     new DefaultParameterResolver()
 );
 
-let sagaSerializer = new SagaSerializer<ToDoSaga>(new JsonSerializer(), sagaFactory);
-let sagaRepository = new SagaRepository<ToDoSaga>(
+const sagaSerializer = new SagaSerializer<ToDoSaga>(new JsonSerializer(), sagaFactory);
+const sagaRepository = new SagaRepository<ToDoSaga>(
     new MemorySagaStorage(),
     sagaSerializer
 );
 
-let sagaManager = new SimpleSagaManager<ToDoSaga>([ToDoSaga], sagaRepository, resolver, sagaFactory);
-let eventClassMap = new EventClassMap([
+const sagaManager = new SimpleSagaManager<ToDoSaga>([ToDoSaga], sagaRepository, resolver, sagaFactory);
+const eventClassMap = new EventClassMap([
     ToDoItemTimeout,
     ToDoItem.Created,
     ToDoItem.MarkedAsDone,
     ToDoItem.Expired
 ]);
 
-let eventStorage = new MemoryEventStorage();
-let eventStore = new EventStore(eventBus, eventStorage, new JsonSerializer(), eventClassMap);
-let factory = new GenericAggregateFactory<ToDoItem>(ToDoItem);
-let repository = new EventSourcingRepository<ToDoItem>(factory, eventStore);
-let toDoItemCommandHandler = new ToDoItemCommandHandler(repository);
+const eventStorage = new MemoryEventStorage();
+const eventStore = new EventStore(eventBus, eventStorage, new JsonSerializer(), eventClassMap);
+const factory = new GenericAggregateFactory<ToDoItem>(ToDoItem);
+const repository = new EventSourcingRepository<ToDoItem>(factory, eventStore);
+const toDoItemCommandHandler = new ToDoItemCommandHandler(repository);
 
 try {
     eventBus.subscribe(sagaManager);
@@ -63,8 +63,8 @@ try {
     commandBus.registerHandler(ToDoItem.MarkAsDone, toDoItemCommandHandler);
     commandBus.registerHandler(ToDoItem.Expire, toDoItemCommandHandler);
 
-    let firstId = IdentityProvider.generateNew();
-    let secondId = IdentityProvider.generateNew();
+    const firstId = IdentityProvider.generateNew();
+    const secondId = IdentityProvider.generateNew();
 
     setTimeout((commandGateway, firstId) => {
         commandGateway.send(new ToDoItem.MarkAsDone(firstId));

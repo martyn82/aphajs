@@ -19,15 +19,16 @@ export function EventListener(): Function {
         methodName: string,
         descriptor: TypedPropertyDescriptor<Function>
     ): void => {
-        let paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName);
+        const paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName);
 
         if (paramTypes.length === 0) {
-            let targetClass = ClassNameInflector.classOf(target);
+            const targetClass = ClassNameInflector.classOf(target);
             throw new DecoratorException(targetClass, methodName, "EventListener");
         }
 
-        let handlers: AnnotatedEventListeners = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, target) || {};
-        let eventClass = ClassNameInflector.className(paramTypes[0]);
+        const handlers: AnnotatedEventListeners = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, target)
+            || {};
+        const eventClass = ClassNameInflector.className(paramTypes[0]);
 
         handlers[eventClass] = descriptor.value;
         Reflect.defineMetadata(EventListenerDecorator.EVENT_HANDLERS, handlers, target);
@@ -41,8 +42,9 @@ export function EventListenerDispatcher(): Function {
         descriptor: TypedPropertyDescriptor<Function>
     ): void => {
         descriptor.value = function (event: Event) {
-            let handlers: AnnotatedEventListeners = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, this) || {};
-            let eventClass = ClassNameInflector.classOf(event);
+            const handlers: AnnotatedEventListeners = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, this)
+                || {};
+            const eventClass = ClassNameInflector.classOf(event);
 
             if (!handlers[eventClass]) {
                 throw new UnsupportedEventException(eventClass);

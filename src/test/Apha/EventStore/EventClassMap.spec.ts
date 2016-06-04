@@ -7,14 +7,14 @@ import {UnknownEventException} from "../../../main/Apha/EventStore/UnknownEventE
 describe("EventClassMap", () => {
     describe("getTypeByClassName", () => {
         it("retrieves type by event class name", () => {
-            let classMap = new EventClassMap([EventClassMapEvent]);
-            let classType = classMap.getTypeByClassName("EventClassMapEvent");
+            const classMap = new EventClassMap([EventClassMapEvent]);
+            const classType = classMap.getTypeByClassName("EventClassMapEvent");
 
             expect(classType).to.equal(EventClassMapEvent);
         });
 
         it("throws exception if class cannot be found", () => {
-            let classMap = new EventClassMap([]);
+            const classMap = new EventClassMap([]);
 
             expect(() => {
                 classMap.getTypeByClassName("foo");

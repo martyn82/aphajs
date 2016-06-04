@@ -37,7 +37,7 @@ export class AssociationValues implements Iterable<AssociationValue> {
     }
 
     public [Symbol.iterator](): Iterator<AssociationValue> {
-        let items: AssociationValue[] = this.getArrayCopy();
+        const items: AssociationValue[] = this.getArrayCopy();
         let cursor: number = 0;
 
         return {

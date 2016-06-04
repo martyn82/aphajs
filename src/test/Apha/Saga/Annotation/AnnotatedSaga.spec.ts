@@ -10,8 +10,8 @@ import {DefaultParameterResolver} from "./../../../../main/Apha/Saga/Annotation/
 describe("AnnotatedSaga", () => {
     describe("on", () => {
         it("invokes correct handler", () => {
-            let event = new AnnotatedSagaSpecEvent();
-            let saga = new AnnotatedSagaSpecSaga("id");
+            const event = new AnnotatedSagaSpecEvent();
+            const saga = new AnnotatedSagaSpecSaga("id");
             saga.setActive();
             saga.setParameterResolver(new DefaultParameterResolver());
 
@@ -21,8 +21,8 @@ describe("AnnotatedSaga", () => {
         });
 
         it("starts saga if handler is supposed to", () => {
-            let event = new AnnotatedSagaSpecEventStart();
-            let saga = new AnnotatedSagaSpecSaga("id");
+            const event = new AnnotatedSagaSpecEventStart();
+            const saga = new AnnotatedSagaSpecSaga("id");
             saga.setParameterResolver(new DefaultParameterResolver());
 
             saga.on(event);
@@ -31,8 +31,8 @@ describe("AnnotatedSaga", () => {
         });
 
         it("ends saga if handler is supposed to", () => {
-            let event = new AnnotatedSagaSpecEventEnd();
-            let saga = new AnnotatedSagaSpecSaga("id");
+            const event = new AnnotatedSagaSpecEventEnd();
+            const saga = new AnnotatedSagaSpecSaga("id");
             saga.setParameterResolver(new DefaultParameterResolver());
 
             saga.on(event);
