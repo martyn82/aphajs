@@ -19,7 +19,7 @@
     "type": "git",
     "url": "git+https://github.com/martyn82/aphajs.git"
   },
-  "typings": "./target/dist/aphajs.d.ts",
+  "typings": "./typings/index.d.ts",
   "config": {
     "all_sources_dir": "src",
     "build_dir": "target/build",
@@ -41,7 +41,7 @@
     "compile": "npm run compile:ts",
     "compile:examples": "tsc --project ./tsconfig.examples.json --outDir ${npm_package_config_build_dir}/examples",
     "compile:ts": "tsc --project ./tsconfig.json --outDir ${npm_package_config_build_dir}",
-    "dist": "tsc --project ./tsconfig.dist.json --outFile ${npm_package_config_dist_dir}/aphajs.js",
+    "dist": "tsc --project ./tsconfig.dist.json --outFile ${npm_package_config_dist_dir}/apha.js",
     "lint": "npm run lint:ts",
     "lint:ts": "tslint ${npm_package_config_all_sources_dir}/**/*.ts",
     "postinstall": "typings install",
