@@ -10,7 +10,8 @@ Event Sourcing.
 
 APHAjs provides:
 * Typed command and event handling with annotations
-*
+* Sagas
+* Event Scheduling
 
 ## Prerequisites
 
