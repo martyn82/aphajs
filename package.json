@@ -59,12 +59,12 @@
     "chai": "^3.5.0",
     "istanbul": "^0.4.3",
     "mkdirp": "^0.5.1",
-    "mocha": "^2.4.5",
+    "mocha": "^2.5.3",
     "remap-istanbul": "^0.6.4",
     "rimraf": "^2.5.2",
     "sinon": "^1.17.3",
     "tslint": "^3.10.2",
     "typescript": "^1.8.10",
-    "typings": "^0.8.1"
+    "typings": "^1.0.4"
   }
 }
