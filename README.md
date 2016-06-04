@@ -13,6 +13,11 @@ APHAjs provides:
 * Sagas
 * Event Scheduling
 
+Upcoming:
+* Replay events
+* Using MongoDB as read/write store
+* Using ElasticSearch as read store
+
 ## Prerequisites
 
 Requirements:
