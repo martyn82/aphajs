@@ -19,8 +19,6 @@
     "node_modules",
     "target",
     "config",
-    "examples",
-    "typings/browser",
-    "typings/browser.d.ts"
+    "examples"
   ]
 }
