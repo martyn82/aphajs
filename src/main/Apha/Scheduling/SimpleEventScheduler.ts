@@ -13,24 +13,27 @@ export class SimpleEventScheduler implements EventScheduler {
     private static REFRESH_TIMEOUT = 864000000;
 
     private refresh = null;
-    private schedule: Schedule = {};
+    private currentSchedule: Schedule = {};
 
-    constructor(private storage: ScheduleStorage, private eventBus: EventBus) {
-        this.scheduleStoredEvents(this);
-    }
+    constructor(private storage: ScheduleStorage, private eventBus: EventBus) {}
 
     public destroy() {
         clearTimeout(this.refresh);
     }
 
-    private scheduleStoredEvents(sender: SimpleEventScheduler) {
+    public schedule(): void {
+        this.scheduleStoredEvents(this);
+    }
+
+    private scheduleStoredEvents(sender: SimpleEventScheduler): void {
         for (const scheduledEvent of sender.storage.findAll()) {
-            if (sender.schedule[scheduledEvent.token]) {
+            if (sender.currentSchedule[scheduledEvent.token]) {
                 continue;
             }
 
             const timeout = scheduledEvent.timestamp - Date.now();
-            sender.schedule[scheduledEvent.token] = setTimeout(sender.onTimeout, timeout, sender, scheduledEvent);
+            sender.currentSchedule[scheduledEvent.token] =
+                setTimeout(sender.onTimeout, timeout, sender, scheduledEvent);
         }
 
         this.refresh = setTimeout(sender.scheduleStoredEvents, SimpleEventScheduler.REFRESH_TIMEOUT, sender);
@@ -39,9 +42,9 @@ export class SimpleEventScheduler implements EventScheduler {
     public cancelSchedule(token: ScheduleToken): void {
         this.storage.remove(token.getToken());
 
-        if (this.schedule[token.getToken()]) {
-            clearTimeout(this.schedule[token.getToken()]);
-            delete this.schedule[token.getToken()];
+        if (this.currentSchedule[token.getToken()]) {
+            clearTimeout(this.currentSchedule[token.getToken()]);
+            delete this.currentSchedule[token.getToken()];
         }
     }
 
@@ -66,14 +69,14 @@ export class SimpleEventScheduler implements EventScheduler {
             this.onTimeout(this, scheduled);
         }
         else if (timeoutMs < SimpleEventScheduler.MAX_TIMEOUT) {
-            this.schedule[scheduled.token] = setTimeout(this.onTimeout, timeoutMs, this, scheduled);
+            this.currentSchedule[scheduled.token] = setTimeout(this.onTimeout, timeoutMs, this, scheduled);
         }
 
         return token;
     }
 
     private onTimeout(sender: SimpleEventScheduler, scheduled: ScheduledEvent): void {
-        delete sender.schedule[scheduled.token];
+        delete sender.currentSchedule[scheduled.token];
         sender.storage.remove(scheduled.token);
         sender.eventBus.publish(scheduled.event);
     }

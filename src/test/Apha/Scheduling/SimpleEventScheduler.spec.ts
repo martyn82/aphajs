@@ -37,83 +37,87 @@ describe("SimpleEventScheduler", () => {
         scheduler.destroy();
     });
 
-    it("schedules all scheduled events from storage upon initialization", () => {
-        const eventBus = new SimpleEventSchedulerSpecEventBus();
-        const storage = new SimpleEventSchedulerSpecScheduleStorage();
+    describe("schedule", () => {
+        it("schedules all scheduled events from storage", () => {
+            const eventBus = new SimpleEventSchedulerSpecEventBus();
+            const storage = new SimpleEventSchedulerSpecScheduleStorage();
 
-        const eventBusMock = sinon.mock(eventBus);
-        const storageMock = sinon.mock(storage);
+            const eventBusMock = sinon.mock(eventBus);
+            const storageMock = sinon.mock(storage);
 
-        const event = new SimpleEventSchedulerSpecEvent();
-        const scheduled = [
-            {
-                token: "id1",
-                event: event,
-                timestamp: Date.now() + 500
-            },
-            {
-                token: "id2",
-                event: event,
-                timestamp: Date.now() + 1000
-            }
-        ];
+            const event = new SimpleEventSchedulerSpecEvent();
+            const scheduled = [
+                {
+                    token: "id1",
+                    event: event,
+                    timestamp: Date.now() + 500
+                },
+                {
+                    token: "id2",
+                    event: event,
+                    timestamp: Date.now() + 1000
+                }
+            ];
 
-        storageMock.expects("findAll")
-            .once()
-            .returns(scheduled);
+            storageMock.expects("findAll")
+                .once()
+                .returns(scheduled);
 
-        storageMock.expects("remove")
-            .exactly(scheduled.length);
+            storageMock.expects("remove")
+                .exactly(scheduled.length);
 
-        eventBusMock.expects("publish")
-            .exactly(scheduled.length);
+            eventBusMock.expects("publish")
+                .exactly(scheduled.length);
 
-        new SimpleEventScheduler(storage, eventBus);
-        clock.tick(1500);
+            const scheduler = new SimpleEventScheduler(storage, eventBus);
+            scheduler.schedule();
+            clock.tick(1500);
 
-        storageMock.verify();
-        eventBusMock.verify();
-    });
+            storageMock.verify();
+            eventBusMock.verify();
+        });
 
-    it("schedules all scheduled events from storage only once", () => {
-        const eventBus = new SimpleEventSchedulerSpecEventBus();
-        const storage = new SimpleEventSchedulerSpecScheduleStorage();
+        it("schedules all scheduled events from storage only once", () => {
+            const eventBus = new SimpleEventSchedulerSpecEventBus();
+            const storage = new SimpleEventSchedulerSpecScheduleStorage();
 
-        const eventBusMock = sinon.mock(eventBus);
-        const storageMock = sinon.mock(storage);
+            const eventBusMock = sinon.mock(eventBus);
+            const storageMock = sinon.mock(storage);
 
-        const event = new SimpleEventSchedulerSpecEvent();
-        const scheduled = [
-            {
-                token: "id1",
-                event: event,
-                timestamp: Date.now() + 500
-            },
-            {
-                token: "id1",
-                event: event,
-                timestamp: Date.now() + 500
-            }
-        ];
+            const event = new SimpleEventSchedulerSpecEvent();
+            const scheduled = [
+                {
+                    token: "id1",
+                    event: event,
+                    timestamp: Date.now() + 500
+                },
+                {
+                    token: "id1",
+                    event: event,
+                    timestamp: Date.now() + 500
+                }
+            ];
 
-        storageMock.expects("findAll")
-            .once()
-            .returns(scheduled);
+            storageMock.expects("findAll")
+                .once()
+                .returns(scheduled);
 
-        storageMock.expects("remove")
-            .once()
-            .withArgs(scheduled[0].token);
+            storageMock.expects("remove")
+                .once()
+                .withArgs(scheduled[0].token);
 
-        eventBusMock.expects("publish")
-            .once()
-            .withArgs(scheduled[0].event)
-            .returns(true);
+            eventBusMock.expects("publish")
+                .once()
+                .withArgs(scheduled[0].event)
+                .returns(true);
 
-        new SimpleEventScheduler(storage, eventBus);
-        clock.tick(500);
+            const scheduler = new SimpleEventScheduler(storage, eventBus);
+            scheduler.schedule();
+            clock.tick(500);
 
-        storageMock.verify();
-        eventBusMock.verify();
+            storageMock.verify();
+            eventBusMock.verify();
+        });
     });
 
     describe("scheduleAt", () => {
