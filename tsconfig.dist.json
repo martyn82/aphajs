@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
+    "module": "amd",
     "allowJs": false,
     "noImplicitAny": false,
     "noImplicitReturns": true,
@@ -11,8 +12,8 @@
     "removeComments": true,
     "stripInternal": true,
     "charset": "utf-8",
-    "rootDir": "src/main",
-    "sourceMap": false
+    "sourceMap": true,
+    "rootDir": ""
   },
   "exclude": [
     "node_modules",

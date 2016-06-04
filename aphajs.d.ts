@@ -1,4 +1,4 @@
-declare module "Inflect" {
+declare module "src/main/Inflect" {
     export type AnyType = {
         new (...args: any[]): any;
     };
@@ -7,62 +7,62 @@ declare module "Inflect" {
         function className(type: AnyType): string;
     }
 }
-declare module "Exception" {
+declare module "src/main/Exception" {
     export abstract class Exception implements Error {
         message: string;
         name: string;
         constructor(message?: string);
     }
 }
-declare module "Apha/Message/Message" {
+declare module "src/main/Apha/Message/Message" {
     export abstract class Message {
     }
 }
-declare module "Apha/Message/Command" {
-    import { Message } from "Apha/Message/Message";
+declare module "src/main/Apha/Message/Command" {
+    import { Message } from "src/main/Apha/Message/Message";
     export type CommandType = {
         new (...args: any[]): Command;
     };
     export abstract class Command extends Message {
     }
 }
-declare module "Apha/CommandHandling/CommandHandler" {
-    import { Command } from "Apha/Message/Command";
+declare module "src/main/Apha/CommandHandling/CommandHandler" {
+    import { Command } from "src/main/Apha/Message/Command";
     export interface CommandHandler {
         handle(command: Command): void;
     }
 }
-declare module "Apha/Decorators/MetadataKeys" {
+declare module "src/main/Apha/Decorators/MetadataKeys" {
     export namespace MetadataKeys {
         const PROPERTY_TYPE: string;
         const PARAM_TYPES: string;
     }
 }
-declare module "Apha/Inflection/InflectionException" {
-    import { Exception } from "Exception";
+declare module "src/main/Apha/Inflection/InflectionException" {
+    import { Exception } from "src/main/Exception";
     export class InflectionException extends Exception {
     }
 }
-declare module "Apha/Inflection/ClassNameInflector" {
-    import { AnyType } from "Inflect";
+declare module "src/main/Apha/Inflection/ClassNameInflector" {
+    import { AnyType } from "src/main/Inflect";
     export class ClassNameInflector {
         static classOf(object: Object): string;
         static className(type: AnyType): string;
     }
 }
-declare module "Apha/Decorators/DecoratorException" {
-    import { Exception } from "Exception";
+declare module "src/main/Apha/Decorators/DecoratorException" {
+    import { Exception } from "src/main/Exception";
     export class DecoratorException extends Exception {
         constructor(targetClass: string, name: string, decoratorName: string);
     }
 }
-declare module "Apha/CommandHandling/UnsupportedCommandException" {
-    import { Exception } from "Exception";
+declare module "src/main/Apha/CommandHandling/UnsupportedCommandException" {
+    import { Exception } from "src/main/Exception";
     export class UnsupportedCommandException extends Exception {
         constructor(commandClass: string);
     }
 }
-declare module "Apha/CommandHandling/CommandHandlerDecorator" {
+declare module "src/main/Apha/CommandHandling/CommandHandlerDecorator" {
     import "reflect-metadata";
     export type AnnotatedCommandHandlers = {
         [commandClass: string]: Function;
@@ -73,38 +73,38 @@ declare module "Apha/CommandHandling/CommandHandlerDecorator" {
     export function CommandHandler(): Function;
     export function CommandHandlerDispatcher(): Function;
 }
-declare module "Apha/CommandHandling/AnnotatedCommandHandler" {
-    import { CommandHandler } from "Apha/CommandHandling/CommandHandler";
-    import { Command } from "Apha/Message/Command";
+declare module "src/main/Apha/CommandHandling/AnnotatedCommandHandler" {
+    import { CommandHandler } from "src/main/Apha/CommandHandling/CommandHandler";
+    import { Command } from "src/main/Apha/Message/Command";
     export abstract class AnnotatedCommandHandler implements CommandHandler {
         handle(command: Command): void;
     }
 }
-declare module "Apha/CommandHandling/CommandBus" {
-    import { CommandHandler } from "Apha/CommandHandling/CommandHandler";
-    import { Command, CommandType } from "Apha/Message/Command";
+declare module "src/main/Apha/CommandHandling/CommandBus" {
+    import { CommandHandler } from "src/main/Apha/CommandHandling/CommandHandler";
+    import { Command, CommandType } from "src/main/Apha/Message/Command";
     export abstract class CommandBus {
         abstract registerHandler(commandType: CommandType, handler: CommandHandler): void;
         abstract unregisterHandler(commandType: CommandType): void;
         abstract send(command: Command): void;
     }
 }
-declare module "Apha/CommandHandling/CommandHandlerAlreadyExistsException" {
-    import { Exception } from "Exception";
+declare module "src/main/Apha/CommandHandling/CommandHandlerAlreadyExistsException" {
+    import { Exception } from "src/main/Exception";
     export class CommandHandlerAlreadyExistsException extends Exception {
         constructor(commandClass: string);
     }
 }
-declare module "Apha/CommandHandling/NoCommandHandlerException" {
-    import { Exception } from "Exception";
+declare module "src/main/Apha/CommandHandling/NoCommandHandlerException" {
+    import { Exception } from "src/main/Exception";
     export class NoCommandHandlerException extends Exception {
         constructor(commandClass: string);
     }
 }
-declare module "Apha/CommandHandling/SimpleCommandBus" {
-    import { CommandBus } from "Apha/CommandHandling/CommandBus";
-    import { CommandHandler } from "Apha/CommandHandling/CommandHandler";
-    import { Command, CommandType } from "Apha/Message/Command";
+declare module "src/main/Apha/CommandHandling/SimpleCommandBus" {
+    import { CommandBus } from "src/main/Apha/CommandHandling/CommandBus";
+    import { CommandHandler } from "src/main/Apha/CommandHandling/CommandHandler";
+    import { Command, CommandType } from "src/main/Apha/Message/Command";
     export class SimpleCommandBus extends CommandBus {
         private handlers;
         registerHandler(commandType: CommandType, handler: CommandHandler): void;
@@ -112,33 +112,33 @@ declare module "Apha/CommandHandling/SimpleCommandBus" {
         send(command: Command): void;
     }
 }
-declare module "Apha/CommandHandling/TypedCommandHandler" {
-    import { CommandHandler } from "Apha/CommandHandling/CommandHandler";
-    import { Command } from "Apha/Message/Command";
+declare module "src/main/Apha/CommandHandling/TypedCommandHandler" {
+    import { CommandHandler } from "src/main/Apha/CommandHandling/CommandHandler";
+    import { Command } from "src/main/Apha/Message/Command";
     export abstract class TypedCommandHandler implements CommandHandler {
         handle(command: Command): void;
         private handleByInflection(command);
     }
 }
-declare module "Apha/CommandHandling/Gateway/CommandGateway" {
-    import { Command } from "Apha/Message/Command";
+declare module "src/main/Apha/CommandHandling/Gateway/CommandGateway" {
+    import { Command } from "src/main/Apha/Message/Command";
     export interface CommandGateway {
         send(command: Command): void;
     }
 }
-declare module "Apha/CommandHandling/Interceptor/CommandDispatchInterceptor" {
-    import { Command } from "Apha/Message/Command";
+declare module "src/main/Apha/CommandHandling/Interceptor/CommandDispatchInterceptor" {
+    import { Command } from "src/main/Apha/Message/Command";
     export interface CommandDispatchInterceptor {
         onBeforeDispatch(command: Command): void;
         onDispatchSuccessful(command: Command): void;
         onDispatchFailed(command: Command, error: Error): void;
     }
 }
-declare module "Apha/CommandHandling/Gateway/DefaultCommandGateway" {
-    import { CommandGateway } from "Apha/CommandHandling/Gateway/CommandGateway";
-    import { CommandBus } from "Apha/CommandHandling/CommandBus";
-    import { CommandDispatchInterceptor } from "Apha/CommandHandling/Interceptor/CommandDispatchInterceptor";
-    import { Command } from "Apha/Message/Command";
+declare module "src/main/Apha/CommandHandling/Gateway/DefaultCommandGateway" {
+    import { CommandGateway } from "src/main/Apha/CommandHandling/Gateway/CommandGateway";
+    import { CommandBus } from "src/main/Apha/CommandHandling/CommandBus";
+    import { CommandDispatchInterceptor } from "src/main/Apha/CommandHandling/Interceptor/CommandDispatchInterceptor";
+    import { Command } from "src/main/Apha/Message/Command";
     export class DefaultCommandGateway implements CommandGateway {
         private commandBus;
         private interceptors;
@@ -149,9 +149,9 @@ declare module "Apha/CommandHandling/Gateway/DefaultCommandGateway" {
         private notifyDispatchFailed(command, error);
     }
 }
-declare module "Apha/Domain/AggregateIdentifierDecorator" {
+declare module "src/main/Apha/Domain/AggregateIdentifierDecorator" {
     import "reflect-metadata";
-    import { AnyType } from "Inflect";
+    import { AnyType } from "src/main/Inflect";
     export type AnnotatedAggregateIdentifier = {
         name: string;
         type: AnyType;
@@ -161,8 +161,8 @@ declare module "Apha/Domain/AggregateIdentifierDecorator" {
     }
     export function AggregateIdentifier(): Function;
 }
-declare module "Apha/Message/Event" {
-    import { Message } from "Apha/Message/Message";
+declare module "src/main/Apha/Message/Event" {
+    import { Message } from "src/main/Apha/Message/Message";
     export type EventType = {
         new (...args: any[]): Event;
     };
@@ -173,14 +173,14 @@ declare module "Apha/Message/Event" {
         id: string;
     }
 }
-declare module "Apha/Domain/UnsupportedEventException" {
-    import { Exception } from "Exception";
+declare module "src/main/Apha/Domain/UnsupportedEventException" {
+    import { Exception } from "src/main/Exception";
     export class UnsupportedEventException extends Exception {
         constructor(eventClass: string, aggregate: string);
     }
 }
-declare module "Apha/Domain/AggregateRoot" {
-    import { Event } from "Apha/Message/Event";
+declare module "src/main/Apha/Domain/AggregateRoot" {
+    import { Event } from "src/main/Apha/Message/Event";
     export type AggregateRootType<T extends AggregateRoot | AggregateRoot> = {
         new (...args: any[]): T;
     };
@@ -198,18 +198,18 @@ declare module "Apha/Domain/AggregateRoot" {
         markChangesCommitted(): void;
     }
 }
-declare module "Apha/Domain/AggregateFactory" {
-    import { AggregateRoot } from "Apha/Domain/AggregateRoot";
-    import { Event } from "Apha/Message/Event";
+declare module "src/main/Apha/Domain/AggregateFactory" {
+    import { AggregateRoot } from "src/main/Apha/Domain/AggregateRoot";
+    import { Event } from "src/main/Apha/Message/Event";
     export interface AggregateFactory<T extends AggregateRoot> {
         createAggregate(events: Event[]): T;
         getAggregateType(): string;
     }
 }
-declare module "Apha/Domain/GenericAggregateFactory" {
-    import { AggregateFactory } from "Apha/Domain/AggregateFactory";
-    import { Event } from "Apha/Message/Event";
-    import { AggregateRoot, AggregateRootType } from "Apha/Domain/AggregateRoot";
+declare module "src/main/Apha/Domain/GenericAggregateFactory" {
+    import { AggregateFactory } from "src/main/Apha/Domain/AggregateFactory";
+    import { Event } from "src/main/Apha/Message/Event";
+    import { AggregateRoot, AggregateRootType } from "src/main/Apha/Domain/AggregateRoot";
     export class GenericAggregateFactory<T extends AggregateRoot> implements AggregateFactory<T> {
         private aggregateRootType;
         private aggregateType;
@@ -218,24 +218,24 @@ declare module "Apha/Domain/GenericAggregateFactory" {
         getAggregateType(): string;
     }
 }
-declare module "Apha/Domain/IdentityProvider" {
+declare module "src/main/Apha/Domain/IdentityProvider" {
     export class IdentityProvider {
         static generateNew(): string;
     }
 }
-declare module "Apha/EventHandling/EventListener" {
-    import { Event } from "Apha/Message/Event";
+declare module "src/main/Apha/EventHandling/EventListener" {
+    import { Event } from "src/main/Apha/Message/Event";
     export interface EventListener {
         on(event: Event): void;
     }
 }
-declare module "Apha/EventHandling/UnsupportedEventException" {
-    import { Exception } from "Exception";
+declare module "src/main/Apha/EventHandling/UnsupportedEventException" {
+    import { Exception } from "src/main/Exception";
     export class UnsupportedEventException extends Exception {
         constructor(eventClass: string);
     }
 }
-declare module "Apha/EventHandling/EventListenerDecorator" {
+declare module "src/main/Apha/EventHandling/EventListenerDecorator" {
     import "reflect-metadata";
     export type AnnotatedEventListeners = {
         [eventClass: string]: Function;
@@ -246,26 +246,26 @@ declare module "Apha/EventHandling/EventListenerDecorator" {
     export function EventListener(): Function;
     export function EventListenerDispatcher(): Function;
 }
-declare module "Apha/EventHandling/AnnotatedEventListener" {
-    import { EventListener } from "Apha/EventHandling/EventListener";
-    import { Event } from "Apha/Message/Event";
+declare module "src/main/Apha/EventHandling/AnnotatedEventListener" {
+    import { EventListener } from "src/main/Apha/EventHandling/EventListener";
+    import { Event } from "src/main/Apha/Message/Event";
     export abstract class AnnotatedEventListener implements EventListener {
         on(event: Event): void;
     }
 }
-declare module "Apha/EventHandling/EventBus" {
-    import { Event, EventType } from "Apha/Message/Event";
-    import { EventListener } from "Apha/EventHandling/EventListener";
+declare module "src/main/Apha/EventHandling/EventBus" {
+    import { Event, EventType } from "src/main/Apha/Message/Event";
+    import { EventListener } from "src/main/Apha/EventHandling/EventListener";
     export abstract class EventBus {
         abstract subscribe(listener: EventListener, eventType?: EventType): void;
         abstract unsubscribe(listener: EventListener, eventType: EventType): void;
         abstract publish(event: Event): boolean;
     }
 }
-declare module "Apha/EventHandling/SimpleEventBus" {
-    import { EventBus } from "Apha/EventHandling/EventBus";
-    import { EventListener } from "Apha/EventHandling/EventListener";
-    import { Event, EventType } from "Apha/Message/Event";
+declare module "src/main/Apha/EventHandling/SimpleEventBus" {
+    import { EventBus } from "src/main/Apha/EventHandling/EventBus";
+    import { EventListener } from "src/main/Apha/EventHandling/EventListener";
+    import { Event, EventType } from "src/main/Apha/Message/Event";
     export class SimpleEventBus extends EventBus {
         private static wildcard;
         private listeners;
@@ -275,41 +275,41 @@ declare module "Apha/EventHandling/SimpleEventBus" {
         private findListeners(eventClasses);
     }
 }
-declare module "Apha/EventHandling/TypedEventListener" {
-    import { EventListener } from "Apha/EventHandling/EventListener";
-    import { Event } from "Apha/Message/Event";
+declare module "src/main/Apha/EventHandling/TypedEventListener" {
+    import { EventListener } from "src/main/Apha/EventHandling/EventListener";
+    import { Event } from "src/main/Apha/Message/Event";
     export class TypedEventListener implements EventListener {
         on(event: Event): void;
         private handleByInflection(event);
     }
 }
-declare module "Apha/EventStore/AggregateNotFoundException" {
-    import { Exception } from "Exception";
+declare module "src/main/Apha/EventStore/AggregateNotFoundException" {
+    import { Exception } from "src/main/Exception";
     export class AggregateNotFoundException extends Exception {
         constructor(aggregateId: string);
     }
 }
-declare module "Apha/EventStore/ConcurrencyException" {
-    import { Exception } from "Exception";
+declare module "src/main/Apha/EventStore/ConcurrencyException" {
+    import { Exception } from "src/main/Exception";
     export class ConcurrencyException extends Exception {
         constructor(expectedPlayhead: number, actualPlayhead: number);
     }
 }
-declare module "Apha/EventStore/UnknownEventException" {
-    import { Exception } from "Exception";
+declare module "src/main/Apha/EventStore/UnknownEventException" {
+    import { Exception } from "src/main/Exception";
     export class UnknownEventException extends Exception {
         constructor(eventClass: string);
     }
 }
-declare module "Apha/EventStore/EventClassMap" {
-    import { EventType } from "Apha/Message/Event";
+declare module "src/main/Apha/EventStore/EventClassMap" {
+    import { EventType } from "src/main/Apha/Message/Event";
     export class EventClassMap {
         private classMap;
         constructor(eventTypes: EventType[]);
         getTypeByClassName(eventClass: string): EventType;
     }
 }
-declare module "Apha/EventStore/EventDescriptor" {
+declare module "src/main/Apha/EventStore/EventDescriptor" {
     export class EventDescriptor {
         id: string;
         type: string;
@@ -321,8 +321,8 @@ declare module "Apha/EventStore/EventDescriptor" {
         static record(id: string, type: string, event: string, payload: string, playhead: number): EventDescriptor;
     }
 }
-declare module "Apha/EventStore/Storage/EventStorage" {
-    import { EventDescriptor } from "Apha/EventStore/EventDescriptor";
+declare module "src/main/Apha/EventStore/Storage/EventStorage" {
+    import { EventDescriptor } from "src/main/Apha/EventStore/EventDescriptor";
     export interface EventStorage {
         contains(id: string): boolean;
         append(event: EventDescriptor): boolean;
@@ -330,19 +330,19 @@ declare module "Apha/EventStore/Storage/EventStorage" {
         findIdentities(): string[];
     }
 }
-declare module "Apha/Serialization/Serializer" {
-    import { AnyType } from "Inflect";
+declare module "src/main/Apha/Serialization/Serializer" {
+    import { AnyType } from "src/main/Inflect";
     export interface Serializer {
         serialize(value: any): string;
         deserialize(data: string, type?: AnyType): any;
     }
 }
-declare module "Apha/EventStore/EventStore" {
-    import { EventBus } from "Apha/EventHandling/EventBus";
-    import { EventStorage } from "Apha/EventStore/Storage/EventStorage";
-    import { Serializer } from "Apha/Serialization/Serializer";
-    import { Event } from "Apha/Message/Event";
-    import { EventClassMap } from "Apha/EventStore/EventClassMap";
+declare module "src/main/Apha/EventStore/EventStore" {
+    import { EventBus } from "src/main/Apha/EventHandling/EventBus";
+    import { EventStorage } from "src/main/Apha/EventStore/Storage/EventStorage";
+    import { Serializer } from "src/main/Apha/Serialization/Serializer";
+    import { Event } from "src/main/Apha/Message/Event";
+    import { EventClassMap } from "src/main/Apha/EventStore/EventClassMap";
     export class EventStore {
         private eventBus;
         private storage;
@@ -357,9 +357,9 @@ declare module "Apha/EventStore/EventStore" {
         getAggregateIds(): string[];
     }
 }
-declare module "Apha/EventStore/Storage/MemoryEventStorage" {
-    import { EventStorage } from "Apha/EventStore/Storage/EventStorage";
-    import { EventDescriptor } from "Apha/EventStore/EventDescriptor";
+declare module "src/main/Apha/EventStore/Storage/MemoryEventStorage" {
+    import { EventStorage } from "src/main/Apha/EventStore/Storage/EventStorage";
+    import { EventDescriptor } from "src/main/Apha/EventStore/EventDescriptor";
     export class MemoryEventStorage implements EventStorage {
         private data;
         contains(id: string): boolean;
@@ -368,12 +368,12 @@ declare module "Apha/EventStore/Storage/MemoryEventStorage" {
         findIdentities(): string[];
     }
 }
-declare module "Apha/Projections/Projection" {
+declare module "src/main/Apha/Projections/Projection" {
     export abstract class Projection {
     }
 }
-declare module "Apha/Projections/Storage/ProjectionStorage" {
-    import { Projection } from "Apha/Projections/Projection";
+declare module "src/main/Apha/Projections/Storage/ProjectionStorage" {
+    import { Projection } from "src/main/Apha/Projections/Projection";
     export interface ProjectionStorage {
         upsert(id: string, projection: Projection): void;
         remove(id: string): void;
@@ -383,23 +383,23 @@ declare module "Apha/Projections/Storage/ProjectionStorage" {
         findBy(criteria: {}, offset: number, limit: number): Projection[];
     }
 }
-declare module "Apha/Projections/Projections" {
-    import { TypedEventListener } from "Apha/EventHandling/TypedEventListener";
-    import { ProjectionStorage } from "Apha/Projections/Storage/ProjectionStorage";
+declare module "src/main/Apha/Projections/Projections" {
+    import { TypedEventListener } from "src/main/Apha/EventHandling/TypedEventListener";
+    import { ProjectionStorage } from "src/main/Apha/Projections/Storage/ProjectionStorage";
     export abstract class Projections extends TypedEventListener {
         protected storage: ProjectionStorage;
         constructor(storage: ProjectionStorage);
     }
 }
-declare module "Apha/Projections/Storage/ProjectionNotFoundException" {
-    import { Exception } from "Exception";
+declare module "src/main/Apha/Projections/Storage/ProjectionNotFoundException" {
+    import { Exception } from "src/main/Exception";
     export class ProjectionNotFoundException extends Exception {
         constructor(id: string);
     }
 }
-declare module "Apha/Projections/Storage/MemoryProjectionStorage" {
-    import { ProjectionStorage } from "Apha/Projections/Storage/ProjectionStorage";
-    import { Projection } from "Apha/Projections/Projection";
+declare module "src/main/Apha/Projections/Storage/MemoryProjectionStorage" {
+    import { ProjectionStorage } from "src/main/Apha/Projections/Storage/ProjectionStorage";
+    import { Projection } from "src/main/Apha/Projections/Projection";
     export class MemoryProjectionStorage implements ProjectionStorage {
         private data;
         upsert(id: string, projection: Projection): void;
@@ -412,18 +412,18 @@ declare module "Apha/Projections/Storage/MemoryProjectionStorage" {
         }, offset: number, limit: number): Projection[];
     }
 }
-declare module "Apha/Repository/Repository" {
-    import { AggregateRoot } from "Apha/Domain/AggregateRoot";
+declare module "src/main/Apha/Repository/Repository" {
+    import { AggregateRoot } from "src/main/Apha/Domain/AggregateRoot";
     export interface Repository<T extends AggregateRoot> {
         findById(id: string): T;
         store(aggregate: AggregateRoot, expectedPlayhead: number): void;
     }
 }
-declare module "Apha/Repository/EventSourcingRepository" {
-    import { Repository } from "Apha/Repository/Repository";
-    import { AggregateRoot } from "Apha/Domain/AggregateRoot";
-    import { AggregateFactory } from "Apha/Domain/AggregateFactory";
-    import { EventStore } from "Apha/EventStore/EventStore";
+declare module "src/main/Apha/Repository/EventSourcingRepository" {
+    import { Repository } from "src/main/Apha/Repository/Repository";
+    import { AggregateRoot } from "src/main/Apha/Domain/AggregateRoot";
+    import { AggregateFactory } from "src/main/Apha/Domain/AggregateFactory";
+    import { EventStore } from "src/main/Apha/EventStore/EventStore";
     export class EventSourcingRepository<T extends AggregateRoot> implements Repository<T> {
         private factory;
         private eventStore;
@@ -432,7 +432,7 @@ declare module "Apha/Repository/EventSourcingRepository" {
         store(aggregate: AggregateRoot, expectedPlayhead: number): void;
     }
 }
-declare module "Apha/Saga/AssociationValue" {
+declare module "src/main/Apha/Saga/AssociationValue" {
     export class AssociationValue {
         private key;
         private value;
@@ -441,9 +441,9 @@ declare module "Apha/Saga/AssociationValue" {
         getValue(): any;
     }
 }
-declare module "Apha/Serialization/SerializerDecorator" {
+declare module "src/main/Apha/Serialization/SerializerDecorator" {
     import "reflect-metadata";
-    import { AnyType } from "Inflect";
+    import { AnyType } from "src/main/Inflect";
     export type AnnotatedIgnoreSerializationProperties = string[];
     export type SerializableType = {
         primaryType: AnyType;
@@ -462,8 +462,8 @@ declare module "Apha/Serialization/SerializerDecorator" {
         function Serializable(options?: SerializableTypeOptions): Function;
     }
 }
-declare module "Apha/Saga/AssociationValues" {
-    import { AssociationValue } from "Apha/Saga/AssociationValue";
+declare module "src/main/Apha/Saga/AssociationValues" {
+    import { AssociationValue } from "src/main/Apha/Saga/AssociationValue";
     export class AssociationValues implements Iterable<AssociationValue> {
         private items;
         constructor(items?: AssociationValue[]);
@@ -475,10 +475,10 @@ declare module "Apha/Saga/AssociationValues" {
         [Symbol.iterator](): Iterator<AssociationValue>;
     }
 }
-declare module "Apha/Saga/Saga" {
-    import { EventListener } from "Apha/EventHandling/EventListener";
-    import { AssociationValues } from "Apha/Saga/AssociationValues";
-    import { Event } from "Apha/Message/Event";
+declare module "src/main/Apha/Saga/Saga" {
+    import { EventListener } from "src/main/Apha/EventHandling/EventListener";
+    import { AssociationValues } from "src/main/Apha/Saga/AssociationValues";
+    import { Event } from "src/main/Apha/Message/Event";
     export type SagaType<T extends Saga | Saga> = {
         new (...args: any[]): T;
     };
@@ -492,9 +492,9 @@ declare module "Apha/Saga/Saga" {
         getId(): string;
     }
 }
-declare module "Apha/Saga/SagaFactory" {
-    import { AssociationValues } from "Apha/Saga/AssociationValues";
-    import { Saga, SagaType } from "Apha/Saga/Saga";
+declare module "src/main/Apha/Saga/SagaFactory" {
+    import { AssociationValues } from "src/main/Apha/Saga/AssociationValues";
+    import { Saga, SagaType } from "src/main/Apha/Saga/Saga";
     export interface SagaFactory<T extends Saga> {
         createSaga(sagaType: SagaType<T>, id: string, associationValues: AssociationValues): T;
         supports(sagaType: SagaType<T>): boolean;
@@ -502,16 +502,16 @@ declare module "Apha/Saga/SagaFactory" {
         dehydrate(saga: T): void;
     }
 }
-declare module "Apha/Saga/UnsupportedSagaException" {
-    import { Exception } from "Exception";
+declare module "src/main/Apha/Saga/UnsupportedSagaException" {
+    import { Exception } from "src/main/Exception";
     export class UnsupportedSagaException extends Exception {
         constructor(sagaClass: string);
     }
 }
-declare module "Apha/Saga/GenericSagaFactory" {
-    import { Saga, SagaType } from "Apha/Saga/Saga";
-    import { SagaFactory } from "Apha/Saga/SagaFactory";
-    import { AssociationValues } from "Apha/Saga/AssociationValues";
+declare module "src/main/Apha/Saga/GenericSagaFactory" {
+    import { Saga, SagaType } from "src/main/Apha/Saga/Saga";
+    import { SagaFactory } from "src/main/Apha/Saga/SagaFactory";
+    import { AssociationValues } from "src/main/Apha/Saga/AssociationValues";
     export class GenericSagaFactory<T extends Saga> implements SagaFactory<T> {
         createSaga(sagaType: SagaType<T>, id: string, associationValues: AssociationValues): T;
         supports(sagaType: SagaType<T>): boolean;
@@ -519,9 +519,9 @@ declare module "Apha/Saga/GenericSagaFactory" {
         dehydrate(saga: T): void;
     }
 }
-declare module "Apha/Saga/Storage/AssociationValueDescriptor" {
-    import { AssociationValue } from "Apha/Saga/AssociationValue";
-    import { AssociationValues } from "Apha/Saga/AssociationValues";
+declare module "src/main/Apha/Saga/Storage/AssociationValueDescriptor" {
+    import { AssociationValue } from "src/main/Apha/Saga/AssociationValue";
+    import { AssociationValues } from "src/main/Apha/Saga/AssociationValues";
     export type AssociationValueDescriptor = {
         [key: string]: string;
     };
@@ -530,8 +530,8 @@ declare module "Apha/Saga/Storage/AssociationValueDescriptor" {
         function fromValues(values: AssociationValues): AssociationValueDescriptor;
     }
 }
-declare module "Apha/Saga/Storage/SagaStorage" {
-    import { AssociationValueDescriptor } from "Apha/Saga/Storage/AssociationValueDescriptor";
+declare module "src/main/Apha/Saga/Storage/SagaStorage" {
+    import { AssociationValueDescriptor } from "src/main/Apha/Saga/Storage/AssociationValueDescriptor";
     export interface SagaStorage {
         insert(sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string): void;
         update(sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string): void;
@@ -540,11 +540,11 @@ declare module "Apha/Saga/Storage/SagaStorage" {
         find(sagaClass: string, associationValue: AssociationValueDescriptor): string[];
     }
 }
-declare module "Apha/Saga/SagaSerializer" {
-    import { Serializer } from "Apha/Serialization/Serializer";
-    import { SagaFactory } from "Apha/Saga/SagaFactory";
-    import { Saga } from "Apha/Saga/Saga";
-    import { AnyType } from "Inflect";
+declare module "src/main/Apha/Saga/SagaSerializer" {
+    import { Serializer } from "src/main/Apha/Serialization/Serializer";
+    import { SagaFactory } from "src/main/Apha/Saga/SagaFactory";
+    import { Saga } from "src/main/Apha/Saga/Saga";
+    import { AnyType } from "src/main/Inflect";
     export class SagaSerializer<T extends Saga> implements Serializer {
         private serializer;
         private factory;
@@ -553,11 +553,11 @@ declare module "Apha/Saga/SagaSerializer" {
         deserialize(data: string, type?: AnyType): any;
     }
 }
-declare module "Apha/Saga/SagaRepository" {
-    import { SagaStorage } from "Apha/Saga/Storage/SagaStorage";
-    import { SagaSerializer } from "Apha/Saga/SagaSerializer";
-    import { Saga, SagaType } from "Apha/Saga/Saga";
-    import { AssociationValue } from "Apha/Saga/AssociationValue";
+declare module "src/main/Apha/Saga/SagaRepository" {
+    import { SagaStorage } from "src/main/Apha/Saga/Storage/SagaStorage";
+    import { SagaSerializer } from "src/main/Apha/Saga/SagaSerializer";
+    import { Saga, SagaType } from "src/main/Apha/Saga/Saga";
+    import { AssociationValue } from "src/main/Apha/Saga/AssociationValue";
     export class SagaRepository<T extends Saga> {
         private storage;
         private serializer;
@@ -568,21 +568,21 @@ declare module "Apha/Saga/SagaRepository" {
         load(id: string, sagaType: SagaType<T>): T;
     }
 }
-declare module "Apha/Saga/Annotation/AssociationValueResolver" {
-    import { Event } from "Apha/Message/Event";
-    import { AssociationValues } from "Apha/Saga/AssociationValues";
+declare module "src/main/Apha/Saga/Annotation/AssociationValueResolver" {
+    import { Event } from "src/main/Apha/Message/Event";
+    import { AssociationValues } from "src/main/Apha/Saga/AssociationValues";
     export interface AssociationValueResolver {
         extractAssociationValues(event: Event): AssociationValues;
     }
 }
-declare module "Apha/Saga/SagaManager" {
-    import { EventListener } from "Apha/EventHandling/EventListener";
-    import { Saga, SagaType } from "Apha/Saga/Saga";
-    import { SagaFactory } from "Apha/Saga/SagaFactory";
-    import { SagaRepository } from "Apha/Saga/SagaRepository";
-    import { Event } from "Apha/Message/Event";
-    import { AssociationValues } from "Apha/Saga/AssociationValues";
-    import { AssociationValueResolver } from "Apha/Saga/Annotation/AssociationValueResolver";
+declare module "src/main/Apha/Saga/SagaManager" {
+    import { EventListener } from "src/main/Apha/EventHandling/EventListener";
+    import { Saga, SagaType } from "src/main/Apha/Saga/Saga";
+    import { SagaFactory } from "src/main/Apha/Saga/SagaFactory";
+    import { SagaRepository } from "src/main/Apha/Saga/SagaRepository";
+    import { Event } from "src/main/Apha/Message/Event";
+    import { AssociationValues } from "src/main/Apha/Saga/AssociationValues";
+    import { AssociationValueResolver } from "src/main/Apha/Saga/Annotation/AssociationValueResolver";
     export enum SagaCreationPolicy {
         Never = 0,
         IFNoneFound = 1,
@@ -601,17 +601,17 @@ declare module "Apha/Saga/SagaManager" {
         protected abstract getSagaCreationPolicy(sagaType: SagaType<T>, event: Event): SagaCreationPolicy;
     }
 }
-declare module "Apha/Saga/SimpleSagaManager" {
-    import { SagaManager, SagaCreationPolicy } from "Apha/Saga/SagaManager";
-    import { Saga, SagaType } from "Apha/Saga/Saga";
-    import { Event } from "Apha/Message/Event";
-    import { AssociationValues } from "Apha/Saga/AssociationValues";
+declare module "src/main/Apha/Saga/SimpleSagaManager" {
+    import { SagaManager, SagaCreationPolicy } from "src/main/Apha/Saga/SagaManager";
+    import { Saga, SagaType } from "src/main/Apha/Saga/Saga";
+    import { Event } from "src/main/Apha/Message/Event";
+    import { AssociationValues } from "src/main/Apha/Saga/AssociationValues";
     export class SimpleSagaManager<T extends Saga> extends SagaManager<T> {
         protected extractAssociationValues(sagaType: SagaType<T>, event: Event): AssociationValues;
         protected getSagaCreationPolicy(sagaType: SagaType<T>, event: Event): SagaCreationPolicy;
     }
 }
-declare module "Apha/Saga/Annotation/StartSagaDecorator" {
+declare module "src/main/Apha/Saga/Annotation/StartSagaDecorator" {
     import "reflect-metadata";
     export type AnnotatedSagaStarters = Set<string>;
     export namespace StartSagaDecorator {
@@ -619,7 +619,7 @@ declare module "Apha/Saga/Annotation/StartSagaDecorator" {
     }
     export function StartSaga(): Function;
 }
-declare module "Apha/Saga/Annotation/EndSagaDecorator" {
+declare module "src/main/Apha/Saga/Annotation/EndSagaDecorator" {
     import "reflect-metadata";
     export type AnnotatedSagaEndings = Set<string>;
     export namespace EndSagaDecorator {
@@ -627,7 +627,7 @@ declare module "Apha/Saga/Annotation/EndSagaDecorator" {
     }
     export function EndSaga(): Function;
 }
-declare module "Apha/Saga/Annotation/SagaEventHandlerDecorator" {
+declare module "src/main/Apha/Saga/Annotation/SagaEventHandlerDecorator" {
     import "reflect-metadata";
     export type AnnotatedSagaEventHandlers = {
         [eventClass: string]: [Function, string];
@@ -641,17 +641,17 @@ declare module "Apha/Saga/Annotation/SagaEventHandlerDecorator" {
     export function SagaEventHandler(options?: SagaEventHandlerOptions): Function;
     export function SagaEventHandlerDispatcher(): Function;
 }
-declare module "Apha/Saga/Annotation/ParameterResolver" {
-    import { Message } from "Apha/Message/Message";
+declare module "src/main/Apha/Saga/Annotation/ParameterResolver" {
+    import { Message } from "src/main/Apha/Message/Message";
     export interface ParameterResolver {
         resolveParameterValue(message: Message, propertyName: string): any;
     }
 }
-declare module "Apha/Saga/Annotation/AnnotatedSaga" {
-    import { Saga } from "Apha/Saga/Saga";
-    import { Event } from "Apha/Message/Event";
-    import { ParameterResolver } from "Apha/Saga/Annotation/ParameterResolver";
-    import { AssociationValue } from "Apha/Saga/AssociationValue";
+declare module "src/main/Apha/Saga/Annotation/AnnotatedSaga" {
+    import { Saga } from "src/main/Apha/Saga/Saga";
+    import { Event } from "src/main/Apha/Message/Event";
+    import { ParameterResolver } from "src/main/Apha/Saga/Annotation/ParameterResolver";
+    import { AssociationValue } from "src/main/Apha/Saga/AssociationValue";
     export abstract class AnnotatedSaga extends Saga {
         private active;
         protected parameterResolver: ParameterResolver;
@@ -664,12 +664,12 @@ declare module "Apha/Saga/Annotation/AnnotatedSaga" {
         protected end(): void;
     }
 }
-declare module "Apha/Saga/Annotation/AnnotatedSagaFactory" {
-    import { SagaFactory } from "Apha/Saga/SagaFactory";
-    import { AnnotatedSaga } from "Apha/Saga/Annotation/AnnotatedSaga";
-    import { ParameterResolver } from "Apha/Saga/Annotation/ParameterResolver";
-    import { SagaType } from "Apha/Saga/Saga";
-    import { AssociationValues } from "Apha/Saga/AssociationValues";
+declare module "src/main/Apha/Saga/Annotation/AnnotatedSagaFactory" {
+    import { SagaFactory } from "src/main/Apha/Saga/SagaFactory";
+    import { AnnotatedSaga } from "src/main/Apha/Saga/Annotation/AnnotatedSaga";
+    import { ParameterResolver } from "src/main/Apha/Saga/Annotation/ParameterResolver";
+    import { SagaType } from "src/main/Apha/Saga/Saga";
+    import { AssociationValues } from "src/main/Apha/Saga/AssociationValues";
     export class AnnotatedSagaFactory<T extends AnnotatedSaga | AnnotatedSaga> implements SagaFactory<T> {
         private parameterResolver;
         constructor(parameterResolver: ParameterResolver);
@@ -679,25 +679,25 @@ declare module "Apha/Saga/Annotation/AnnotatedSagaFactory" {
         dehydrate(saga: T): void;
     }
 }
-declare module "Apha/Saga/Annotation/DefaultParameterResolver" {
-    import { ParameterResolver } from "Apha/Saga/Annotation/ParameterResolver";
-    import { Message } from "Apha/Message/Message";
+declare module "src/main/Apha/Saga/Annotation/DefaultParameterResolver" {
+    import { ParameterResolver } from "src/main/Apha/Saga/Annotation/ParameterResolver";
+    import { Message } from "src/main/Apha/Message/Message";
     export class DefaultParameterResolver implements ParameterResolver {
         resolveParameterValue(message: Message, propertyName: string): any;
     }
 }
-declare module "Apha/Saga/Annotation/SimpleAssociationValueResolver" {
+declare module "src/main/Apha/Saga/Annotation/SimpleAssociationValueResolver" {
     import "reflect-metadata";
-    import { AssociationValueResolver } from "Apha/Saga/Annotation/AssociationValueResolver";
-    import { Event } from "Apha/Message/Event";
-    import { AssociationValues } from "Apha/Saga/AssociationValues";
+    import { AssociationValueResolver } from "src/main/Apha/Saga/Annotation/AssociationValueResolver";
+    import { Event } from "src/main/Apha/Message/Event";
+    import { AssociationValues } from "src/main/Apha/Saga/AssociationValues";
     export class SimpleAssociationValueResolver implements AssociationValueResolver {
         extractAssociationValues(event: Event): AssociationValues;
     }
 }
-declare module "Apha/Saga/Storage/MemorySagaStorage" {
-    import { SagaStorage } from "Apha/Saga/Storage/SagaStorage";
-    import { AssociationValueDescriptor } from "Apha/Saga/Storage/AssociationValueDescriptor";
+declare module "src/main/Apha/Saga/Storage/MemorySagaStorage" {
+    import { SagaStorage } from "src/main/Apha/Saga/Storage/SagaStorage";
+    import { AssociationValueDescriptor } from "src/main/Apha/Saga/Storage/AssociationValueDescriptor";
     export class MemorySagaStorage implements SagaStorage {
         private sagas;
         private associations;
@@ -709,16 +709,16 @@ declare module "Apha/Saga/Storage/MemorySagaStorage" {
         find(sagaClass: string, associationValue: AssociationValueDescriptor): string[];
     }
 }
-declare module "Apha/Scheduling/ScheduleToken" {
+declare module "src/main/Apha/Scheduling/ScheduleToken" {
     export class ScheduleToken {
         private value;
         constructor(value: string);
         getToken(): string;
     }
 }
-declare module "Apha/Scheduling/EventScheduler" {
-    import { Event } from "Apha/Message/Event";
-    import { ScheduleToken } from "Apha/Scheduling/ScheduleToken";
+declare module "src/main/Apha/Scheduling/EventScheduler" {
+    import { Event } from "src/main/Apha/Message/Event";
+    import { ScheduleToken } from "src/main/Apha/Scheduling/ScheduleToken";
     export enum TimeUnit {
         Milliseconds = 0,
         Seconds = 1,
@@ -732,8 +732,8 @@ declare module "Apha/Scheduling/EventScheduler" {
         destroy(): void;
     }
 }
-declare module "Apha/Scheduling/Storage/ScheduleStorage" {
-    import { Event } from "Apha/Message/Event";
+declare module "src/main/Apha/Scheduling/Storage/ScheduleStorage" {
+    import { Event } from "src/main/Apha/Message/Event";
     export type ScheduledEvent = {
         token: string;
         timestamp: number;
@@ -745,12 +745,12 @@ declare module "Apha/Scheduling/Storage/ScheduleStorage" {
         findAll(): ScheduledEvent[];
     }
 }
-declare module "Apha/Scheduling/SimpleEventScheduler" {
-    import { EventScheduler, TimeUnit } from "Apha/Scheduling/EventScheduler";
-    import { ScheduleStorage } from "Apha/Scheduling/Storage/ScheduleStorage";
-    import { EventBus } from "Apha/EventHandling/EventBus";
-    import { ScheduleToken } from "Apha/Scheduling/ScheduleToken";
-    import { Event } from "Apha/Message/Event";
+declare module "src/main/Apha/Scheduling/SimpleEventScheduler" {
+    import { EventScheduler, TimeUnit } from "src/main/Apha/Scheduling/EventScheduler";
+    import { ScheduleStorage } from "src/main/Apha/Scheduling/Storage/ScheduleStorage";
+    import { EventBus } from "src/main/Apha/EventHandling/EventBus";
+    import { ScheduleToken } from "src/main/Apha/Scheduling/ScheduleToken";
+    import { Event } from "src/main/Apha/Message/Event";
     export class SimpleEventScheduler implements EventScheduler {
         private storage;
         private eventBus;
@@ -769,8 +769,8 @@ declare module "Apha/Scheduling/SimpleEventScheduler" {
         private toMillis(timeout, unit);
     }
 }
-declare module "Apha/Scheduling/Storage/MemoryScheduleStorage" {
-    import { ScheduleStorage, ScheduledEvent } from "Apha/Scheduling/Storage/ScheduleStorage";
+declare module "src/main/Apha/Scheduling/Storage/MemoryScheduleStorage" {
+    import { ScheduleStorage, ScheduledEvent } from "src/main/Apha/Scheduling/Storage/ScheduleStorage";
     export class MemoryScheduleStorage implements ScheduleStorage {
         private data;
         add(schedule: ScheduledEvent): void;
@@ -778,10 +778,10 @@ declare module "Apha/Scheduling/Storage/MemoryScheduleStorage" {
         findAll(): ScheduledEvent[];
     }
 }
-declare module "Apha/Serialization/JsonSerializer" {
+declare module "src/main/Apha/Serialization/JsonSerializer" {
     import "reflect-metadata";
-    import { Serializer } from "Apha/Serialization/Serializer";
-    import { AnyType } from "Inflect";
+    import { Serializer } from "src/main/Apha/Serialization/Serializer";
+    import { AnyType } from "src/main/Inflect";
     export class JsonSerializer implements Serializer {
         serialize(value: any): string;
         deserialize(data: string, type?: AnyType): any;
