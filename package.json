@@ -19,7 +19,7 @@
     "type": "git",
     "url": "git+https://github.com/martyn82/aphajs.git"
   },
-  "typings": "./src/index.d.ts",
+  "typings": "./target/dist/aphajs.d.ts",
   "config": {
     "all_sources_dir": "src",
     "build_dir": "target/build",
