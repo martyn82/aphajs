@@ -14,7 +14,7 @@ export class Scenario {
         private aggregateFactory: AggregateFactory<AggregateRoot>,
         private eventStore: TraceableEventStore,
         private commandHandler: CommandHandler,
-        private assert: (expected: any, actual: any) => any
+        private assert: (expectedEvents: Event[], actualEvents: Event[]) => void
     ) {}
 
     public given(...events: Event[]): this {
