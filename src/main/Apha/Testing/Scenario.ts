@@ -6,6 +6,7 @@ import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {AggregateFactory} from "../Domain/AggregateFactory";
 import {TraceableEventStore} from "./TraceableEventStore";
 import {CommandHandler} from "../CommandHandling/CommandHandler";
+import {CommandBus} from "../CommandHandling/CommandBus";
 
 export class Scenario {
     private aggregate: AggregateRoot;
@@ -13,7 +14,7 @@ export class Scenario {
     constructor(
         private aggregateFactory: AggregateFactory<AggregateRoot>,
         private eventStore: TraceableEventStore,
-        private commandHandler: CommandHandler,
+        private commandBus: CommandBus,
         private assert: (expectedEvents: Event[], actualEvents: Event[]) => void
     ) {}
 
@@ -36,7 +37,7 @@ export class Scenario {
         }
 
         commands.forEach((command: Command) => {
-            this.commandHandler.handle(command);
+            this.commandBus.send(command);
         });
 
         return this;

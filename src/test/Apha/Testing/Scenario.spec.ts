@@ -14,11 +14,10 @@ import {Event} from "../../../main/Apha/Message/Event";
 import {Repository} from "../../../main/Apha/Repository/Repository";
 import {EventSourcingRepository} from "../../../main/Apha/Repository/EventSourcingRepository";
 import {TypedCommandHandler} from "../../../main/Apha/CommandHandling/TypedCommandHandler";
+import {SimpleCommandBus} from "../../../main/Apha/CommandHandling/SimpleCommandBus";
 
 describe("Scenario", () => {
     let scenario;
-
-    let commandHandlerMock;
     let assertSpy;
 
     beforeEach(() => {
@@ -34,11 +33,13 @@ describe("Scenario", () => {
         );
         const repository = new EventSourcingRepository<ScenarioSpec_AggregateRoot>(factory, eventStore);
         const commandHandler = new ScenarioSpec_CommandHandler(repository);
+        const commandBus = new SimpleCommandBus();
 
-        commandHandlerMock = sinon.mock(commandHandler);
+        commandBus.registerHandler(ScenarioSpec_Command, commandHandler);
+        commandBus.registerHandler(ScenarioSpec_Command2, commandHandler);
+
         assertSpy = sinon.spy();
-
-        scenario = new Scenario(factory, eventStore, commandHandler, assertSpy);
+        scenario = new Scenario(factory, eventStore, commandBus, assertSpy);
     });
 
     it("should assert empty events; given nothing, when nothing, then nothing", () => {
