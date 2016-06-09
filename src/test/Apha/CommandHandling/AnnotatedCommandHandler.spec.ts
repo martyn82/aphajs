@@ -24,6 +24,15 @@ describe("AnnotatedCommandHandler", () => {
             expect(handler.handleSomethingElseCalled).to.equal(true);
         });
     });
+
+    describe("getSupportedCommands", () => {
+        it("should returns the supported commands", () => {
+            const handler = new CommandHandlerDecoratorSpecCommandHandler1();
+            expect(handler.getSupportedCommands()).to.eql(
+                [CommandHandlerDecoratorSpecCommand1, CommandHandlerDecoratorSpecCommand2]
+            );
+        });
+    });
 });
 
 class CommandHandlerDecoratorSpecCommand1 extends Command {}

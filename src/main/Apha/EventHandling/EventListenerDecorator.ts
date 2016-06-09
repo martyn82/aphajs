@@ -4,7 +4,7 @@ import {MetadataKeys} from "../Decorators/MetadataKeys";
 import {AnnotatedEventListener} from "./AnnotatedEventListener";
 import {DecoratorException} from "../Decorators/DecoratorException";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
-import {Event} from "../Message/Event";
+import {Event, EventType} from "../Message/Event";
 import {UnsupportedEventException} from "./UnsupportedEventException";
 
 export type AnnotatedEventListeners = {[eventClass: string]: Function};
@@ -26,12 +26,19 @@ export function EventListener(): Function {
             throw new DecoratorException(targetClass, methodName, "EventListener");
         }
 
-        const handlers: AnnotatedEventListeners = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, target)
-            || {};
-        const eventClass = ClassNameInflector.className(paramTypes[0]);
+        const handlers: AnnotatedEventListeners =
+            Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, target) || {};
+        const eventType: EventType = paramTypes[0];
+        const eventClass = ClassNameInflector.className(eventType);
 
         handlers[eventClass] = descriptor.value;
         Reflect.defineMetadata(EventListenerDecorator.EVENT_HANDLERS, handlers, target);
+
+        const types = target.getSupportedEvents();
+        types.push(eventType);
+        target.getSupportedEvents = (): EventType[] => {
+            return types;
+        };
     };
 }
 

@@ -4,7 +4,7 @@ import {MetadataKeys} from "../Decorators/MetadataKeys";
 import {AnnotatedCommandHandler} from "./AnnotatedCommandHandler";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {DecoratorException} from "../Decorators/DecoratorException";
-import {Command} from "../Message/Command";
+import {Command, CommandType} from "../Message/Command";
 import {UnsupportedCommandException} from "./UnsupportedCommandException";
 
 export type AnnotatedCommandHandlers = {[commandClass: string]: Function};
@@ -28,11 +28,18 @@ export function CommandHandler(): Function {
 
         const handlers: AnnotatedCommandHandlers =
             Reflect.getOwnMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, target) || {};
-        const commandClass = ClassNameInflector.className(paramTypes[0]);
+        const commandType: CommandType = paramTypes[0];
+        const commandClass = ClassNameInflector.className(commandType);
 
         handlers[commandClass] = descriptor.value;
         Reflect.defineMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, handlers, target);
-    }
+
+        const types = target.getSupportedCommands();
+        types.push(commandType);
+        target.getSupportedCommands = (): CommandType[] => {
+            return types;
+        };
+    };
 }
 
 export function CommandHandlerDispatcher(): Function {
@@ -52,5 +59,5 @@ export function CommandHandlerDispatcher(): Function {
 
             handlers[commandClass].call(this, command);
         };
-    }
+    };
 }

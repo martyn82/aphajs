@@ -24,6 +24,15 @@ describe("AnnotatedEventListener", () => {
             expect(handler.onSomethingElseCalled).to.equal(true);
         });
     });
+
+    describe("getSupportedEvents", () => {
+        it("should return the supported events", () => {
+            const handler = new EventListenerDecoratorSpecEventListener1();
+            expect(handler.getSupportedEvents()).to.eql(
+                [EventListenerDecoratorSpecEvent1, EventListenerDecoratorSpecEvent2]
+            );
+        });
+    });
 });
 
 class EventListenerDecoratorSpecEvent1 extends Event {}
