@@ -1,13 +1,14 @@
 
 import {CommandHandler} from "./CommandHandler";
 import {Command, CommandType} from "../Message/Command";
-import {CommandHandlerDispatcher} from "./CommandHandlerDecorator";
+import {CommandHandlerDispatcher, SupportedCommandTypesRetriever} from "./CommandHandlerDecorator";
 
 export abstract class AnnotatedCommandHandler implements CommandHandler {
     @CommandHandlerDispatcher()
     public handle(command: Command): void {
     }
 
+    @SupportedCommandTypesRetriever()
     public getSupportedCommands(): CommandType[] {
         return [];
     }

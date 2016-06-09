@@ -1,9 +1,7 @@
 
-import {AnyType} from "./Inflect";
-
 export function Mixin(...baseTypes: Function[]): Function {
-    return (constructor: Function): void => {
-        applyMixins(constructor, baseTypes);
+    return (target: Function): void => {
+        applyMixins(target, baseTypes);
     };
 }
 

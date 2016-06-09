@@ -1,8 +1,9 @@
 
 import {expect} from "chai";
 import {CommandHandler} from "../../../main/Apha/CommandHandling/CommandHandlerDecorator";
-import {Command} from "../../../main/Apha/Message/Command";
+import {Command, CommandType} from "../../../main/Apha/Message/Command";
 import {AnnotatedCommandHandler} from "../../../main/Apha/CommandHandling/AnnotatedCommandHandler";
+import {Mixin} from "../../../main/MixinDecorator";
 
 describe("AnnotatedCommandHandler", () => {
     describe("handle", () => {
@@ -26,11 +27,16 @@ describe("AnnotatedCommandHandler", () => {
     });
 
     describe("getSupportedCommands", () => {
-        it("should returns the supported commands", () => {
+        it("should return the supported commands", () => {
             const handler = new CommandHandlerDecoratorSpecCommandHandler1();
             expect(handler.getSupportedCommands()).to.eql(
                 [CommandHandlerDecoratorSpecCommand1, CommandHandlerDecoratorSpecCommand2]
             );
+        });
+
+        it("should return the supported commands for mixed-in class", () => {
+            const handler = new CommandHandlerDecoratorSpecMixedInCommandHandler();
+            expect(handler.getSupportedCommands()).to.eql([CommandHandlerDecoratorSpecCommand1]);
         });
     });
 });
@@ -59,5 +65,18 @@ class CommandHandlerDecoratorSpecCommandHandler2 extends AnnotatedCommandHandler
     @CommandHandler()
     public handleAnotherThing(command: CommandHandlerDecoratorSpecCommand1): void {
         this.handleAnotherThingCalled = true;
+    }
+}
+
+@Mixin(AnnotatedCommandHandler)
+class CommandHandlerDecoratorSpecMixedInCommandHandler implements AnnotatedCommandHandler {
+    handle: (command: Command) => void;
+    getSupportedCommands: () => CommandType[];
+
+    public handleSomethingCalled: boolean = false;
+
+    @CommandHandler()
+    public handleSomething(command: CommandHandlerDecoratorSpecCommand1): void {
+        this.handleSomethingCalled = true;
     }
 }

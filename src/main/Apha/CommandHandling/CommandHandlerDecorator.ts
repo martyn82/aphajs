@@ -11,6 +11,7 @@ export type AnnotatedCommandHandlers = {[commandClass: string]: Function};
 
 export namespace CommandHandlerDecorator {
     export const COMMAND_HANDLERS = "annotations:commandhandlers";
+    export const COMMAND_TYPES = "annotations:commandtypes";
 }
 
 export function CommandHandler(): Function {
@@ -34,11 +35,9 @@ export function CommandHandler(): Function {
         handlers[commandClass] = descriptor.value;
         Reflect.defineMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, handlers, target);
 
-        const types = target.getSupportedCommands();
+        const types = Reflect.getOwnMetadata(CommandHandlerDecorator.COMMAND_TYPES, target) || [];
         types.push(commandType);
-        target.getSupportedCommands = (): CommandType[] => {
-            return types;
-        };
+        Reflect.defineMetadata(CommandHandlerDecorator.COMMAND_TYPES, types, target);
     };
 }
 
@@ -58,6 +57,18 @@ export function CommandHandlerDispatcher(): Function {
             }
 
             handlers[commandClass].call(this, command);
+        };
+    };
+}
+
+export function SupportedCommandTypesRetriever(): Function {
+    return (
+        target: AnnotatedCommandHandler,
+        methodName: string,
+        descriptor: TypedPropertyDescriptor<Function>
+    ): void => {
+        descriptor.value = function (): CommandType[] {
+            return Reflect.getMetadata(CommandHandlerDecorator.COMMAND_TYPES, this) || [];
         };
     };
 }

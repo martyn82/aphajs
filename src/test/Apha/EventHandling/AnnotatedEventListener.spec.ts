@@ -1,8 +1,9 @@
 
 import {expect} from "chai";
 import {AnnotatedEventListener} from "../../../main/Apha/EventHandling/AnnotatedEventListener";
-import {Event} from "../../../main/Apha/Message/Event";
+import {Event, EventType} from "../../../main/Apha/Message/Event";
 import {EventListener} from "../../../main/Apha/EventHandling/EventListenerDecorator";
+import {Mixin} from "../../../main/MixinDecorator";
 
 describe("AnnotatedEventListener", () => {
     describe("on", () => {
@@ -32,6 +33,11 @@ describe("AnnotatedEventListener", () => {
                 [EventListenerDecoratorSpecEvent1, EventListenerDecoratorSpecEvent2]
             );
         });
+
+        it("should return the supported events for mixed-in class", () => {
+            const handler = new EventListenerDecoratorSpecMixedInEventListener();
+            expect(handler.getSupportedEvents()).to.eql([EventListenerDecoratorSpecEvent1]);
+        });
     });
 });
 
@@ -59,5 +65,18 @@ class EventListenerDecoratorSpecEventListener2 extends AnnotatedEventListener {
     @EventListener()
     public onAnotherThing(event: EventListenerDecoratorSpecEvent1): void {
         this.onAnotherThingCalled = true;
+    }
+}
+
+@Mixin(AnnotatedEventListener)
+class EventListenerDecoratorSpecMixedInEventListener implements AnnotatedEventListener {
+    on: (event: Event) => void;
+    getSupportedEvents: () => EventType[];
+
+    public onSomethingCalled: boolean = false;
+
+    @EventListener()
+    public onSomething(event: EventListenerDecoratorSpecEvent1): void {
+        this.onSomethingCalled = true;
     }
 }

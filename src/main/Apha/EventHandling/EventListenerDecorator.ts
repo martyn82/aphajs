@@ -11,6 +11,7 @@ export type AnnotatedEventListeners = {[eventClass: string]: Function};
 
 export namespace EventListenerDecorator {
     export const EVENT_HANDLERS = "annotations:eventhandlers";
+    export const EVENT_TYPES = "annotations:eventtypes";
 }
 
 export function EventListener(): Function {
@@ -27,18 +28,16 @@ export function EventListener(): Function {
         }
 
         const handlers: AnnotatedEventListeners =
-            Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, target) || {};
+            Reflect.getOwnMetadata(EventListenerDecorator.EVENT_HANDLERS, target) || {};
         const eventType: EventType = paramTypes[0];
         const eventClass = ClassNameInflector.className(eventType);
 
         handlers[eventClass] = descriptor.value;
         Reflect.defineMetadata(EventListenerDecorator.EVENT_HANDLERS, handlers, target);
 
-        const types = target.getSupportedEvents();
+        const types = Reflect.getOwnMetadata(EventListenerDecorator.EVENT_TYPES, target) || [];
         types.push(eventType);
-        target.getSupportedEvents = (): EventType[] => {
-            return types;
-        };
+        Reflect.defineMetadata(EventListenerDecorator.EVENT_TYPES, types, target);
     };
 }
 
@@ -60,4 +59,16 @@ export function EventListenerDispatcher(): Function {
             handlers[eventClass].call(this, event);
         };
     }
+}
+
+export function SupportedEventTypesRetriever(): Function {
+    return (
+        target: AnnotatedEventListener,
+        methodName: string,
+        descriptor: TypedPropertyDescriptor<Function>
+    ): void => {
+        descriptor.value = function (): EventType[] {
+            return Reflect.getMetadata(EventListenerDecorator.EVENT_TYPES, this);
+        };
+    };
 }
