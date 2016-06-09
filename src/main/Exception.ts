@@ -10,9 +10,6 @@ export declare class Error {
 }
 
 export abstract class Exception extends Error {
-    public name: string;
-    public stack;
-
     constructor(public message?: string) {
         super(message);
 
