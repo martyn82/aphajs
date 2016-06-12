@@ -12,9 +12,7 @@ export declare class Error {
 export abstract class Exception extends Error {
     constructor(public message?: string) {
         super(message);
-
         this.name = Inflect.classOf(this);
-        this.stack = (<any>new Error()).stack;
     }
 
     public toString(): string {

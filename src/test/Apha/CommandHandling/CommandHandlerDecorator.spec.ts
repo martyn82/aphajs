@@ -4,16 +4,18 @@ import {expect} from "chai";
 import {MetadataKeys} from "../../../main/Apha/Decorators/MetadataKeys";
 import {AnnotatedCommandHandler} from "../../../main/Apha/CommandHandling/AnnotatedCommandHandler";
 import {Command} from "../../../main/Apha/Message/Command";
-import {CommandHandler, CommandHandlerDecorator} from "../../../main/Apha/CommandHandling/CommandHandlerDecorator";
+import {CommandHandler} from "../../../main/Apha/CommandHandling/CommandHandlerDecorator";
 import {DecoratorException} from "../../../main/Apha/Decorators/DecoratorException";
 import {UnsupportedCommandException} from "../../../main/Apha/CommandHandling/UnsupportedCommandException";
+
+const COMMAND_HANDLERS = "annotations:commandhandlers";
 
 describe("CommandHandlerDecorator", () => {
     describe("CommandHandler", () => {
         it("defines method as a command handler", () => {
             const target = new CommandHandlerDecoratorSpecTarget();
 
-            let handlers = Reflect.getMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, target);
+            let handlers = Reflect.getMetadata(COMMAND_HANDLERS, target);
             expect(handlers).to.be.undefined;
 
             const methodName = "handleSomething";
@@ -26,7 +28,7 @@ describe("CommandHandlerDecorator", () => {
 
             CommandHandler()(target, methodName, descriptor);
 
-            handlers = Reflect.getMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, target);
+            handlers = Reflect.getMetadata(COMMAND_HANDLERS, target);
             expect(handlers).not.to.be.undefined;
             expect(handlers["Something"]).to.equal(target[methodName]);
         });

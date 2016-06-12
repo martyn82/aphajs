@@ -24,10 +24,10 @@ export abstract class AggregateRoot {
     }
 
     protected on(event: Event): void {
-        this.handleByInflection(event);
+        this.applyByInflection(event);
     }
 
-    private handleByInflection(event: Event): void {
+    private applyByInflection(event: Event): void {
         const eventClass = ClassNameInflector.classOf(event);
         const handler = this["on" + eventClass];
 

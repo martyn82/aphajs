@@ -4,16 +4,18 @@ import {expect} from "chai";
 import {MetadataKeys} from "../../../main/Apha/Decorators/MetadataKeys";
 import {AnnotatedEventListener} from "../../../main/Apha/EventHandling/AnnotatedEventListener";
 import {Event} from "../../../main/Apha/Message/Event";
-import {EventListener, EventListenerDecorator} from "../../../main/Apha/EventHandling/EventListenerDecorator";
+import {EventListener} from "../../../main/Apha/EventHandling/EventListenerDecorator";
 import {DecoratorException} from "../../../main/Apha/Decorators/DecoratorException";
 import {UnsupportedEventException} from "../../../main/Apha/EventHandling/UnsupportedEventException";
+
+const EVENT_HANDLERS = "annotations:eventhandlers";
 
 describe("EventListenerDecorator", () => {
     describe("EventListener", () => {
         it("defines method as an event handler", () => {
             const target = new EventListenerDecoratorSpecTarget();
 
-            let handlers = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, target);
+            let handlers = Reflect.getMetadata(EVENT_HANDLERS, target);
             expect(handlers).to.be.undefined;
 
             const methodName = "onSomething";
@@ -26,7 +28,7 @@ describe("EventListenerDecorator", () => {
 
             EventListener()(target, methodName, descriptor);
 
-            handlers = Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, target);
+            handlers = Reflect.getMetadata(EVENT_HANDLERS, target);
             expect(handlers).not.to.be.undefined;
             expect(handlers["Something"]).to.equal(target[methodName]);
         });

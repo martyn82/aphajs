@@ -47,11 +47,7 @@ export class SimpleEventBus extends EventBus {
         }
 
         listeners.forEach((handler) => {
-            try {
-                handler.on(event);
-            } catch (e) {
-                console.error(e.toString());
-            }
+            handler.on(event);
         });
 
         return true;

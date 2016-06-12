@@ -9,7 +9,7 @@ import {UnsupportedCommandException} from "./UnsupportedCommandException";
 
 export type AnnotatedCommandHandlers = {[commandClass: string]: Function};
 
-export namespace CommandHandlerDecorator {
+namespace CommandHandlerDecorator {
     export const COMMAND_HANDLERS = "annotations:commandhandlers";
     export const COMMAND_TYPES = "annotations:commandtypes";
 }
@@ -22,15 +22,16 @@ export function CommandHandler(): Function {
     ): void => {
         const paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName);
 
-        if (paramTypes.length === 0) {
+        if (paramTypes.length === 0 || !paramTypes[0]) {
             const targetClass = ClassNameInflector.classOf(target);
             throw new DecoratorException(targetClass, methodName, "CommandHandler");
         }
 
-        const handlers: AnnotatedCommandHandlers =
-            Reflect.getOwnMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, target) || {};
         const commandType: CommandType = paramTypes[0];
         const commandClass = ClassNameInflector.className(commandType);
+
+        const handlers: AnnotatedCommandHandlers =
+            Reflect.getOwnMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, target) || {};
 
         handlers[commandClass] = descriptor.value;
         Reflect.defineMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, handlers, target);
