@@ -1,5 +1,4 @@
 
-
 import {AnnotatedCommandHandler} from "../../../src/main/Apha/CommandHandling/AnnotatedCommandHandler";
 import {EventSourcingRepository} from "../../../src/main/Apha/Repository/EventSourcingRepository";
 import {ToDoItem} from "./ToDoItem";

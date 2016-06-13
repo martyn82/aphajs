@@ -20,7 +20,7 @@ export class DemonstrateHandler extends AnnotatedCommandHandler {
             aggregate = new Demonstration();
         }
 
-        aggregate.demonstrate(command);
+        aggregate.handle(command);
         this.repository.store(aggregate, aggregate.version);
     }
 }
