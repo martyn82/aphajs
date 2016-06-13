@@ -10,7 +10,8 @@ import {UnsupportedCommandException} from "./UnsupportedCommandException";
 export type AnnotatedCommandHandlers = {[commandClass: string]: Function};
 
 type CommandDescriptor = {
-    type: CommandType
+    type: Function,
+    commandName: string
 };
 
 type DeferredCommandHandler = {
@@ -25,7 +26,7 @@ namespace CommandHandlerDecorator {
     export const DEFERRED = "annotations:deferredcommandhandlers";
 }
 
-export function CommandHandler(commandDescriptor?: {type: CommandType}): Function {
+export function CommandHandler(commandDescriptor?: {type: Function, commandName: string}): Function {
     return (
         target: AnnotatedCommandHandler,
         methodName: string,
@@ -45,7 +46,7 @@ export function CommandHandler(commandDescriptor?: {type: CommandType}): Functio
 
         const paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName) || [];
 
-        if (paramTypes.length === 0) {
+        if (paramTypes.length === 0 || typeof paramTypes[0] === "undefined") {
             const targetClass = ClassNameInflector.classOf(target);
             throw new DecoratorException(targetClass, methodName, "CommandHandler");
         }
@@ -100,7 +101,8 @@ export function SupportedCommandTypesRetriever(): Function {
 export function defineDeferredCommandHandlers(target: AnnotatedCommandHandler): void {
     const deferred: DeferredCommandHandler[] = Reflect.getMetadata(CommandHandlerDecorator.DEFERRED, target) || [];
     deferred.forEach(handler => {
-        Reflect.defineMetadata(MetadataKeys.PARAM_TYPES, [handler.command.type], target, handler.methodName);
+        const commandType = handler.command.type[handler.command.commandName];
+        Reflect.defineMetadata(MetadataKeys.PARAM_TYPES, [commandType], target, handler.methodName);
         CommandHandler()(target, handler.methodName, handler.descriptor);
     });
     Reflect.defineMetadata(CommandHandlerDecorator.DEFERRED, [], target);

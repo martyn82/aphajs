@@ -61,7 +61,7 @@ describe("CommandHandlerDecorator", () => {
                 enumerable: false,
                 configurable: false
             };
-            const commandDescriptor = {type: Something};
+            const commandDescriptor = {type: CommandHandlerDecoratorSpecDeferredTarget, commandName: "Something"};
 
             CommandHandler(commandDescriptor)(target, methodName, descriptor);
 
@@ -94,7 +94,7 @@ describe("CommandHandlerDecorator", () => {
                 enumerable: false,
                 configurable: false
             };
-            const commandDescriptor = {type: Something};
+            const commandDescriptor = {type: CommandHandlerDecoratorSpecDeferredTarget, commandName: "Something"};
             const deferred = [{
                 methodName: methodName,
                 descriptor: descriptor,
@@ -104,7 +104,9 @@ describe("CommandHandlerDecorator", () => {
 
             defineDeferredCommandHandlers(target);
 
-            expect(Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName)).to.eql([Something]);
+            expect(Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName)).to.eql(
+                [CommandHandlerDecoratorSpecDeferredTarget.Something]
+            );
         });
     });
 });
@@ -127,6 +129,10 @@ class CommandHandlerDecoratorSpecNoHandler extends AnnotatedCommandHandler {
 
 class CommandHandlerDecoratorSpecDeferredTarget extends AnnotatedCommandHandler {
     @Reflect.metadata(MetadataKeys.PARAM_TYPES, [undefined])
-    public handleThis(command: Something): void {
+    public handleThis(command: CommandHandlerDecoratorSpecDeferredTarget.Something): void {
     }
+}
+
+namespace CommandHandlerDecoratorSpecDeferredTarget {
+    export class Something extends Command {}
 }

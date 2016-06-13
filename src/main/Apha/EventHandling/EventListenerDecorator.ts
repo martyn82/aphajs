@@ -10,7 +10,8 @@ import {UnsupportedEventException} from "./UnsupportedEventException";
 export type AnnotatedEventListeners = {[eventClass: string]: Function};
 
 type EventDescriptor = {
-    type: EventType
+    type: Function,
+    eventName: string
 };
 
 type DeferredEventListener = {
@@ -25,7 +26,7 @@ namespace EventListenerDecorator {
     export const DEFERRED = "annotations:deferredeventhandlers";
 }
 
-export function EventListener(eventDescriptor?: {type: EventType}): Function {
+export function EventListener(eventDescriptor?: {type: Function, eventName: string}): Function {
     return (
         target: AnnotatedEventListener,
         methodName: string,
@@ -45,7 +46,7 @@ export function EventListener(eventDescriptor?: {type: EventType}): Function {
 
         const paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName) || [];
 
-        if (paramTypes.length === 0) {
+        if (paramTypes.length === 0 || typeof paramTypes[0] === "undefined") {
             const targetClass = ClassNameInflector.classOf(target);
             throw new DecoratorException(targetClass, methodName, "EventListener");
         }
@@ -100,7 +101,8 @@ export function SupportedEventTypesRetriever(): Function {
 export function defineDeferredEventListeners(target: AnnotatedEventListener): void {
     const deferred: DeferredEventListener[] = Reflect.getMetadata(EventListenerDecorator.DEFERRED, target) || [];
     deferred.forEach(handler => {
-        Reflect.defineMetadata(MetadataKeys.PARAM_TYPES, [handler.event.type], target, handler.methodName);
+        const eventType = handler.event.type[handler.event.eventName];
+        Reflect.defineMetadata(MetadataKeys.PARAM_TYPES, [eventType], target, handler.methodName);
         EventListener()(target, handler.methodName, handler.descriptor);
     });
     Reflect.defineMetadata(EventListenerDecorator.DEFERRED, [], target);

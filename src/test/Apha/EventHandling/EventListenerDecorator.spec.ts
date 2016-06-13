@@ -58,7 +58,7 @@ describe("EventListenerDecorator", () => {
                 enumerable: false,
                 configurable: false
             };
-            const eventDescriptor = {type: Something};
+            const eventDescriptor = {type: EventListenerDecoratorSpecDeferredTarget, eventName: "Something"};
 
             EventListener(eventDescriptor)(target, methodName, descriptor);
 
@@ -91,7 +91,7 @@ describe("EventListenerDecorator", () => {
                 enumerable: false,
                 configurable: false
             };
-            const eventDescription = {type: Something};
+            const eventDescription = {type: EventListenerDecoratorSpecDeferredTarget, eventName: "Something"};
             const deferred = [{
                 methodName: methodName,
                 descriptor: descriptor,
@@ -101,7 +101,9 @@ describe("EventListenerDecorator", () => {
 
             defineDeferredEventListeners(target);
 
-            expect(Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName)).to.eql([Something]);
+            expect(Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName)).to.eql(
+                [EventListenerDecoratorSpecDeferredTarget.Something]
+            );
         });
     });
 });
@@ -124,7 +126,10 @@ class EventListenerDecoratorSpecNoHandler extends AnnotatedEventListener {
 
 class EventListenerDecoratorSpecDeferredTarget extends AnnotatedEventListener {
     @Reflect.metadata(MetadataKeys.PARAM_TYPES, [undefined])
-    public onThis(event: Something): void {
-
+    public onThis(event: EventListenerDecoratorSpecDeferredTarget.Something): void {
     }
+}
+
+namespace EventListenerDecoratorSpecDeferredTarget {
+    export class Something extends Event {}
 }
