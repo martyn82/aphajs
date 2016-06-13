@@ -2,10 +2,10 @@
 import {AggregateRoot} from "./AggregateRoot";
 import {AnnotatedCommandHandler} from "../CommandHandling/AnnotatedCommandHandler";
 import {Mixin} from "../../MixinDecorator";
-import {CommandHandlerDispatcher} from "../CommandHandling/CommandHandlerDecorator";
+import {CommandHandlerDispatcher, defineDeferredCommandHandlers} from "../CommandHandling/CommandHandlerDecorator";
 import {AnnotatedEventListener} from "../EventHandling/AnnotatedEventListener";
 import {Command, CommandType} from "../Message/Command";
-import {EventListenerDispatcher} from "../EventHandling/EventListenerDecorator";
+import {EventListenerDispatcher, defineDeferredEventListeners} from "../EventHandling/EventListenerDecorator";
 import {Event, EventType} from "../Message/Event";
 
 @Mixin(AnnotatedCommandHandler, AnnotatedEventListener)
@@ -14,6 +14,12 @@ export abstract class AnnotatedAggregateRoot extends AggregateRoot
 
     getSupportedCommands: () => CommandType[];
     getSupportedEvents: () => EventType[];
+
+    constructor() {
+        super();
+        defineDeferredCommandHandlers(this);
+        defineDeferredEventListeners(this);
+    }
 
     @CommandHandlerDispatcher()
     public handle(command: Command): void {

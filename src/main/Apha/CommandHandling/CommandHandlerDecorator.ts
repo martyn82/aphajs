@@ -9,20 +9,43 @@ import {UnsupportedCommandException} from "./UnsupportedCommandException";
 
 export type AnnotatedCommandHandlers = {[commandClass: string]: Function};
 
+type CommandDescriptor = {
+    type: CommandType
+};
+
+type DeferredCommandHandler = {
+    methodName: string,
+    descriptor: TypedPropertyDescriptor<Function>,
+    command: CommandDescriptor
+};
+
 namespace CommandHandlerDecorator {
     export const COMMAND_HANDLERS = "annotations:commandhandlers";
     export const COMMAND_TYPES = "annotations:commandtypes";
+    export const DEFERRED = "annotations:deferredcommandhandlers";
 }
 
-export function CommandHandler(): Function {
+export function CommandHandler(commandDescriptor?: {type: CommandType}): Function {
     return (
         target: AnnotatedCommandHandler,
         methodName: string,
         descriptor: TypedPropertyDescriptor<Function>
     ): void => {
-        const paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName);
+        if (commandDescriptor) {
+            const deferred: DeferredCommandHandler[] =
+                Reflect.getMetadata(CommandHandlerDecorator.DEFERRED, target) || [];
+            deferred.push({
+                methodName: methodName,
+                descriptor: descriptor,
+                command: commandDescriptor
+            });
+            Reflect.defineMetadata(CommandHandlerDecorator.DEFERRED, deferred, target);
+            return;
+        }
 
-        if (paramTypes.length === 0 || !paramTypes[0]) {
+        const paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName) || [];
+
+        if (paramTypes.length === 0) {
             const targetClass = ClassNameInflector.classOf(target);
             throw new DecoratorException(targetClass, methodName, "CommandHandler");
         }
@@ -72,4 +95,13 @@ export function SupportedCommandTypesRetriever(): Function {
             return Reflect.getMetadata(CommandHandlerDecorator.COMMAND_TYPES, this) || [];
         };
     };
+}
+
+export function defineDeferredCommandHandlers(target: AnnotatedCommandHandler): void {
+    const deferred: DeferredCommandHandler[] = Reflect.getMetadata(CommandHandlerDecorator.DEFERRED, target) || [];
+    deferred.forEach(handler => {
+        Reflect.defineMetadata(MetadataKeys.PARAM_TYPES, [handler.command.type], target, handler.methodName);
+        CommandHandler()(target, handler.methodName, handler.descriptor);
+    });
+    Reflect.defineMetadata(CommandHandlerDecorator.DEFERRED, [], target);
 }

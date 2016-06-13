@@ -4,15 +4,16 @@ import {expect} from "chai";
 import {MetadataKeys} from "../../../main/Apha/Decorators/MetadataKeys";
 import {AnnotatedEventListener} from "../../../main/Apha/EventHandling/AnnotatedEventListener";
 import {Event} from "../../../main/Apha/Message/Event";
-import {EventListener} from "../../../main/Apha/EventHandling/EventListenerDecorator";
+import {EventListener, defineDeferredEventListeners} from "../../../main/Apha/EventHandling/EventListenerDecorator";
 import {DecoratorException} from "../../../main/Apha/Decorators/DecoratorException";
 import {UnsupportedEventException} from "../../../main/Apha/EventHandling/UnsupportedEventException";
 
 const EVENT_HANDLERS = "annotations:eventhandlers";
+const DEFERRED = "annotations:deferredeventhandlers";
 
 describe("EventListenerDecorator", () => {
     describe("EventListener", () => {
-        it("defines method as an event handler", () => {
+        it("should define method as an event handler", () => {
             const target = new EventListenerDecoratorSpecTarget();
 
             let handlers = Reflect.getMetadata(EVENT_HANDLERS, target);
@@ -33,7 +34,7 @@ describe("EventListenerDecorator", () => {
             expect(handlers["Something"]).to.equal(target[methodName]);
         });
 
-        it("throws exception if no parameter can be found", () => {
+        it("should throw exception if no parameter can be found", () => {
             const target = new EventListenerDecoratorSpecInvalidTarget();
             const methodName = "onNothing";
             const descriptor = {
@@ -47,15 +48,60 @@ describe("EventListenerDecorator", () => {
                 EventListener()(target, methodName, descriptor);
             }).to.throw(DecoratorException);
         });
+
+        it("should add handler to deferred list if reference to event type is given", () => {
+            const target = new EventListenerDecoratorSpecDeferredTarget();
+            const methodName = "handleThis";
+            const descriptor = {
+                value: target[methodName],
+                writable: true,
+                enumerable: false,
+                configurable: false
+            };
+            const eventDescriptor = {type: Something};
+
+            EventListener(eventDescriptor)(target, methodName, descriptor);
+
+            const deferred = Reflect.getMetadata(DEFERRED, target);
+            expect(deferred).to.eql([{
+                methodName: methodName,
+                descriptor: descriptor,
+                event: eventDescriptor
+            }]);
+        });
     });
 
     describe("EventListenerDispatcher", () => {
-        it("throws exception if no handlers are defined", () => {
+        it("should throw exception if no handlers are defined", () => {
             const target = new EventListenerDecoratorSpecNoHandler();
 
             expect(() => {
                 target.on(new Something());
             }).to.throw(UnsupportedEventException);
+        });
+    });
+
+    describe("defineDeferredEventListeners", () => {
+        it("should define a deferred event listener", () => {
+            const target = new EventListenerDecoratorSpecDeferredTarget();
+            const methodName = "onThis";
+            const descriptor = {
+                value: target[methodName],
+                writable: true,
+                enumerable: false,
+                configurable: false
+            };
+            const eventDescription = {type: Something};
+            const deferred = [{
+                methodName: methodName,
+                descriptor: descriptor,
+                event: eventDescription
+            }];
+            Reflect.defineMetadata(DEFERRED, deferred, target);
+
+            defineDeferredEventListeners(target);
+
+            expect(Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName)).to.eql([Something]);
         });
     });
 });
@@ -74,4 +120,11 @@ class EventListenerDecoratorSpecInvalidTarget extends AnnotatedEventListener {
 }
 
 class EventListenerDecoratorSpecNoHandler extends AnnotatedEventListener {
+}
+
+class EventListenerDecoratorSpecDeferredTarget extends AnnotatedEventListener {
+    @Reflect.metadata(MetadataKeys.PARAM_TYPES, [undefined])
+    public onThis(event: Something): void {
+
+    }
 }

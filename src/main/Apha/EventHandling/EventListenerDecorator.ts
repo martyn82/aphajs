@@ -9,20 +9,43 @@ import {UnsupportedEventException} from "./UnsupportedEventException";
 
 export type AnnotatedEventListeners = {[eventClass: string]: Function};
 
+type EventDescriptor = {
+    type: EventType
+};
+
+type DeferredEventListener = {
+    methodName: string,
+    descriptor: TypedPropertyDescriptor<Function>,
+    event: EventDescriptor
+};
+
 namespace EventListenerDecorator {
     export const EVENT_HANDLERS = "annotations:eventhandlers";
     export const EVENT_TYPES = "annotations:eventtypes";
+    export const DEFERRED = "annotations:deferredeventhandlers";
 }
 
-export function EventListener(): Function {
+export function EventListener(eventDescriptor?: {type: EventType}): Function {
     return (
         target: AnnotatedEventListener,
         methodName: string,
         descriptor: TypedPropertyDescriptor<Function>
     ): void => {
-        const paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName);
+        if (eventDescriptor) {
+            const deferred: DeferredEventListener[] =
+                Reflect.getMetadata(EventListenerDecorator.DEFERRED, target) || [];
+            deferred.push({
+                methodName: methodName,
+                descriptor: descriptor,
+                event: eventDescriptor
+            });
+            Reflect.defineMetadata(EventListenerDecorator.DEFERRED, deferred, target);
+            return;
+        }
 
-        if (paramTypes.length === 0 || !paramTypes[0]) {
+        const paramTypes = Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName) || [];
+
+        if (paramTypes.length === 0) {
             const targetClass = ClassNameInflector.classOf(target);
             throw new DecoratorException(targetClass, methodName, "EventListener");
         }
@@ -72,4 +95,13 @@ export function SupportedEventTypesRetriever(): Function {
             return Reflect.getMetadata(EventListenerDecorator.EVENT_TYPES, this);
         };
     };
+}
+
+export function defineDeferredEventListeners(target: AnnotatedEventListener): void {
+    const deferred: DeferredEventListener[] = Reflect.getMetadata(EventListenerDecorator.DEFERRED, target) || [];
+    deferred.forEach(handler => {
+        Reflect.defineMetadata(MetadataKeys.PARAM_TYPES, [handler.event.type], target, handler.methodName);
+        EventListener()(target, handler.methodName, handler.descriptor);
+    });
+    Reflect.defineMetadata(EventListenerDecorator.DEFERRED, [], target);
 }

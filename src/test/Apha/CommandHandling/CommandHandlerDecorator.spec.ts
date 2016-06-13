@@ -4,15 +4,19 @@ import {expect} from "chai";
 import {MetadataKeys} from "../../../main/Apha/Decorators/MetadataKeys";
 import {AnnotatedCommandHandler} from "../../../main/Apha/CommandHandling/AnnotatedCommandHandler";
 import {Command} from "../../../main/Apha/Message/Command";
-import {CommandHandler} from "../../../main/Apha/CommandHandling/CommandHandlerDecorator";
+import {
+    CommandHandler,
+    defineDeferredCommandHandlers
+} from "../../../main/Apha/CommandHandling/CommandHandlerDecorator";
 import {DecoratorException} from "../../../main/Apha/Decorators/DecoratorException";
 import {UnsupportedCommandException} from "../../../main/Apha/CommandHandling/UnsupportedCommandException";
 
 const COMMAND_HANDLERS = "annotations:commandhandlers";
+const DEFERRED = "annotations:deferredcommandhandlers";
 
 describe("CommandHandlerDecorator", () => {
     describe("CommandHandler", () => {
-        it("defines method as a command handler", () => {
+        it("should define method as a command handler", () => {
             const target = new CommandHandlerDecoratorSpecTarget();
 
             let handlers = Reflect.getMetadata(COMMAND_HANDLERS, target);
@@ -33,7 +37,7 @@ describe("CommandHandlerDecorator", () => {
             expect(handlers["Something"]).to.equal(target[methodName]);
         });
 
-        it("throws exception if no parameter can be found", () => {
+        it("should throw exception if no parameter can be found", () => {
             const target = new CommandHandlerDecoratorSpecInvalidTarget();
             const methodName = "handleNothing";
             const descriptor = {
@@ -47,15 +51,60 @@ describe("CommandHandlerDecorator", () => {
                 CommandHandler()(target, methodName, descriptor);
             }).to.throw(DecoratorException);
         });
+
+        it("should add handler to deferred list if reference to command type is given", () => {
+            const target = new CommandHandlerDecoratorSpecDeferredTarget();
+            const methodName = "handleThis";
+            const descriptor = {
+                value: target[methodName],
+                writable: true,
+                enumerable: false,
+                configurable: false
+            };
+            const commandDescriptor = {type: Something};
+
+            CommandHandler(commandDescriptor)(target, methodName, descriptor);
+
+            const deferred = Reflect.getMetadata(DEFERRED, target);
+            expect(deferred).to.eql([{
+                methodName: methodName,
+                descriptor: descriptor,
+                command: commandDescriptor
+            }]);
+        });
     });
 
     describe("CommandHandlerDispatcher", () => {
-        it("throws exception if no handlers are defined", () => {
+        it("should throw exception if no handlers are defined", () => {
             const target = new CommandHandlerDecoratorSpecNoHandler();
 
             expect(() => {
                 target.handle(new Something());
             }).to.throw(UnsupportedCommandException);
+        });
+    });
+
+    describe("defineDeferredCommandHandlers", () => {
+        it("should define a deferred command handler", () => {
+            const target = new CommandHandlerDecoratorSpecDeferredTarget();
+            const methodName = "handleThis";
+            const descriptor = {
+                value: target[methodName],
+                writable: true,
+                enumerable: false,
+                configurable: false
+            };
+            const commandDescriptor = {type: Something};
+            const deferred = [{
+                methodName: methodName,
+                descriptor: descriptor,
+                command: commandDescriptor
+            }];
+            Reflect.defineMetadata(DEFERRED, deferred, target);
+
+            defineDeferredCommandHandlers(target);
+
+            expect(Reflect.getMetadata(MetadataKeys.PARAM_TYPES, target, methodName)).to.eql([Something]);
         });
     });
 });
@@ -74,4 +123,10 @@ class CommandHandlerDecoratorSpecInvalidTarget extends AnnotatedCommandHandler {
 }
 
 class CommandHandlerDecoratorSpecNoHandler extends AnnotatedCommandHandler {
+}
+
+class CommandHandlerDecoratorSpecDeferredTarget extends AnnotatedCommandHandler {
+    @Reflect.metadata(MetadataKeys.PARAM_TYPES, [undefined])
+    public handleThis(command: Something): void {
+    }
 }
