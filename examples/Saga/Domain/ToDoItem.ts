@@ -55,66 +55,27 @@ export class ToDoItem extends AnnotatedAggregateRoot {
 
 export namespace ToDoItem {
     export class Create extends Command {
-        constructor(private _id: string, private _description: string, private _expireSeconds: number) {
-            super();
-        }
-
-        public get id(): string {
-            return this._id;
-        }
-
-        public get description(): string {
-            return this._description;
-        }
-
-        public get expireSeconds(): number {
-            return this._expireSeconds;
-        }
+        constructor(protected _id: string, private _description: string, private _expireSeconds: number) {super();}
+        public get description(): string {return this._description;}
+        public get expireSeconds(): number {return this._expireSeconds;}
     }
     export class Created extends Event {
-        constructor(id: string, private _description: string, private _expireSeconds: number) {
-            super();
-            this._id = id;
-        }
-
-        public get description(): string {
-            return this._description;
-        }
-
-        public get expireSeconds(): number {
-            return this._expireSeconds;
-        }
+        constructor(protected _id: string, private _description: string, private _expireSeconds: number) {super();}
+        public get description(): string {return this._description;}
+        public get expireSeconds(): number {return this._expireSeconds;}
     }
 
     export class MarkAsDone extends Command {
-        constructor(private _id: string) {
-            super();
-        }
-
-        public get id(): string {
-            return this._id;
-        }
+        constructor(protected _id: string) {super();}
     }
     export class MarkedAsDone extends Event {
-        constructor(id: string) {
-            super();
-            this._id = id;
-        }
+        constructor(protected _id: string) {super();}
     }
 
     export class Expire extends Command {
-        constructor(private _id: string) {
-            super();
-        }
-
-        public get id(): string {
-            return this._id;
-        }
+        constructor(protected _id: string) {super();}
     }
     export class Expired extends Event {
-        constructor(id: string) {
-            super();
-            this._id = id;
-        }
+        constructor(protected _id: string) {super();}
     }
 }

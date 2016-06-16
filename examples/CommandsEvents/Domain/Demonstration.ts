@@ -29,18 +29,9 @@ export class Demonstration extends AnnotatedAggregateRoot {
 
 export namespace Demonstration {
     export class Demonstrate extends Command {
-        constructor(private _id: string) {
-            super();
-        }
-
-        public get id(): string {
-            return this._id;
-        }
+        constructor(protected _id: string) {super();}
     }
     export class Demonstrated extends Event {
-        constructor(id: string) {
-            super();
-            this._id = id;
-        }
+        constructor(protected _id: string) {super();}
     }
 }
