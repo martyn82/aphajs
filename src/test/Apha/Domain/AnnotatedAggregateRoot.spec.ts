@@ -46,8 +46,7 @@ describe("AnnotatedAggregateRoot", () => {
 });
 
 class AnnotatedAggregateRootSpecCommand1 extends Command {
-    constructor(private _id: string) {super();}
-    public get id(): string {return this._id;}
+    constructor(protected _id: string) {super();}
 }
 class AnnotatedAggregateRootSpecEvent1 extends Event {
     constructor(protected _id: string) {super();}

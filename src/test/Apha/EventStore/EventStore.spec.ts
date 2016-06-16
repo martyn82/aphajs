@@ -164,6 +164,17 @@ describe("EventStore", () => {
             }).to.throw(ConcurrencyException);
         });
     });
+
+    describe("clear", () => {
+        it("should clear the storage", () => {
+            storageMock.expects("clear")
+                .once();
+
+            eventStore.clear();
+
+            storageMock.verify();
+        });
+    });
 });
 
 class EventStoreEvent extends Event {
@@ -184,6 +195,9 @@ class EventStoreEventStorage implements EventStorage {
 
     public findIdentities(): string[] {
         return [];
+    }
+
+    public clear(): void {
     }
 }
 

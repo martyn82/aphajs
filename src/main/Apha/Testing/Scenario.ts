@@ -5,8 +5,8 @@ import {AggregateRoot} from "../Domain/AggregateRoot";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {AggregateFactory} from "../Domain/AggregateFactory";
 import {TraceableEventStore} from "./TraceableEventStore";
-import {CommandHandler} from "../CommandHandling/CommandHandler";
 import {CommandBus} from "../CommandHandling/CommandBus";
+import {AssertEvents} from "./Assert";
 
 export class Scenario {
     private aggregate: AggregateRoot;
@@ -15,16 +15,22 @@ export class Scenario {
         private aggregateFactory: AggregateFactory<AggregateRoot>,
         private eventStore: TraceableEventStore,
         private commandBus: CommandBus,
-        private assert: (expectedEvents: Event[], actualEvents: Event[]) => void
+        private assert: AssertEvents
     ) {}
 
     public given(...events: Event[]): this {
+        this.eventStore.clear();
+
         if (events.length === 0) {
             return this;
         }
 
+        events.forEach(event => {
+            event.version = -1;
+        });
+
         const aggregate = this.getAggregate(events);
-        this.eventStore.save(aggregate.getId(), ClassNameInflector.classOf(aggregate), events, -1);
+        this.eventStore.save(aggregate.getId(), ClassNameInflector.classOf(aggregate), events, aggregate.version);
 
         return this;
     }

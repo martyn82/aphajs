@@ -78,4 +78,8 @@ export class EventStore {
     public getAggregateIds(): string[] {
         return this.storage.findIdentities();
     }
+
+    public clear(): void {
+        this.storage.clear();
+    }
 }

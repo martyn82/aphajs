@@ -122,6 +122,8 @@ class EventSourcingRepositoryEventStorage implements EventStorage {
     public findIdentities(): string[] {
         return [];
     }
+    public clear(): void {
+    }
 }
 
 class EventSourcingRepositoryEvent extends Event {}

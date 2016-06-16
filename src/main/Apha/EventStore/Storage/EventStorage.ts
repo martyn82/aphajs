@@ -6,4 +6,5 @@ export interface EventStorage {
     append(event: EventDescriptor): boolean;
     find(id: string): EventDescriptor[];
     findIdentities(): string[];
+    clear(): void;
 }

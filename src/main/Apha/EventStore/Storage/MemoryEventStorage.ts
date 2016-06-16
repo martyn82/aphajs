@@ -29,4 +29,8 @@ export class MemoryEventStorage implements EventStorage {
     public findIdentities(): string[] {
         return Object.keys(this.data);
     }
+
+    public clear(): void {
+        this.data = {};
+    }
 }

@@ -10,6 +10,7 @@ import {TraceableEventBus} from "./TraceableEventBus";
 
 export class TraceableEventStore extends EventStore implements TraceableEventHandler {
     private traceableEventBus: TraceableEventBus;
+    private _storage: EventStorage;
 
     constructor(
         eventBus: EventBus,
@@ -20,6 +21,7 @@ export class TraceableEventStore extends EventStore implements TraceableEventHan
         const traceableEventBus = new TraceableEventBus(eventBus);
         super(traceableEventBus, storage, serializer, eventClassMap);
         this.traceableEventBus = traceableEventBus;
+        this._storage = storage;
     }
 
     public getEvents(): Event[] {
@@ -28,5 +30,9 @@ export class TraceableEventStore extends EventStore implements TraceableEventHan
 
     public clearTraceLog(): void {
         this.traceableEventBus.clearTraceLog();
+    }
+
+    public clear(): void {
+        this._storage.clear();
     }
 }

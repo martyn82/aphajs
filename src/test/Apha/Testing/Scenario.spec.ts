@@ -134,21 +134,17 @@ class ScenarioSpec_CommandHandler extends TypedCommandHandler {
 }
 
 class ScenarioSpec_Command extends Command {
-    constructor(private _id: string) {super();}
-    public get id(): string {return this._id;}
+    constructor(protected _id: string) {super();}
 }
 class ScenarioSpec_Event extends Event {
     constructor(protected _id: string) {super();}
-    public get id(): string {return this._id;}
 }
 
 class ScenarioSpec_Command2 extends Command {
-    constructor(private _id: string, private _val: string) {super();}
-    public get id(): string {return this._id;}
+    constructor(protected _id: string, private _val: string) {super();}
     public get val(): string {return this._val;}
 }
 class ScenarioSpec_Event2 extends Event {
     constructor(protected _id: string, private _val: string) {super();}
-    public get id(): string {return this._id;}
     public get val(): string {return this._val;}
 }
