@@ -7,6 +7,7 @@ import {Event, EventType} from "../../src/main/Apha/Message/Event";
 import {EventListener} from "../../src/main/Apha/EventHandling/EventListenerDecorator";
 import {Mixin} from "../../src/main/MixinDecorator";
 import {Account} from "./Account";
+import {clone} from "../../src/main/Clone";
 
 namespace ProjectionsType {
     export const Account = "Account";
@@ -45,15 +46,13 @@ export class AccountProjections extends Projections<AccountProjection> implement
     @EventListener()
     public onAccountActivated(event: Account.Activated): void {
         const account = this.storage.find(event.id);
-        const accountCopy = new AccountProjection(account.id, account.emailAddress, account.password, true);
-        this.storage.upsert(event.id, accountCopy);
+        this.storage.upsert(event.id, account.copy({_active: true}));
     }
 
     @EventListener()
     public onAccountDeactivated(event: Account.Deactivated): void {
         const account = this.storage.find(event.id);
-        const accountCopy = new AccountProjection(account.id, account.emailAddress, account.password, false);
-        this.storage.upsert(event.id, accountCopy);
+        this.storage.upsert(event.id, account.copy({_active: false}));
     }
 
     public findAll(page: number, pageSize: number): AccountProjection[] {
