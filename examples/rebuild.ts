@@ -123,3 +123,5 @@ if (activeAccounts.length !== numberOfActive) {
 console.log(
     `Rebuilt ${numberOfEvents} events, for ${numberOfAggregates} accounts (of which ${numberOfActive} activated)`
 );
+
+rebuilder.rebuildIfNecessary();
