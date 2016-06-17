@@ -9,9 +9,9 @@ import {MemoryEventStorage} from "../src/main/Apha/EventStore/Storage/MemoryEven
 import {JsonSerializer} from "../src/main/Apha/Serialization/JsonSerializer";
 import {EventClassMap} from "../src/main/Apha/EventStore/EventClassMap";
 import {EventSourcingRepository} from "../src/main/Apha/Repository/EventSourcingRepository";
-import {Account} from "./Testing/Account";
-import {Fixtures} from "./Testing/Fixtures";
-import {AccountCommandHandler} from "./Testing/AccountCommandHandler";
+import {Account} from "./Account/Account";
+import {Fixtures} from "./Account/Fixtures";
+import {AccountCommandHandler} from "./Account/AccountCommandHandler";
 
 const factory = new GenericAggregateFactory<Account>(Account);
 const eventStore = new TraceableEventStore(
