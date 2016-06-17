@@ -29,14 +29,21 @@ describe("AnnotatedEventListener", () => {
     describe("getSupportedEvents", () => {
         it("should return the supported events", () => {
             const handler = new EventListenerDecoratorSpecEventListener1();
-            expect(handler.getSupportedEvents()).to.eql(
-                [EventListenerDecoratorSpecEvent1, EventListenerDecoratorSpecEvent2]
-            );
+
+            const events = new Set<EventType>();
+            events.add(EventListenerDecoratorSpecEvent1);
+            events.add(EventListenerDecoratorSpecEvent2);
+
+            expect(handler.getSupportedEvents()).to.eql(events);
         });
 
         it("should return the supported events for mixed-in class", () => {
             const handler = new EventListenerDecoratorSpecMixedInEventListener();
-            expect(handler.getSupportedEvents()).to.eql([EventListenerDecoratorSpecEvent1]);
+
+            const events = new Set<EventType>();
+            events.add(EventListenerDecoratorSpecEvent1);
+
+            expect(handler.getSupportedEvents()).to.eql(events);
         });
     });
 });
@@ -71,7 +78,7 @@ class EventListenerDecoratorSpecEventListener2 extends AnnotatedEventListener {
 @Mixin(AnnotatedEventListener)
 class EventListenerDecoratorSpecMixedInEventListener implements AnnotatedEventListener {
     on: (event: Event) => void;
-    getSupportedEvents: () => EventType[];
+    getSupportedEvents: () => Set<EventType>;
 
     public onSomethingCalled: boolean = false;
 

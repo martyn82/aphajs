@@ -60,8 +60,8 @@ export function EventListener(eventDescriptor?: {type: Function, eventName: stri
         handlers[eventClass] = descriptor.value;
         Reflect.defineMetadata(EventListenerDecorator.EVENT_HANDLERS, handlers, target);
 
-        const types = Reflect.getOwnMetadata(EventListenerDecorator.EVENT_TYPES, target) || [];
-        types.push(eventType);
+        const types = Reflect.getOwnMetadata(EventListenerDecorator.EVENT_TYPES, target) || new Set<EventType>();
+        types.add(eventType);
         Reflect.defineMetadata(EventListenerDecorator.EVENT_TYPES, types, target);
     };
 }
@@ -92,8 +92,8 @@ export function SupportedEventTypesRetriever(): Function {
         methodName: string,
         descriptor: TypedPropertyDescriptor<Function>
     ): void => {
-        descriptor.value = function (): EventType[] {
-            return Reflect.getMetadata(EventListenerDecorator.EVENT_TYPES, this);
+        descriptor.value = function (): Set<EventType> {
+            return Reflect.getMetadata(EventListenerDecorator.EVENT_TYPES, this) || new Set<EventType>();
         };
     };
 }

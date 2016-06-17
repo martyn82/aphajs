@@ -1,10 +1,10 @@
 
 import {expect} from "chai";
 import {AnnotatedAggregateRoot} from "../../../main/Apha/Domain/AnnotatedAggregateRoot";
-import {Command} from "../../../main/Apha/Message/Command";
+import {Command, CommandType} from "../../../main/Apha/Message/Command";
 import {CommandHandler} from "../../../main/Apha/CommandHandling/CommandHandlerDecorator";
 import {EventListener} from "../../../main/Apha/EventHandling/EventListenerDecorator";
-import {Event} from "../../../main/Apha/Message/Event";
+import {Event, EventType} from "../../../main/Apha/Message/Event";
 
 describe("AnnotatedAggregateRoot", () => {
     describe("handle", () => {
@@ -33,14 +33,22 @@ describe("AnnotatedAggregateRoot", () => {
     describe("getSupportedEvents", () => {
         it("should return the by aggregate root supported events", () => {
             const aggregate = new AnnotatedAggregateRootSpecAggregateRoot();
-            expect(aggregate.getSupportedEvents()).to.eql([AnnotatedAggregateRootSpecEvent1]);
+
+            const events = new Set<EventType>();
+            events.add(AnnotatedAggregateRootSpecEvent1);
+
+            expect(aggregate.getSupportedEvents()).to.eql(events);
         });
     });
 
     describe("getSupportedCommands", () => {
         it("should return the by aggregate root supported commands", () => {
             const aggregate = new AnnotatedAggregateRootSpecAggregateRoot();
-            expect(aggregate.getSupportedCommands()).to.eql([AnnotatedAggregateRootSpecCommand1]);
+
+            const commands = new Set<CommandType>();
+            commands.add(AnnotatedAggregateRootSpecCommand1);
+
+            expect(aggregate.getSupportedCommands()).to.eql(commands);
         });
     });
 });

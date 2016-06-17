@@ -60,8 +60,8 @@ export function CommandHandler(commandDescriptor?: {type: Function, commandName:
         handlers[commandClass] = descriptor.value;
         Reflect.defineMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, handlers, target);
 
-        const types = Reflect.getOwnMetadata(CommandHandlerDecorator.COMMAND_TYPES, target) || [];
-        types.push(commandType);
+        const types = Reflect.getOwnMetadata(CommandHandlerDecorator.COMMAND_TYPES, target) || new Set<CommandType>();
+        types.add(commandType);
         Reflect.defineMetadata(CommandHandlerDecorator.COMMAND_TYPES, types, target);
     };
 }
@@ -92,8 +92,8 @@ export function SupportedCommandTypesRetriever(): Function {
         methodName: string,
         descriptor: TypedPropertyDescriptor<Function>
     ): void => {
-        descriptor.value = function (): CommandType[] {
-            return Reflect.getMetadata(CommandHandlerDecorator.COMMAND_TYPES, this) || [];
+        descriptor.value = function (): Set<CommandType> {
+            return Reflect.getMetadata(CommandHandlerDecorator.COMMAND_TYPES, this) || new Set<CommandType>();
         };
     };
 }

@@ -9,7 +9,7 @@ export abstract class AnnotatedEventListener implements EventListener {
     }
 
     @SupportedEventTypesRetriever()
-    public getSupportedEvents(): EventType[] {
-        return [];
+    public getSupportedEvents(): Set<EventType> {
+        return new Set<EventType>();
     }
 }

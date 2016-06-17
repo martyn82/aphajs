@@ -29,14 +29,21 @@ describe("AnnotatedCommandHandler", () => {
     describe("getSupportedCommands", () => {
         it("should return the supported commands", () => {
             const handler = new CommandHandlerDecoratorSpecCommandHandler1();
-            expect(handler.getSupportedCommands()).to.eql(
-                [CommandHandlerDecoratorSpecCommand1, CommandHandlerDecoratorSpecCommand2]
-            );
+
+            const commands = new Set<CommandType>();
+            commands.add(CommandHandlerDecoratorSpecCommand1);
+            commands.add(CommandHandlerDecoratorSpecCommand2);
+
+            expect(handler.getSupportedCommands()).to.eql(commands);
         });
 
         it("should return the supported commands for mixed-in class", () => {
             const handler = new CommandHandlerDecoratorSpecMixedInCommandHandler();
-            expect(handler.getSupportedCommands()).to.eql([CommandHandlerDecoratorSpecCommand1]);
+
+            const commands = new Set<CommandType>();
+            commands.add(CommandHandlerDecoratorSpecCommand1);
+
+            expect(handler.getSupportedCommands()).to.eql(commands);
         });
     });
 });
@@ -71,7 +78,7 @@ class CommandHandlerDecoratorSpecCommandHandler2 extends AnnotatedCommandHandler
 @Mixin(AnnotatedCommandHandler)
 class CommandHandlerDecoratorSpecMixedInCommandHandler implements AnnotatedCommandHandler {
     handle: (command: Command) => void;
-    getSupportedCommands: () => CommandType[];
+    getSupportedCommands: () => Set<CommandType>;
 
     public handleSomethingCalled: boolean = false;
 

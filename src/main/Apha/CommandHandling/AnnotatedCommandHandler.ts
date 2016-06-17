@@ -9,7 +9,7 @@ export abstract class AnnotatedCommandHandler implements CommandHandler {
     }
 
     @SupportedCommandTypesRetriever()
-    public getSupportedCommands(): CommandType[] {
-        return [];
+    public getSupportedCommands(): Set<CommandType> {
+        return new Set<CommandType>();
     }
 }

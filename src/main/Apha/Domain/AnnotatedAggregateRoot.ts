@@ -12,8 +12,8 @@ import {Event, EventType} from "../Message/Event";
 export abstract class AnnotatedAggregateRoot extends AggregateRoot
     implements AnnotatedCommandHandler, AnnotatedEventListener {
 
-    getSupportedCommands: () => CommandType[];
-    getSupportedEvents: () => EventType[];
+    getSupportedCommands: () => Set<CommandType>;
+    getSupportedEvents: () => Set<EventType>;
 
     constructor() {
         super();
