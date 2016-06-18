@@ -24,19 +24,17 @@ export function clone(obj: any, target?: any): any {
         return copy;
     }
 
-    if (obj instanceof Object) {
-        if (target) {
-            copy = target;
-        } else {
-            copy = {};
-        }
-
-        for (const prop in obj) {
-            if (obj.hasOwnProperty(prop)) {
-                copy[prop] = clone(obj[prop]);
-            }
-        }
-
-        return copy;
+    if (target) {
+        copy = target;
+    } else {
+        copy = {};
     }
+
+    for (const prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+            copy[prop] = clone(obj[prop]);
+        }
+    }
+
+    return copy;
 }
