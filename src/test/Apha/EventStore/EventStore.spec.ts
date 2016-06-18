@@ -193,8 +193,8 @@ class EventStoreEventStorage implements EventStorage {
         return [];
     }
 
-    public findIdentities(): string[] {
-        return [];
+    public findIdentities(): Set<string> {
+        return new Set<string>();
     }
 
     public clear(): void {

@@ -26,8 +26,10 @@ export class MemoryEventStorage implements EventStorage {
         return this.data[id];
     }
 
-    public findIdentities(): string[] {
-        return Object.keys(this.data);
+    public findIdentities(): Set<string> {
+        const identities = new Set<string>();
+        Object.keys(this.data).forEach(identity => identities.add(identity));
+        return identities;
     }
 
     public clear(): void {

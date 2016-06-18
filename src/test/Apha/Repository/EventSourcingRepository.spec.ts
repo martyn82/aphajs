@@ -119,8 +119,8 @@ class EventSourcingRepositoryEventStorage implements EventStorage {
     public find(id: string): EventDescriptor[] {
         return [];
     }
-    public findIdentities(): string[] {
-        return [];
+    public findIdentities(): Set<string> {
+        return new Set<string>();
     }
     public clear(): void {
     }

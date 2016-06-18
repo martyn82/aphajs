@@ -75,7 +75,7 @@ export class EventStore {
         });
     }
 
-    public getAggregateIds(): string[] {
+    public getAggregateIds(): Set<string> {
         return this.storage.findIdentities();
     }
 

@@ -18,13 +18,13 @@ describe("MemoryEventStorage", () => {
             storage.append(event);
 
             const identities = storage.findIdentities();
-            expect(identities).to.have.lengthOf(1);
-            expect(identities[0]).to.equal(aggregateId);
+            expect(identities.size).to.equal(1);
+            expect(identities.values().next().value).to.equal(aggregateId);
         });
 
         it("retrieves an empty array if storage is empty", () => {
             const identities = storage.findIdentities();
-            expect(identities).to.have.lengthOf(0);
+            expect(identities.size).to.equal(0);
         });
     });
 
@@ -59,8 +59,8 @@ describe("MemoryEventStorage", () => {
 
             const identities = storage.findIdentities();
 
-            expect(identities).to.have.lengthOf(1);
-            expect(identities[0]).to.equal(aggregateId);
+            expect(identities.size).to.equal(1);
+            expect(identities.values().next().value).to.equal(aggregateId);
         });
     });
 

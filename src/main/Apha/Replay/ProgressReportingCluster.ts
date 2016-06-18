@@ -7,19 +7,19 @@ export class ProgressReportingCluster implements Cluster {
     private eventCount: number = 0;
     private lastReportProgress: number = -1;
 
-    constructor(private cluster: Cluster, private totalEventCount: number, private reportStep: number) {}
+    constructor(private delegate: Cluster, private totalEventCount: number, private reportStep: number = 5) {}
 
     public getMembers(): Set<EventListener> {
-        return this.cluster.getMembers();
+        return this.delegate.getMembers();
     }
 
     public getName(): string {
-        return this.cluster.getName();
+        return this.delegate.getName();
     }
 
     public publishAll(...events: Event[]): void {
         this.eventCount += events.length;
-        this.cluster.publishAll.apply(this.cluster, events);
+        this.delegate.publishAll.apply(this.delegate, events);
 
         const progress = Math.floor(this.eventCount * 100 / this.totalEventCount);
 
@@ -30,10 +30,10 @@ export class ProgressReportingCluster implements Cluster {
     }
 
     public subscribe(listener: EventListener): void {
-        this.cluster.subscribe(listener);
+        this.delegate.subscribe(listener);
     }
 
     public unsubscribe(listener: EventListener): void {
-        this.cluster.unsubscribe(listener);
+        this.delegate.unsubscribe(listener);
     }
 }

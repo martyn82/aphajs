@@ -5,6 +5,6 @@ export interface EventStorage {
     contains(id: string): boolean;
     append(event: EventDescriptor): boolean;
     find(id: string): EventDescriptor[];
-    findIdentities(): string[];
+    findIdentities(): Set<string>;
     clear(): void;
 }

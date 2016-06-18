@@ -5,7 +5,7 @@ import {Event} from "../Message/Event";
 import {EventListener} from "../EventHandling/EventListener";
 
 export class ReplayingCluster implements Cluster {
-    constructor(private cluster: Cluster, private eventStore: EventStore) {}
+    constructor(private delegate: Cluster, private eventStore: EventStore) {}
 
     public startReplay(): void {
         this.eventStore.getAggregateIds().forEach(aggregateId => {
@@ -14,22 +14,22 @@ export class ReplayingCluster implements Cluster {
     }
 
     public getName(): string {
-        return this.cluster.getName();
+        return this.delegate.getName();
     }
 
     public publishAll(...events: Event[]): void {
-        this.cluster.publishAll.apply(this.cluster, events);
+        this.delegate.publishAll.apply(this.delegate, events);
     }
 
     public getMembers(): Set<EventListener> {
-        return this.cluster.getMembers();
+        return this.delegate.getMembers();
     }
 
     public subscribe(listener: EventListener): void {
-        this.cluster.subscribe(listener);
+        this.delegate.subscribe(listener);
     }
 
     public unsubscribe(listener: EventListener): void {
-        this.cluster.unsubscribe(listener);
+        this.delegate.unsubscribe(listener);
     }
 }
