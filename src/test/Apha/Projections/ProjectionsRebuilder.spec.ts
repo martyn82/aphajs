@@ -27,7 +27,7 @@ describe("ProjectionsRebuilder", () => {
             new SimpleEventBus(),
             new MemoryEventStorage(),
             new JsonSerializer(),
-            new EventClassMap([])
+            new EventClassMap()
         );
 
         versionRepositoryMock = sinon.mock(versionRepository);

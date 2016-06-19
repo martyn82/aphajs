@@ -31,7 +31,9 @@ describe("EventStore", () => {
         storageMock = sinon.mock(storage);
         serializerMock = sinon.mock(serializer);
 
-        eventStore = new EventStore(eventBus, storage, serializer, new EventClassMap([EventStoreEvent]));
+        const events = new Set<EventType>();
+        events.add(EventStoreEvent);
+        eventStore = new EventStore(eventBus, storage, serializer, new EventClassMap(events));
     });
 
     describe("getAggregateIds", () => {

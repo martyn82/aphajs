@@ -7,7 +7,7 @@ import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {Event, EventType} from "../Message/Event";
 import {UnsupportedEventException} from "./UnsupportedEventException";
 
-export type AnnotatedEventListeners = {[eventClass: string]: Function};
+export type AnnotatedEventListeners = Map<string, Function>;
 
 type EventDescriptor = {
     type: Function,
@@ -55,9 +55,9 @@ export function EventListener(eventDescriptor?: {type: Function, eventName: stri
         const eventClass = ClassNameInflector.className(eventType);
 
         const handlers: AnnotatedEventListeners =
-            Reflect.getOwnMetadata(EventListenerDecorator.EVENT_HANDLERS, target) || {};
+            Reflect.getOwnMetadata(EventListenerDecorator.EVENT_HANDLERS, target) || new Map<string, Function>();
 
-        handlers[eventClass] = descriptor.value;
+        handlers.set(eventClass, descriptor.value);
         Reflect.defineMetadata(EventListenerDecorator.EVENT_HANDLERS, handlers, target);
 
         const types = Reflect.getOwnMetadata(EventListenerDecorator.EVENT_TYPES, target) || new Set<EventType>();
@@ -74,14 +74,14 @@ export function EventListenerDispatcher(): Function {
     ): void => {
         descriptor.value = function (event: Event) {
             const handlers: AnnotatedEventListeners =
-                Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, this) || {};
+                Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, this) || new Map<string, Function>();
             const eventClass = ClassNameInflector.classOf(event);
 
-            if (!handlers[eventClass]) {
+            if (!handlers.has(eventClass)) {
                 throw new UnsupportedEventException(eventClass);
             }
 
-            handlers[eventClass].call(this, event);
+            handlers.get(eventClass).call(this, event);
         };
     }
 }

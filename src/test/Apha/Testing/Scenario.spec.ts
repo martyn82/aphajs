@@ -10,7 +10,7 @@ import {MemoryEventStorage} from "../../../main/Apha/EventStore/Storage/MemoryEv
 import {JsonSerializer} from "../../../main/Apha/Serialization/JsonSerializer";
 import {EventClassMap} from "../../../main/Apha/EventStore/EventClassMap";
 import {Command} from "../../../main/Apha/Message/Command";
-import {Event} from "../../../main/Apha/Message/Event";
+import {Event, EventType} from "../../../main/Apha/Message/Event";
 import {Repository} from "../../../main/Apha/Repository/Repository";
 import {EventSourcingRepository} from "../../../main/Apha/Repository/EventSourcingRepository";
 import {TypedCommandHandler} from "../../../main/Apha/CommandHandling/TypedCommandHandler";
@@ -21,15 +21,16 @@ describe("Scenario", () => {
     let assertSpy;
 
     beforeEach(() => {
+        const events = new Set<EventType>();
+        events.add(ScenarioSpec_Event);
+        events.add(ScenarioSpec_Event2);
+
         const factory = new GenericAggregateFactory<ScenarioSpec_AggregateRoot>(ScenarioSpec_AggregateRoot);
         const eventStore = new TraceableEventStore(
             new SimpleEventBus(),
             new MemoryEventStorage(),
             new JsonSerializer(),
-            new EventClassMap([
-                ScenarioSpec_Event,
-                ScenarioSpec_Event2
-            ])
+            new EventClassMap(events)
         );
         const repository = new EventSourcingRepository<ScenarioSpec_AggregateRoot>(factory, eventStore);
         const commandHandler = new ScenarioSpec_CommandHandler(repository);

@@ -23,7 +23,7 @@ describe("ReplayingCluster", () => {
             new SimpleEventBus(),
             new MemoryEventStorage(),
             new JsonSerializer(),
-            new EventClassMap([])
+            new EventClassMap()
         );
 
         delegateClusterMock = sinon.mock(delegate);

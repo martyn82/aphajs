@@ -19,7 +19,7 @@ describe("CommandHandlerDecorator", () => {
         it("should define method as a command handler", () => {
             const target = new CommandHandlerDecoratorSpecTarget();
 
-            let handlers = Reflect.getMetadata(COMMAND_HANDLERS, target);
+            let handlers: Map<string, Function> = Reflect.getMetadata(COMMAND_HANDLERS, target);
             expect(handlers).to.be.undefined;
 
             const methodName = "handleSomething";
@@ -34,7 +34,7 @@ describe("CommandHandlerDecorator", () => {
 
             handlers = Reflect.getMetadata(COMMAND_HANDLERS, target);
             expect(handlers).not.to.be.undefined;
-            expect(handlers["Something"]).to.equal(target[methodName]);
+            expect(handlers.get("Something")).to.equal(target[methodName]);
         });
 
         it("should throw exception if no parameter can be found", () => {

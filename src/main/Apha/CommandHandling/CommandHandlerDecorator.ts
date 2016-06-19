@@ -7,7 +7,7 @@ import {DecoratorException} from "../Decorators/DecoratorException";
 import {Command, CommandType} from "../Message/Command";
 import {UnsupportedCommandException} from "./UnsupportedCommandException";
 
-export type AnnotatedCommandHandlers = {[commandClass: string]: Function};
+export type AnnotatedCommandHandlers = Map<string, Function>;
 
 type CommandDescriptor = {
     type: Function,
@@ -55,9 +55,9 @@ export function CommandHandler(commandDescriptor?: {type: Function, commandName:
         const commandClass = ClassNameInflector.className(commandType);
 
         const handlers: AnnotatedCommandHandlers =
-            Reflect.getOwnMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, target) || {};
+            Reflect.getOwnMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, target) || new Map<string, Function>();
 
-        handlers[commandClass] = descriptor.value;
+        handlers.set(commandClass, descriptor.value);
         Reflect.defineMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, handlers, target);
 
         const types = Reflect.getOwnMetadata(CommandHandlerDecorator.COMMAND_TYPES, target) || new Set<CommandType>();
@@ -74,14 +74,14 @@ export function CommandHandlerDispatcher(): Function {
     ): void => {
         descriptor.value = function (command: Command) {
             const handlers: AnnotatedCommandHandlers =
-                Reflect.getMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, this) || {};
+                Reflect.getMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, this) || new Map<string, Function>();
             const commandClass = ClassNameInflector.classOf(command);
 
-            if (!handlers[commandClass]) {
+            if (!handlers.has(commandClass)) {
                 throw new UnsupportedCommandException(commandClass);
             }
 
-            handlers[commandClass].call(this, command);
+            handlers.get(commandClass).call(this, command);
         };
     };
 }

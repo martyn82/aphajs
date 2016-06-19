@@ -5,7 +5,7 @@ import {EventSourcingRepository} from "../../../main/Apha/Repository/EventSourci
 import {AggregateFactory} from "../../../main/Apha/Domain/AggregateFactory";
 import {EventStore} from "../../../main/Apha/EventStore/EventStore";
 import {AggregateRoot} from "../../../main/Apha/Domain/AggregateRoot";
-import {Event} from "../../../main/Apha/Message/Event";
+import {Event, EventType} from "../../../main/Apha/Message/Event";
 import {SimpleEventBus} from "../../../main/Apha/EventHandling/SimpleEventBus";
 import {EventStorage} from "../../../main/Apha/EventStore/Storage/EventStorage";
 import {EventDescriptor} from "../../../main/Apha/EventStore/EventDescriptor";
@@ -22,7 +22,9 @@ describe("EventSourcingRepository", () => {
         const eventBus = new SimpleEventBus();
         const storage = new EventSourcingRepositoryEventStorage();
         const serializer = new JsonSerializer();
-        const eventClassMap = new EventClassMap([EventSourcingRepositoryEvent]);
+        const events = new Set<EventType>();
+        events.add(EventSourcingRepositoryEvent);
+        const eventClassMap = new EventClassMap(events);
 
         const factory = new EventSourcingRepositoryAggregateFactory();
         const eventStore = new EventStore(eventBus, storage, serializer, eventClassMap);

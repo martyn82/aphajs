@@ -16,7 +16,7 @@ describe("EventListenerDecorator", () => {
         it("should define method as an event handler", () => {
             const target = new EventListenerDecoratorSpecTarget();
 
-            let handlers = Reflect.getMetadata(EVENT_HANDLERS, target);
+            let handlers: Map<string, Function> = Reflect.getMetadata(EVENT_HANDLERS, target);
             expect(handlers).to.be.undefined;
 
             const methodName = "onSomething";
@@ -31,7 +31,7 @@ describe("EventListenerDecorator", () => {
 
             handlers = Reflect.getMetadata(EVENT_HANDLERS, target);
             expect(handlers).not.to.be.undefined;
-            expect(handlers["Something"]).to.equal(target[methodName]);
+            expect(handlers.get("Something")).to.equal(target[methodName]);
         });
 
         it("should throw exception if no parameter can be found", () => {
