@@ -21,6 +21,7 @@ import {ToDoSagaFactory} from "./Saga/Domain/ToDoSagaFactory";
 import {ToDoSaga, ToDoItemTimeout} from "./Saga/Domain/ToDoSaga";
 import {ToDoItem} from "./Saga/Domain/ToDoItem";
 import {ToDoItemCommandHandler} from "./Saga/Domain/ToDoItemCommandHandler";
+import {EventType} from "../src/main/Apha/Message/Event";
 
 const commandBus = new SimpleCommandBus();
 const eventBus = new SimpleEventBus();
@@ -43,12 +44,12 @@ const sagaRepository = new SagaRepository<ToDoSaga>(
 );
 
 const sagaManager = new SimpleSagaManager<ToDoSaga>([ToDoSaga], sagaRepository, resolver, sagaFactory);
-const eventClassMap = new EventClassMap([
-    ToDoItemTimeout,
-    ToDoItem.Created,
-    ToDoItem.MarkedAsDone,
-    ToDoItem.Expired
-]);
+const eventTypes = new Set<EventType>();
+eventTypes.add(ToDoItemTimeout);
+eventTypes.add(ToDoItem.Created);
+eventTypes.add(ToDoItem.MarkedAsDone);
+eventTypes.add(ToDoItem.Expired);
+const eventClassMap = new EventClassMap(eventTypes);
 
 const eventStorage = new MemoryEventStorage();
 const eventStore = new EventStore(eventBus, eventStorage, new JsonSerializer(), eventClassMap);

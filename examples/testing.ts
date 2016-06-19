@@ -12,17 +12,18 @@ import {EventSourcingRepository} from "../src/main/Apha/Repository/EventSourcing
 import {Account} from "./Account/Account";
 import {Fixtures} from "./Account/Fixtures";
 import {AccountCommandHandler} from "./Account/AccountCommandHandler";
+import {EventType} from "../src/main/Apha/Message/Event";
 
 const factory = new GenericAggregateFactory<Account>(Account);
+const eventTypes = new Set<EventType>();
+eventTypes.add(Account.Activated);
+eventTypes.add(Account.Deactivated);
+eventTypes.add(Account.Registered);
 const eventStore = new TraceableEventStore(
     new SimpleEventBus(),
     new MemoryEventStorage(),
     new JsonSerializer(),
-    new EventClassMap([
-        Account.Activated,
-        Account.Deactivated,
-        Account.Registered
-    ])
+    new EventClassMap(eventTypes)
 );
 const handler = new AccountCommandHandler(new EventSourcingRepository<Account>(factory, eventStore), factory);
 const commandBus = new SimpleCommandBus();

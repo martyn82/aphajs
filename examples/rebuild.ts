@@ -16,6 +16,7 @@ import {IdentityProvider} from "../src/main/Apha/Domain/IdentityProvider";
 import {ClassNameInflector} from "../src/main/Apha/Inflection/ClassNameInflector";
 import {AccountProjections, AccountProjection} from "./Account/AccountProjections";
 import {WinstonLogger} from "../src/main/Apha/Logging/WinstonLogger";
+import {EventType} from "../src/main/Apha/Message/Event";
 
 class CoreProjectionsRebuilder extends ProjectionsRebuilder {
     constructor(
@@ -45,11 +46,11 @@ const eventStorage = new MemoryEventStorage();
 
 const cluster = new SimpleCluster("default");
 
-const eventStore = new EventStore(cluster, eventStorage, serializer, new EventClassMap([
-    Account.Registered,
-    Account.Activated,
-    Account.Deactivated
-]));
+const eventTypes = new Set<EventType>();
+eventTypes.add(Account.Registered);
+eventTypes.add(Account.Activated);
+eventTypes.add(Account.Deactivated);
+const eventStore = new EventStore(cluster, eventStorage, serializer, new EventClassMap(eventTypes));
 
 const rebuilder = new CoreProjectionsRebuilder(versionRepository, cluster, eventStore, accountProjections);
 rebuilder.logger = logger;

@@ -10,13 +10,17 @@ import {EventStore} from "../src/main/Apha/EventStore/EventStore";
 import {GenericAggregateFactory} from "../src/main/Apha/Domain/GenericAggregateFactory";
 import {EventSourcingRepository} from "../src/main/Apha/Repository/EventSourcingRepository";
 import {SimpleCommandBus} from "../src/main/Apha/CommandHandling/SimpleCommandBus";
+import {EventType} from "../src/main/Apha/Message/Event";
 
 const eventStorage = new MemoryEventStorage();
 const eventBus = new SimpleEventBus();
 eventBus.subscribe(new DemonstratedListener(eventStorage));
 
 const serializer = new JsonSerializer();
-const eventClassMap = new EventClassMap([Demonstration.Demonstrated]);
+const eventTypes = new Set<EventType>();
+eventTypes.add(Demonstration.Demonstrated);
+
+const eventClassMap = new EventClassMap(eventTypes);
 const eventStore = new EventStore(eventBus, eventStorage, serializer, eventClassMap);
 const factory = new GenericAggregateFactory<Demonstration>(Demonstration);
 const repository = new EventSourcingRepository<Demonstration>(factory, eventStore);
