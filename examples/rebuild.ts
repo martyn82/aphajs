@@ -1,4 +1,5 @@
 
+import * as winston from "winston";
 import {ProjectionsRebuilder} from "../src/main/Apha/Projections/ProjectionsRebuilder";
 import {MemoryVersionStorage} from "../src/main/Apha/Projections/Storage/MemoryVersionStorage";
 import {MemoryProjectionStorage} from "../src/main/Apha/Projections/Storage/MemoryProjectionStorage";
@@ -14,6 +15,7 @@ import {Account} from "./Account/Account";
 import {IdentityProvider} from "../src/main/Apha/Domain/IdentityProvider";
 import {ClassNameInflector} from "../src/main/Apha/Inflection/ClassNameInflector";
 import {AccountProjections, AccountProjection} from "./Account/AccountProjections";
+import {WinstonLogger} from "../src/main/Apha/Logging/WinstonLogger";
 
 class CoreProjectionsRebuilder extends ProjectionsRebuilder {
     constructor(
@@ -29,6 +31,12 @@ class CoreProjectionsRebuilder extends ProjectionsRebuilder {
 
 // Initialize system ~~~~~~~~~~~~~~~~~~~~~
 
+const logger = new WinstonLogger(new winston.Logger(
+    {
+        transports: [new winston.transports.Console()],
+        level: 'info'
+    }
+));
 const versionRepository = new VersionRepository(new MemoryVersionStorage());
 const accountProjections = new AccountProjections(new MemoryProjectionStorage<AccountProjection>());
 
@@ -44,17 +52,19 @@ const eventStore = new EventStore(cluster, eventStorage, serializer, new EventCl
 ]));
 
 const rebuilder = new CoreProjectionsRebuilder(versionRepository, cluster, eventStore, accountProjections);
+rebuilder.logger = logger;
 
 // Seed some events ~~~~~~~~~~~~~~~~~~~~~~
-console.log("Creating some data to rebuild...");
+logger.info("Creating some data to rebuild...");
 
 const aggregatesToCreate = 1000000;
 
-console.log(`Creating ${aggregatesToCreate} aggregates...`);
+logger.info(`Creating ${aggregatesToCreate} aggregates...`);
 
 let numberOfActive = 0;
 let numberOfEvents = 0;
 let numberOfAggregates = 0;
+let latestProgressReported = -1;
 
 for (let i = 0; i < aggregatesToCreate; i++) {
     let accountId = IdentityProvider.generateNew();
@@ -104,9 +114,18 @@ for (let i = 0; i < aggregatesToCreate; i++) {
             numberOfActive++;
         }
     }
+
+    let progress = Math.floor(numberOfAggregates * 100 / aggregatesToCreate);
+    if (progress % 5 === 0 && latestProgressReported !== progress) {
+        logger.info(
+            `Creation progress: ${progress}% (${numberOfAggregates} / ${aggregatesToCreate} aggregates created)`
+        );
+        latestProgressReported = progress;
+    }
 }
 
-console.log("Done.\n\n");
+logger.info("Creation done.");
+logger.info("~~~~~~~~~");
 
 // Start the rebuild ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -120,8 +139,9 @@ if (activeAccounts.length !== numberOfActive) {
     );
 }
 
-console.log(
+logger.info(
     `Rebuilt ${numberOfEvents} events, for ${numberOfAggregates} accounts (of which ${numberOfActive} activated)`
 );
+logger.info("~~~~~~~~~");
 
 rebuilder.rebuildIfNecessary();

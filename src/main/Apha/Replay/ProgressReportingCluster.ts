@@ -2,12 +2,18 @@
 import {Cluster} from "../EventHandling/Cluster";
 import {EventListener} from "../EventHandling/EventListener";
 import {Event} from "../Message/Event";
+import {Logger} from "../Logging/Logger";
 
 export class ProgressReportingCluster implements Cluster {
     private eventCount: number = 0;
     private lastReportProgress: number = -1;
 
-    constructor(private delegate: Cluster, private totalEventCount: number, private reportStep: number = 5) {}
+    constructor(
+        private delegate: Cluster,
+        private totalEventCount: number,
+        private logger: Logger,
+        private reportStep: number = 5
+    ) {}
 
     public getMembers(): Set<EventListener> {
         return this.delegate.getMembers();
@@ -24,7 +30,7 @@ export class ProgressReportingCluster implements Cluster {
         const progress = Math.floor(this.eventCount * 100 / this.totalEventCount);
 
         if (progress % this.reportStep === 0 && this.lastReportProgress !== progress) {
-            console.log(`Replay progress: ${progress}% (${this.eventCount} of ${this.totalEventCount} events)`);
+            this.logger.info(`Replay progress: ${progress}% (${this.eventCount} of ${this.totalEventCount} events)`);
             this.lastReportProgress = progress;
         }
     }

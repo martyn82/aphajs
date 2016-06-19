@@ -5,20 +5,30 @@ import {ReplayingCluster} from "../Replay/ReplayingCluster";
 import {EventStore} from "../EventStore/EventStore";
 import {Cluster} from "../EventHandling/Cluster";
 import {ProgressReportingCluster} from "../Replay/ProgressReportingCluster";
+import {Logger} from "../Logging/Logger";
+import {NullLogger} from "../Logging/NullLogger";
 
 export abstract class ProjectionsRebuilder {
+    private _logger: Logger;
+
     constructor(
         private versionRepository: VersionRepository,
         private projectionsType: ProjectionsType,
         private cluster: Cluster,
         private eventStore: EventStore
-    ) {}
+    ) {
+        this._logger = new NullLogger();
+    }
+
+    public set logger(logger: Logger) {
+        this._logger = logger;
+    }
 
     public rebuildIfNecessary(): void {
         if (this.isRebuildNecessary()) {
             this.rebuild();
         } else {
-            console.log(`${this.projectionsType.name}: No rebuild is necessary`);
+            this._logger.info(`${this.projectionsType.name}: No rebuild is necessary`);
         }
     }
 
@@ -33,24 +43,24 @@ export abstract class ProjectionsRebuilder {
     }
 
     protected rebuild(): void {
-        console.log(`${this.projectionsType.name} rebuild necessary`);
+        this._logger.info(`${this.projectionsType.name} rebuild necessary`);
 
         const eventCount = this.countEvents();
         const replayingCluster = new ReplayingCluster(
-            new ProgressReportingCluster(this.cluster, eventCount, 5),
+            new ProgressReportingCluster(this.cluster, eventCount, this._logger, 5),
             this.eventStore
         );
 
-        console.log(`Starting ${this.projectionsType.name} rebuild, ${eventCount} events`);
+        this._logger.info(`Starting ${this.projectionsType.name} rebuild, ${eventCount} events`);
         const startTime = Date.now();
 
         try {
             replayingCluster.startReplay();
             this.versionRepository.updateVersion(this.projectionsType.name, this.projectionsType.version);
 
-            console.log(`${this.projectionsType.name} rebuild finished in ${Date.now() - startTime} ms`);
+            this._logger.info(`${this.projectionsType.name} rebuild finished in ${Date.now() - startTime} ms`);
         } catch (e) {
-            console.error(`${this.projectionsType.name} rebuild failed after ${Date.now() - startTime} ms`);
+            this._logger.error(`${this.projectionsType.name} rebuild failed after ${Date.now() - startTime} ms`, e);
             throw e;
         }
     }
