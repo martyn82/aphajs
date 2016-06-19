@@ -12,9 +12,9 @@ APHAjs provides:
 * Typed command and event handling with annotations
 * Sagas
 * Event Scheduling
+* Replay events
 
 Upcoming:
-* Replay events
 * Using MongoDB as read/write store
 * Using ElasticSearch as read store
 
