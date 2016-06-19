@@ -4,6 +4,7 @@ import {CommandHandler} from "../../src/main/Apha/CommandHandling/CommandHandler
 import {EventListener} from "../../src/main/Apha/EventHandling/EventListenerDecorator";
 import {Command} from "../../src/main/Apha/Message/Command";
 import {Event} from "../../src/main/Apha/Message/Event";
+import {DomainEvent} from "../../src/main/Apha/EventStore/DomainEventDecorator";
 
 export class Account extends AnnotatedAggregateRoot {
     private _id: string;
@@ -58,6 +59,7 @@ export namespace Account {
         public get emailAddress(): string {return this._emailAddress;}
         public get password(): string {return this._password;}
     }
+    @DomainEvent()
     export class Registered extends Event {
         constructor(protected _id: string, private _emailAddress: string, private _password: string) {super();}
         public get emailAddress(): string {return this._emailAddress;}
@@ -67,6 +69,7 @@ export namespace Account {
     export class Activate extends Command {
         constructor(protected _id: string) {super();}
     }
+    @DomainEvent()
     export class Activated extends Event {
         constructor(protected _id: string) {super();}
     }
@@ -74,6 +77,7 @@ export namespace Account {
     export class Deactivate extends Command {
         constructor(protected _id: string) {super();}
     }
+    @DomainEvent()
     export class Deactivated extends Event {
         constructor(protected _id: string) {super();}
     }

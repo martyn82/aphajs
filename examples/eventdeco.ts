@@ -1,15 +1,10 @@
 
-import "reflect-metadata";
 import {Event} from "../src/main/Apha/Message/Event";
-
-export type AnnotatedEvents = {};
-
-export function DomainEvent(): Function {
-    return (target: Event): void => {
-
-    };
-}
+import {AnnotatedEventClassMap} from "../src/main/Apha/EventStore/AnnotatedEventClassMap";
+import {DomainEvent} from "../src/main/Apha/EventStore/DomainEventDecorator";
 
 @DomainEvent()
-class SomeEvent extends Event {
-}
+class SomeEvent extends Event {}
+
+const classMap = new AnnotatedEventClassMap();
+console.log(classMap);

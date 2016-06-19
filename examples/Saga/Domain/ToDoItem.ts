@@ -4,6 +4,7 @@ import {Event} from "../../../src/main/Apha/Message/Event";
 import {AnnotatedAggregateRoot} from "../../../src/main/Apha/Domain/AnnotatedAggregateRoot";
 import {CommandHandler} from "../../../src/main/Apha/CommandHandling/CommandHandlerDecorator";
 import {EventListener} from "../../../src/main/Apha/EventHandling/EventListenerDecorator";
+import {DomainEvent} from "../../../src/main/Apha/EventStore/DomainEventDecorator";
 
 export class ToDoItem extends AnnotatedAggregateRoot {
     private id: string;
@@ -59,6 +60,7 @@ export namespace ToDoItem {
         public get description(): string {return this._description;}
         public get expireSeconds(): number {return this._expireSeconds;}
     }
+    @DomainEvent()
     export class Created extends Event {
         constructor(protected _id: string, private _description: string, private _expireSeconds: number) {super();}
         public get description(): string {return this._description;}
@@ -68,6 +70,7 @@ export namespace ToDoItem {
     export class MarkAsDone extends Command {
         constructor(protected _id: string) {super();}
     }
+    @DomainEvent()
     export class MarkedAsDone extends Event {
         constructor(protected _id: string) {super();}
     }
@@ -75,6 +78,7 @@ export namespace ToDoItem {
     export class Expire extends Command {
         constructor(protected _id: string) {super();}
     }
+    @DomainEvent()
     export class Expired extends Event {
         constructor(protected _id: string) {super();}
     }

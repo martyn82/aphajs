@@ -7,23 +7,18 @@ import {SimpleCommandBus} from "../src/main/Apha/CommandHandling/SimpleCommandBu
 import {SimpleEventBus} from "../src/main/Apha/EventHandling/SimpleEventBus";
 import {MemoryEventStorage} from "../src/main/Apha/EventStore/Storage/MemoryEventStorage";
 import {JsonSerializer} from "../src/main/Apha/Serialization/JsonSerializer";
-import {EventClassMap} from "../src/main/Apha/EventStore/EventClassMap";
 import {EventSourcingRepository} from "../src/main/Apha/Repository/EventSourcingRepository";
 import {Account} from "./Account/Account";
 import {Fixtures} from "./Account/Fixtures";
 import {AccountCommandHandler} from "./Account/AccountCommandHandler";
-import {EventType} from "../src/main/Apha/Message/Event";
+import {AnnotatedEventClassMap} from "../src/main/Apha/EventStore/AnnotatedEventClassMap";
 
 const factory = new GenericAggregateFactory<Account>(Account);
-const eventTypes = new Set<EventType>();
-eventTypes.add(Account.Activated);
-eventTypes.add(Account.Deactivated);
-eventTypes.add(Account.Registered);
 const eventStore = new TraceableEventStore(
     new SimpleEventBus(),
     new MemoryEventStorage(),
     new JsonSerializer(),
-    new EventClassMap(eventTypes)
+    new AnnotatedEventClassMap()
 );
 const handler = new AccountCommandHandler(new EventSourcingRepository<Account>(factory, eventStore), factory);
 const commandBus = new SimpleCommandBus();

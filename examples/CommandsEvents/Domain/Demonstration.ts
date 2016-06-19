@@ -4,6 +4,7 @@ import {Event} from "../../../src/main/Apha/Message/Event";
 import {AnnotatedAggregateRoot} from "../../../src/main/Apha/Domain/AnnotatedAggregateRoot";
 import {CommandHandler} from "../../../src/main/Apha/CommandHandling/CommandHandlerDecorator";
 import {EventListener} from "../../../src/main/Apha/EventHandling/EventListenerDecorator";
+import {DomainEvent} from "../../../src/main/Apha/EventStore/DomainEventDecorator";
 
 export class Demonstration extends AnnotatedAggregateRoot {
     private id: string;
@@ -31,6 +32,7 @@ export namespace Demonstration {
     export class Demonstrate extends Command {
         constructor(protected _id: string) {super();}
     }
+    @DomainEvent()
     export class Demonstrated extends Event {
         constructor(protected _id: string) {super();}
     }

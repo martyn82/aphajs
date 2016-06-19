@@ -8,7 +8,6 @@ import {Cluster} from "../src/main/Apha/EventHandling/Cluster";
 import {EventStore} from "../src/main/Apha/EventStore/EventStore";
 import {SimpleCluster} from "../src/main/Apha/EventHandling/SimpleCluster";
 import {JsonSerializer} from "../src/main/Apha/Serialization/JsonSerializer";
-import {EventClassMap} from "../src/main/Apha/EventStore/EventClassMap";
 import {MemoryEventStorage} from "../src/main/Apha/EventStore/Storage/MemoryEventStorage";
 import {EventDescriptor} from "../src/main/Apha/EventStore/EventDescriptor";
 import {Account} from "./Account/Account";
@@ -16,7 +15,7 @@ import {IdentityProvider} from "../src/main/Apha/Domain/IdentityProvider";
 import {ClassNameInflector} from "../src/main/Apha/Inflection/ClassNameInflector";
 import {AccountProjections, AccountProjection} from "./Account/AccountProjections";
 import {WinstonLogger} from "../src/main/Apha/Logging/WinstonLogger";
-import {EventType} from "../src/main/Apha/Message/Event";
+import {AnnotatedEventClassMap} from "../src/main/Apha/EventStore/AnnotatedEventClassMap";
 
 class CoreProjectionsRebuilder extends ProjectionsRebuilder {
     constructor(
@@ -45,12 +44,7 @@ const serializer = new JsonSerializer();
 const eventStorage = new MemoryEventStorage();
 
 const cluster = new SimpleCluster("default");
-
-const eventTypes = new Set<EventType>();
-eventTypes.add(Account.Registered);
-eventTypes.add(Account.Activated);
-eventTypes.add(Account.Deactivated);
-const eventStore = new EventStore(cluster, eventStorage, serializer, new EventClassMap(eventTypes));
+const eventStore = new EventStore(cluster, eventStorage, serializer, new AnnotatedEventClassMap());
 
 const rebuilder = new CoreProjectionsRebuilder(versionRepository, cluster, eventStore, accountProjections);
 rebuilder.logger = logger;

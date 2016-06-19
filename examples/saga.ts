@@ -7,7 +7,6 @@ import {EventStore} from "../src/main/Apha/EventStore/EventStore";
 import {JsonSerializer} from "../src/main/Apha/Serialization/JsonSerializer";
 import {SimpleEventBus} from "../src/main/Apha/EventHandling/SimpleEventBus";
 import {MemoryEventStorage} from "../src/main/Apha/EventStore/Storage/MemoryEventStorage";
-import {EventClassMap} from "../src/main/Apha/EventStore/EventClassMap";
 import {SimpleSagaManager} from "../src/main/Apha/Saga/SimpleSagaManager";
 import {SagaRepository} from "../src/main/Apha/Saga/SagaRepository";
 import {SagaSerializer} from "../src/main/Apha/Saga/SagaSerializer";
@@ -18,10 +17,10 @@ import {SimpleEventScheduler} from "../src/main/Apha/Scheduling/SimpleEventSched
 import {MemoryScheduleStorage} from "../src/main/Apha/Scheduling/Storage/MemoryScheduleStorage";
 import {DefaultParameterResolver} from "../src/main/Apha/Saga/Annotation/DefaultParameterResolver";
 import {ToDoSagaFactory} from "./Saga/Domain/ToDoSagaFactory";
-import {ToDoSaga, ToDoItemTimeout} from "./Saga/Domain/ToDoSaga";
+import {ToDoSaga} from "./Saga/Domain/ToDoSaga";
 import {ToDoItem} from "./Saga/Domain/ToDoItem";
 import {ToDoItemCommandHandler} from "./Saga/Domain/ToDoItemCommandHandler";
-import {EventType} from "../src/main/Apha/Message/Event";
+import {AnnotatedEventClassMap} from "../src/main/Apha/EventStore/AnnotatedEventClassMap";
 
 const commandBus = new SimpleCommandBus();
 const eventBus = new SimpleEventBus();
@@ -44,12 +43,7 @@ const sagaRepository = new SagaRepository<ToDoSaga>(
 );
 
 const sagaManager = new SimpleSagaManager<ToDoSaga>([ToDoSaga], sagaRepository, resolver, sagaFactory);
-const eventTypes = new Set<EventType>();
-eventTypes.add(ToDoItemTimeout);
-eventTypes.add(ToDoItem.Created);
-eventTypes.add(ToDoItem.MarkedAsDone);
-eventTypes.add(ToDoItem.Expired);
-const eventClassMap = new EventClassMap(eventTypes);
+const eventClassMap = new AnnotatedEventClassMap();
 
 const eventStorage = new MemoryEventStorage();
 const eventStore = new EventStore(eventBus, eventStorage, new JsonSerializer(), eventClassMap);

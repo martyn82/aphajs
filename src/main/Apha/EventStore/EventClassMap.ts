@@ -11,7 +11,7 @@ export class EventClassMap {
         this.classMap = new Map<string, EventType>();
 
         for (const eventType of eventTypes.values()) {
-            this.classMap.set(ClassNameInflector.className(eventType), eventType);
+            this.register(eventType);
         }
     }
 
@@ -21,5 +21,17 @@ export class EventClassMap {
         }
 
         return this.classMap.get(eventClass);
+    }
+
+    public register(eventType: EventType): void {
+        this.classMap.set(ClassNameInflector.className(eventType), eventType);
+    }
+
+    public unregister(eventType: EventType): void {
+        const eventClassName = ClassNameInflector.className(eventType);
+
+        if (this.classMap.has(eventClassName)) {
+            this.classMap.delete(eventClassName);
+        }
     }
 }
