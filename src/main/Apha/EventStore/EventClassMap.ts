@@ -4,7 +4,7 @@ import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {UnknownEventException} from "./UnknownEventException";
 
 export class EventClassMap {
-    private classMap: Map<string, EventType>;
+    protected classMap: Map<string, EventType>;
 
     constructor(eventTypes?: Set<EventType>) {
         eventTypes = eventTypes ? eventTypes : new Set<EventType>();
