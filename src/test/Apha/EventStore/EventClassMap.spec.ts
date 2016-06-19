@@ -6,7 +6,7 @@ import {UnknownEventException} from "../../../main/Apha/EventStore/UnknownEventE
 
 describe("EventClassMap", () => {
     describe("getTypeByClassName", () => {
-        it("retrieves type by event class name", () => {
+        it("should retrieve type by event class name", () => {
             const events = new Set<EventType>();
             events.add(EventClassMapEvent);
 
@@ -16,12 +16,41 @@ describe("EventClassMap", () => {
             expect(classType).to.equal(EventClassMapEvent);
         });
 
-        it("throws exception if class cannot be found", () => {
+        it("should throw exception if class cannot be found", () => {
             const classMap = new EventClassMap();
 
             expect(() => {
                 classMap.getTypeByClassName("foo");
             }).to.throw(UnknownEventException);
+        });
+    });
+
+    describe("register", () => {
+        it("should register an event in the map", () => {
+            const classMap = new EventClassMap();
+            classMap.register(EventClassMapEvent);
+
+            expect(classMap.getTypeByClassName("EventClassMapEvent")).to.equal(EventClassMapEvent);
+        });
+    });
+
+    describe("unregister", () => {
+        it("should unregister an event from the map", () => {
+            const classMap = new EventClassMap();
+            classMap.register(EventClassMapEvent);
+            classMap.unregister(EventClassMapEvent);
+
+            expect(() => {
+                classMap.getTypeByClassName("EventClassMapEvent");
+            }).to.throw(UnknownEventException);
+        });
+
+        it("should be idempotent", () => {
+            const classMap = new EventClassMap();
+
+            expect(() => {
+                classMap.unregister(EventClassMapEvent);
+            }).to.not.throw();
         });
     });
 });
