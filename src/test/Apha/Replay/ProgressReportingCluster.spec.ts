@@ -4,6 +4,7 @@ import {ProgressReportingCluster} from "../../../main/Apha/Replay/ProgressReport
 import {SimpleCluster} from "../../../main/Apha/EventHandling/SimpleCluster";
 import {EventListener} from "../../../main/Apha/EventHandling/EventListener";
 import {Event} from "../../../main/Apha/Message/Event";
+import {NullLogger} from "../../../main/Apha/Logging/NullLogger";
 
 describe("ProgressReportingCluster", () => {
     const totalEventCount = 1;
@@ -12,13 +13,16 @@ describe("ProgressReportingCluster", () => {
     let cluster;
 
     let delegateClusterMock;
+    let loggerMock;
 
     beforeEach(() => {
         const delegate = new SimpleCluster("foo");
+        const logger = new NullLogger();
 
         delegateClusterMock = sinon.mock(delegate);
+        loggerMock = sinon.mock(logger);
 
-        cluster = new ProgressReportingCluster(delegate, totalEventCount, reportStep);
+        cluster = new ProgressReportingCluster(delegate, totalEventCount, logger, reportStep);
     });
 
     describe("getMembers", () => {
@@ -72,6 +76,16 @@ describe("ProgressReportingCluster", () => {
             cluster.publishAll(event);
 
             delegateClusterMock.verify();
+        });
+
+        it("should report progress to the logger", () => {
+            const event = new ProgressReportingClusterSpecEvent();
+
+            loggerMock.expects("log").once();
+
+            cluster.publishAll(event);
+
+            loggerMock.verify();
         });
     });
 });
