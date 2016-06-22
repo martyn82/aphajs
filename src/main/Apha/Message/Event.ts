@@ -7,7 +7,6 @@ export type EventType = {new(...args: any[]): Event};
 export abstract class Event extends Message {
     @AggregateIdentifier()
     protected _id: string;
-
     private _version: number;
 
     public set version(version: number) {

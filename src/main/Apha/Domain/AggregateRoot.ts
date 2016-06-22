@@ -9,8 +9,6 @@ export abstract class AggregateRoot {
     private _version: number = -1;
     private eventLog: Event[] = [];
 
-    constructor() {}
-
     public loadFromHistory(history: Event[]): void {
         history.forEach((event) => {
             this.apply(event, false);
