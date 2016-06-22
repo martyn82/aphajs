@@ -6,6 +6,7 @@ import {DecoratorException} from "../Decorators/DecoratorException";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {Event, EventType} from "../Message/Event";
 import {UnsupportedEventException} from "./UnsupportedEventException";
+import {Message} from "../Message/Message";
 
 export type AnnotatedEventListeners = Map<string, Function>;
 
@@ -52,7 +53,7 @@ export function EventListener(eventDescriptor?: {type: Function, eventName: stri
         }
 
         const eventType: EventType = paramTypes[0];
-        const eventClass = ClassNameInflector.className(eventType);
+        const eventClass = Message.fqn(eventType);
 
         const handlers: AnnotatedEventListeners =
             Reflect.getOwnMetadata(EventListenerDecorator.EVENT_HANDLERS, target) || new Map<string, Function>();
@@ -75,7 +76,7 @@ export function EventListenerDispatcher(): Function {
         descriptor.value = function (event: Event) {
             const handlers: AnnotatedEventListeners =
                 Reflect.getMetadata(EventListenerDecorator.EVENT_HANDLERS, this) || new Map<string, Function>();
-            const eventClass = ClassNameInflector.classOf(event);
+            const eventClass = event.fullyQualifiedName;
 
             if (!handlers.has(eventClass)) {
                 throw new UnsupportedEventException(eventClass);

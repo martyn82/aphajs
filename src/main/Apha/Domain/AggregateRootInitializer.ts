@@ -9,6 +9,10 @@ export type AggregateRootType = {new(...args: any[]): AggregateRoot};
 export class AggregateRootInitializer {
     private static messages: Map<string, Set<string>> = new Map<string, Set<string>>();
 
+    public static reset(): void {
+        AggregateRootInitializer.messages = new Map<string, Set<string>>();
+    }
+
     public initialize(type: AggregateRootType): void {
         const instance = new type();
         this.annotateMessages(instance);

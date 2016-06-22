@@ -8,7 +8,6 @@ import {Serializer} from "../../../main/Apha/Serialization/Serializer";
 import {EventDescriptor} from "../../../main/Apha/EventStore/EventDescriptor";
 import {Event, EventType} from "../../../main/Apha/Message/Event";
 import {EventClassMap} from "../../../main/Apha/EventStore/EventClassMap";
-import {ClassNameInflector} from "../../../main/Apha/Inflection/ClassNameInflector";
 import {AggregateNotFoundException} from "../../../main/Apha/EventStore/AggregateNotFoundException";
 import {EventListener} from "../../../main/Apha/EventHandling/EventListener";
 import {ConcurrencyException} from "../../../main/Apha/EventStore/ConcurrencyException";
@@ -53,7 +52,7 @@ describe("EventStore", () => {
                 EventDescriptor.record(
                     aggregateId,
                     "aggregatetype",
-                    ClassNameInflector.className(EventStoreEvent),
+                    event.fullyQualifiedName,
                     serializer.serialize(event),
                     1
                 )
@@ -139,7 +138,7 @@ describe("EventStore", () => {
                         return EventDescriptor.record(
                             aggregateId,
                             aggregateType,
-                            ClassNameInflector.classOf(event),
+                            event.fullyQualifiedName,
                             serializer.serialize(event),
                             event.version
                         );

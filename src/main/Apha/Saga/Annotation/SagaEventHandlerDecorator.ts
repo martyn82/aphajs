@@ -9,6 +9,7 @@ import {UnsupportedEventException} from "../../EventHandling/UnsupportedEventExc
 import {AnnotatedSagaStarters, StartSagaDecorator} from "./StartSagaDecorator";
 import {AnnotatedSagaEndings, EndSagaDecorator} from "./EndSagaDecorator";
 import {AssociationValue} from "../AssociationValue";
+import {Message} from "../../Message/Message";
 
 export type AnnotatedSagaEventHandlers = {[eventClass: string]: [Function, string]};
 export type SagaEventHandlerOptions = {
@@ -34,7 +35,7 @@ export function SagaEventHandler(options?: SagaEventHandlerOptions): Function {
 
         const handlers: AnnotatedSagaEventHandlers =
             Reflect.getOwnMetadata(SagaEventHandlerDecorator.SAGA_EVENT_HANDLERS, target) || {};
-        const eventClass = ClassNameInflector.className(paramTypes[0]);
+        const eventClass = Message.fqn(paramTypes[0]);
 
         handlers[eventClass] = [descriptor.value, options ? options.associationProperty : undefined];
         Reflect.defineMetadata(SagaEventHandlerDecorator.SAGA_EVENT_HANDLERS, handlers, target);
@@ -50,7 +51,7 @@ export function SagaEventHandlerDispatcher(): Function {
         descriptor.value = function (event: Event) {
             const handlers: AnnotatedSagaEventHandlers =
                 Reflect.getMetadata(SagaEventHandlerDecorator.SAGA_EVENT_HANDLERS, this) || {};
-            const eventClass = ClassNameInflector.classOf(event);
+            const eventClass = event.fullyQualifiedName;
 
             if (!handlers[eventClass]) {
                 throw new UnsupportedEventException(eventClass);

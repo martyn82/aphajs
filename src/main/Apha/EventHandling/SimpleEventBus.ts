@@ -2,7 +2,7 @@
 import {EventBus} from "./EventBus";
 import {EventListener} from "./EventListener";
 import {Event, EventType} from "../Message/Event";
-import {ClassNameInflector} from "../Inflection/ClassNameInflector";
+import {Message} from "../Message/Message";
 
 export class SimpleEventBus extends EventBus {
     private static wildcard = "*";
@@ -14,7 +14,7 @@ export class SimpleEventBus extends EventBus {
         if (eventType == null) {
             eventClass = SimpleEventBus.wildcard;
         } else {
-            eventClass = ClassNameInflector.className(eventType);
+            eventClass = Message.fqn(eventType);
         }
 
         if (!this.listeners.has(eventClass)) {
@@ -25,7 +25,7 @@ export class SimpleEventBus extends EventBus {
     }
 
     public unsubscribe(listener: EventListener, eventType: EventType): void {
-        const eventClass = ClassNameInflector.className(eventType);
+        const eventClass = Message.fqn(eventType);
 
         if (!this.listeners.has(eventClass)) {
             return;
@@ -35,7 +35,7 @@ export class SimpleEventBus extends EventBus {
     }
 
     public publish(event: Event): boolean {
-        const eventClass = ClassNameInflector.classOf(event);
+        const eventClass = event.fullyQualifiedName;
         const listeners = this.findListeners([SimpleEventBus.wildcard, eventClass]);
 
         if (listeners.size === 0) {

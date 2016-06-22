@@ -6,6 +6,7 @@ import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {DecoratorException} from "../Decorators/DecoratorException";
 import {Command, CommandType} from "../Message/Command";
 import {UnsupportedCommandException} from "./UnsupportedCommandException";
+import {Message} from "../Message/Message";
 
 export type AnnotatedCommandHandlers = Map<string, Function>;
 
@@ -52,7 +53,7 @@ export function CommandHandler(commandDescriptor?: {type: Function, commandName:
         }
 
         const commandType: CommandType = paramTypes[0];
-        const commandClass = ClassNameInflector.className(commandType);
+        const commandClass = Message.fqn(commandType);
 
         const handlers: AnnotatedCommandHandlers =
             Reflect.getOwnMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, target) || new Map<string, Function>();
@@ -75,7 +76,7 @@ export function CommandHandlerDispatcher(): Function {
         descriptor.value = function (command: Command) {
             const handlers: AnnotatedCommandHandlers =
                 Reflect.getMetadata(CommandHandlerDecorator.COMMAND_HANDLERS, this) || new Map<string, Function>();
-            const commandClass = ClassNameInflector.classOf(command);
+            const commandClass = command.fullyQualifiedName;
 
             if (!handlers.has(commandClass)) {
                 throw new UnsupportedCommandException(commandClass);

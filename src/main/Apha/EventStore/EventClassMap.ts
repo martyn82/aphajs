@@ -1,7 +1,7 @@
 
 import {EventType} from "../Message/Event";
-import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {UnknownEventException} from "./UnknownEventException";
+import {Message} from "../Message/Message";
 
 export class EventClassMap {
     protected classMap: Map<string, EventType>;
@@ -24,11 +24,11 @@ export class EventClassMap {
     }
 
     public register(eventType: EventType): void {
-        this.classMap.set(ClassNameInflector.className(eventType), eventType);
+        this.classMap.set(Message.fqn(eventType), eventType);
     }
 
     public unregister(eventType: EventType): void {
-        const eventClassName = ClassNameInflector.className(eventType);
+        const eventClassName = Message.fqn(eventType);
 
         if (this.classMap.has(eventClassName)) {
             this.classMap.delete(eventClassName);

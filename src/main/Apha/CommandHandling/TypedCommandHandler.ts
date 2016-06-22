@@ -1,8 +1,8 @@
 
 import {CommandHandler} from "./CommandHandler";
 import {Command} from "../Message/Command";
-import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {UnsupportedCommandException} from "./UnsupportedCommandException";
+import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 
 export abstract class TypedCommandHandler implements CommandHandler {
     public handle(command: Command): void {

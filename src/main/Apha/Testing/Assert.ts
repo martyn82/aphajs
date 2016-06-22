@@ -1,7 +1,6 @@
 
 import {Event} from "../Message/Event";
 import {Exception} from "../../Exception";
-import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 
 export type AssertEvents = (expectedEvents: Event[], actualEvents: Event[]) => void;
 
@@ -44,10 +43,10 @@ function hasSameVersion(expected: {version: any}, actual: {version: any}): boole
     return expected.version === actual.version;
 }
 
-function typeEquals(expected: any, actual: any): boolean {
-    return ClassNameInflector.classOf(expected) === ClassNameInflector.classOf(actual);
+function typeEquals(expected: Event, actual: Event): boolean {
+    return expected.fullyQualifiedName === actual.fullyQualifiedName;
 }
 
-function objectToString(object: Object): string {
-    return ClassNameInflector.classOf(object) + JSON.stringify(object);
+function objectToString(object: Event): string {
+    return object.fullyQualifiedName + JSON.stringify(object);
 }

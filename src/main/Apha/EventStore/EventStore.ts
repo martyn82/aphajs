@@ -5,7 +5,6 @@ import {Serializer} from "../Serialization/Serializer";
 import {Event} from "../Message/Event";
 import {ConcurrencyException} from "./ConcurrencyException";
 import {EventDescriptor} from "./EventDescriptor";
-import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {AggregateNotFoundException} from "./AggregateNotFoundException";
 import {EventClassMap} from "./EventClassMap";
 
@@ -52,7 +51,7 @@ export class EventStore {
         const descriptor = EventDescriptor.record(
             aggregateId,
             aggregateType,
-            ClassNameInflector.classOf(event),
+            event.fullyQualifiedName,
             this.serializer.serialize(event),
             event.version
         );

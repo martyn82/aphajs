@@ -3,14 +3,14 @@ import {CommandBus} from "./CommandBus";
 import {CommandHandler} from "./CommandHandler";
 import {Command, CommandType} from "../Message/Command";
 import {CommandHandlerAlreadyExistsException} from "./CommandHandlerAlreadyExistsException";
-import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {NoCommandHandlerException} from "./NoCommandHandlerException";
+import {Message} from "../Message/Message";
 
 export class SimpleCommandBus extends CommandBus {
     private handlers: Map<string, CommandHandler> = new Map<string, CommandHandler>();
 
     public registerHandler(commandType: CommandType, handler: CommandHandler) {
-        const commandClass = ClassNameInflector.className(commandType);
+        const commandClass = Message.fqn(commandType);
 
         if (this.handlers.has(commandClass)) {
             throw new CommandHandlerAlreadyExistsException(commandClass);
@@ -20,7 +20,7 @@ export class SimpleCommandBus extends CommandBus {
     }
 
     public unregisterHandler(commandType: CommandType) {
-        const commandClass = ClassNameInflector.className(commandType);
+        const commandClass = Message.fqn(commandType);
 
         if (!this.handlers.has(commandClass)) {
             return;
@@ -30,7 +30,7 @@ export class SimpleCommandBus extends CommandBus {
     }
 
     public send(command: Command) {
-        const commandClass = ClassNameInflector.classOf(command);
+        const commandClass = command.fullyQualifiedName;
 
         if (!this.handlers.has(commandClass)) {
             throw new NoCommandHandlerException(commandClass);
