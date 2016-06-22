@@ -6,7 +6,7 @@ import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 
 export class SimpleEventBus extends EventBus {
     private static wildcard = "*";
-    private listeners: {[eventClass: string]: EventListener[]} = {};
+    private listeners: Map<string, Set<EventListener>> = new Map<string, Set<EventListener>>();
 
     public subscribe(listener: EventListener, eventType?: EventType): void {
         let eventClass;
@@ -17,55 +17,49 @@ export class SimpleEventBus extends EventBus {
             eventClass = ClassNameInflector.className(eventType);
         }
 
-        if (!this.listeners[eventClass]) {
-            this.listeners[eventClass] = [];
+        if (!this.listeners.has(eventClass)) {
+            this.listeners.set(eventClass, new Set<EventListener>());
         }
 
-        this.listeners[eventClass].push(listener);
+        this.listeners.get(eventClass).add(listener);
     }
 
     public unsubscribe(listener: EventListener, eventType: EventType): void {
         const eventClass = ClassNameInflector.className(eventType);
 
-        if (!this.listeners[eventClass]) {
+        if (!this.listeners.has(eventClass)) {
             return;
         }
 
-        const index = this.listeners[eventClass].indexOf(listener);
-
-        if (index > -1) {
-            delete this.listeners[eventClass][index];
-        }
+        this.listeners.get(eventClass).delete(listener);
     }
 
     public publish(event: Event): boolean {
         const eventClass = ClassNameInflector.classOf(event);
         const listeners = this.findListeners([SimpleEventBus.wildcard, eventClass]);
 
-        if (listeners.length === 0) {
+        if (listeners.size === 0) {
             return false;
         }
 
-        listeners.forEach((handler) => {
-            handler.on(event);
-        });
+        for (const listener of listeners.values()) {
+            listener.on(event);
+        }
 
         return true;
     }
 
-    private findListeners(eventClasses: string[]): EventListener[] {
-        const listeners = [];
+    private findListeners(eventClasses: string[]): Set<EventListener> {
+        const listeners = new Set<EventListener>();
 
-        eventClasses.forEach((eventClass) => {
-            if (!this.listeners[eventClass]) {
+        eventClasses.forEach(eventClass => {
+            if (!this.listeners.has(eventClass)) {
                 return;
             }
 
-            this.listeners[eventClass].forEach((listener) => {
-                if (listeners.indexOf(listener) === -1) {
-                    listeners.push(listener);
-                }
-            });
+            for (const listener of this.listeners.get(eventClass).values()) {
+                listeners.add(listener);
+            }
         });
 
         return listeners;

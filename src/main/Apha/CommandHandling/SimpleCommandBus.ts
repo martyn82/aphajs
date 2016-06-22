@@ -7,35 +7,35 @@ import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {NoCommandHandlerException} from "./NoCommandHandlerException";
 
 export class SimpleCommandBus extends CommandBus {
-    private handlers: {[commandClass: string]: CommandHandler} = {};
+    private handlers: Map<string, CommandHandler> = new Map<string, CommandHandler>();
 
     public registerHandler(commandType: CommandType, handler: CommandHandler) {
         const commandClass = ClassNameInflector.className(commandType);
 
-        if (this.handlers[commandClass]) {
+        if (this.handlers.has(commandClass)) {
             throw new CommandHandlerAlreadyExistsException(commandClass);
         }
 
-        this.handlers[commandClass] = handler;
+        this.handlers.set(commandClass, handler);
     }
 
     public unregisterHandler(commandType: CommandType) {
         const commandClass = ClassNameInflector.className(commandType);
 
-        if (!this.handlers[commandClass]) {
+        if (!this.handlers.has(commandClass)) {
             return;
         }
 
-        delete this.handlers[commandClass];
+        this.handlers.delete(commandClass);
     }
 
     public send(command: Command) {
         const commandClass = ClassNameInflector.classOf(command);
 
-        if (!this.handlers[commandClass]) {
+        if (!this.handlers.has(commandClass)) {
             throw new NoCommandHandlerException(commandClass);
         }
 
-        this.handlers[commandClass].handle(command);
+        this.handlers.get(commandClass).handle(command);
     }
 }
