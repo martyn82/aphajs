@@ -6,15 +6,9 @@ import {Event} from "../../../main/Apha/Message/Event";
 import {AggregateRootInitializer} from "../../../main/Apha/Domain/AggregateRootInitializer";
 
 describe("AggregateRootInitializer", () => {
-    let initializer;
-
-    beforeEach(() => {
-        initializer = new AggregateRootInitializer();
-    });
-
     describe("initialize", () => {
         it("should annotate aggregate root messages with their fully qualified name", () => {
-            initializer.initialize(Foo);
+            AggregateRootInitializer.initialize(Foo);
 
             const command = new Foo.SomeCommand();
             expect(command.fullyQualifiedName).to.equal("Foo$SomeCommand");

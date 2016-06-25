@@ -13,12 +13,12 @@ export class AggregateRootInitializer {
         AggregateRootInitializer.messages = new Map<string, Set<string>>();
     }
 
-    public initialize(type: AggregateRootType): void {
-        const instance = new type();
-        this.annotateMessages(instance);
+    public static initialize(target: AggregateRootType): void {
+        const instance = new target();
+        AggregateRootInitializer.annotateMessages(instance);
     }
 
-    private annotateMessages(aggregate: AggregateRoot): void {
+    private static annotateMessages(aggregate: AggregateRoot): void {
         const ownName = ClassNameInflector.classOf(aggregate);
 
         if (!AggregateRootInitializer.messages.has(ownName)) {

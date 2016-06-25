@@ -10,11 +10,10 @@ describe("Message", () => {
     beforeEach(() => {
         AggregateRootInitializer.reset();
     });
-    
+
     describe("fqn", () => {
         it("should return the fully qualified name of the messagetype given", () => {
-            const initializer = new AggregateRootInitializer();
-            initializer.initialize(Foo);
+            AggregateRootInitializer.initialize(Foo);
 
             expect(Message.fqn(Foo.SomeCommand)).to.equal("Foo$SomeCommand");
             expect(Message.fqn(Foo.SomeEvent)).to.equal("Foo$SomeEvent");
