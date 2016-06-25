@@ -11,7 +11,7 @@ export class DemonstrateHandler extends AnnotatedCommandHandler {
 
     @CommandHandler()
     public handleDemonstrate(command: Demonstration.Demonstrate): void {
-        console.log("received command", command);
+        console.log("received command", command.fullyQualifiedName);
         let aggregate;
 
         try {

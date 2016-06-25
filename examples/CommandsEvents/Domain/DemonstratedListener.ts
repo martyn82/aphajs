@@ -11,7 +11,7 @@ export class DemonstratedListener extends AnnotatedEventListener {
 
     @EventListener()
     public onDemonstrated(event: Demonstration.Demonstrated): void {
-        console.log("received event", event);
+        console.log("received event", event.fullyQualifiedName);
 
         const identities = this.storage.findIdentities();
         console.log("stored aggregates:", identities);
