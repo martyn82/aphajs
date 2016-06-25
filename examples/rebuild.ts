@@ -1,3 +1,4 @@
+/// <reference path="./../typings/index.d.ts" />
 
 import * as winston from "winston";
 import {ProjectionsRebuilder} from "../src/main/Apha/Projections/ProjectionsRebuilder";
@@ -50,11 +51,11 @@ const rebuilder = new CoreProjectionsRebuilder(versionRepository, cluster, event
 rebuilder.logger = logger;
 
 // Seed some events ~~~~~~~~~~~~~~~~~~~~~~
-logger.info("Creating some data to rebuild...");
+logger.info("*** Creating some data to rebuild...");
 
 const aggregatesToCreate = 1000000;
 
-logger.info(`Creating ${aggregatesToCreate} aggregates...`);
+logger.info(`*** Creating ${aggregatesToCreate} aggregates...`);
 
 let numberOfActive = 0;
 let numberOfEvents = 0;
@@ -113,13 +114,13 @@ for (let i = 0; i < aggregatesToCreate; i++) {
     let progress = Math.floor(numberOfAggregates * 100 / aggregatesToCreate);
     if (progress % 5 === 0 && latestProgressReported !== progress) {
         logger.info(
-            `Creation progress: ${progress}% (${numberOfAggregates} / ${aggregatesToCreate} aggregates created)`
+            `*** Creation progress: ${progress}% (${numberOfAggregates} / ${aggregatesToCreate} aggregates created)`
         );
         latestProgressReported = progress;
     }
 }
 
-logger.info("Creation done.");
+logger.info("*** Creation done.");
 logger.info("~~~~~~~~~");
 
 // Start the rebuild ~~~~~~~~~~~~~~~~~~~~~~~
