@@ -43,7 +43,11 @@ describe("ProjectionsRebuilder", () => {
 
             eventStoreMock.expects("getAggregateIds")
                 .twice()
-                .returns(["some-id"]);
+                .returns((() => {
+                    const ids = new Set<string>();
+                    ids.add("some-id");
+                    return ids;
+                })());
 
             eventStoreMock.expects("getEventsForAggregate")
                 .twice()
