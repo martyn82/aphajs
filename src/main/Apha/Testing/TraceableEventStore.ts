@@ -32,7 +32,7 @@ export class TraceableEventStore extends EventStore implements TraceableEventHan
         this.traceableEventBus.clearTraceLog();
     }
 
-    public clear(): void {
-        this._storage.clear();
+    public async clear(): Promise<void> {
+        return super.clear();
     }
 }

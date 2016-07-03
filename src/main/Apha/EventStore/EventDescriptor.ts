@@ -6,18 +6,18 @@ export class EventDescriptor {
         public event: string,
         public payload: string,
         public recorded: string,
-        public playhead: number
+        public version: number
     ) {
     }
 
-    public static record(id: string, type: string, event: string, payload: string, playhead: number): EventDescriptor {
+    public static record(id: string, type: string, event: string, payload: string, version: number): EventDescriptor {
         return new EventDescriptor(
             id,
             type,
             event,
             payload,
             (new Date()).toUTCString(),
-            playhead
+            version
         );
     }
 }

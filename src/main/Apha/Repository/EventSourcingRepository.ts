@@ -8,17 +8,17 @@ import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 export class EventSourcingRepository<T extends AggregateRoot> implements Repository<T> {
     constructor(private factory: AggregateFactory<T>, private eventStore: EventStore) {}
 
-    public findById(id: string): T {
-        const events = this.eventStore.getEventsForAggregate(id);
+    public async findById(id: string): Promise<T> {
+        const events = await this.eventStore.getEventsForAggregate(id);
         return this.factory.createAggregate(events);
     }
 
-    public store(aggregate: AggregateRoot, expectedPlayhead: number): void {
-        this.eventStore.save(
+    public async store(aggregate: AggregateRoot, expectedVersion: number): Promise<void> {
+        await this.eventStore.save(
             aggregate.getId(),
             ClassNameInflector.classOf(aggregate),
             aggregate.getUncommittedChanges(),
-            expectedPlayhead
+            expectedVersion
         );
 
         aggregate.markChangesCommitted();

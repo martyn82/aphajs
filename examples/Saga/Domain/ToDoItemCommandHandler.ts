@@ -10,22 +10,22 @@ export class ToDoItemCommandHandler extends AnnotatedCommandHandler {
     }
 
     @CommandHandler()
-    public handleCreateToDoItem(command: ToDoItem.Create): void {
+    public async handleCreateToDoItem(command: ToDoItem.Create): Promise<void> {
         const item = new ToDoItem();
         item.create(command);
         this.repository.store(item, item.version);
     }
 
     @CommandHandler()
-    public handleMarkItemAsDone(command: ToDoItem.MarkAsDone): void {
-        const item = this.repository.findById(command.id);
+    public async handleMarkItemAsDone(command: ToDoItem.MarkAsDone): Promise<void> {
+        const item = await this.repository.findById(command.id);
         item.markAsDone(command);
         this.repository.store(item, item.version);
     }
 
     @CommandHandler()
-    public handleExpire(command: ToDoItem.Expire): void {
-        const item = this.repository.findById(command.id);
+    public async handleExpire(command: ToDoItem.Expire): Promise<void> {
+        const item = await this.repository.findById(command.id);
         item.expire(command);
         this.repository.store(item, item.version);
     }

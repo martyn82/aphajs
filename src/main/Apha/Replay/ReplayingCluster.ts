@@ -7,10 +7,13 @@ import {EventListener} from "../EventHandling/EventListener";
 export class ReplayingCluster implements Cluster {
     constructor(private delegate: Cluster, private eventStore: EventStore) {}
 
-    public startReplay(): void {
-        this.eventStore.getAggregateIds().forEach(aggregateId => {
-            this.publishAll.apply(this, this.eventStore.getEventsForAggregate(aggregateId));
-        });
+    public async startReplay(): Promise<void> {
+        const aggregateIds = await this.eventStore.getAggregateIds();
+
+        for (const aggregateId of aggregateIds.values()) {
+            const events = await this.eventStore.getEventsForAggregate(aggregateId);
+            this.publishAll.apply(this, events);
+        }
     }
 
     public getName(): string {

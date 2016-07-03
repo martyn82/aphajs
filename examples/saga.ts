@@ -51,26 +51,30 @@ const factory = new GenericAggregateFactory<ToDoItem>(ToDoItem);
 const repository = new EventSourcingRepository<ToDoItem>(factory, eventStore);
 const toDoItemCommandHandler = new ToDoItemCommandHandler(repository);
 
-try {
-    eventBus.subscribe(sagaManager);
+async function main() {
+    try {
+        eventBus.subscribe(sagaManager);
 
-    commandBus.registerHandler(ToDoItem.Create, toDoItemCommandHandler);
-    commandBus.registerHandler(ToDoItem.MarkAsDone, toDoItemCommandHandler);
-    commandBus.registerHandler(ToDoItem.Expire, toDoItemCommandHandler);
+        commandBus.registerHandler(ToDoItem.Create, toDoItemCommandHandler);
+        commandBus.registerHandler(ToDoItem.MarkAsDone, toDoItemCommandHandler);
+        commandBus.registerHandler(ToDoItem.Expire, toDoItemCommandHandler);
 
-    const firstId = IdentityProvider.generateNew();
-    const secondId = IdentityProvider.generateNew();
+        const firstId = IdentityProvider.generateNew();
+        const secondId = IdentityProvider.generateNew();
 
-    setTimeout((commandGateway, firstId) => {
-        commandGateway.send(new ToDoItem.MarkAsDone(firstId));
-    }, 1000, commandGateway, firstId);
+        setTimeout((commandGateway, firstId) => {
+            commandGateway.send(new ToDoItem.MarkAsDone(firstId));
+        }, 1000, commandGateway, firstId);
 
-    commandGateway.send(new ToDoItem.Create(firstId, "My first todo item", 4));
-    commandGateway.send(new ToDoItem.Create(secondId, "My second todo item", 4));
-} catch (e) {
-    console.error(e);
-} finally {
-    setTimeout((scheduler) => {
-        scheduler.destroy();
-    }, 5000, scheduler);
+        commandGateway.send(new ToDoItem.Create(firstId, "My first todo item", 4));
+        commandGateway.send(new ToDoItem.Create(secondId, "My second todo item", 4));
+    } catch (e) {
+        console.error(e);
+    } finally {
+        setTimeout((scheduler) => {
+            scheduler.destroy();
+        }, 5000, scheduler);
+    }
 }
+
+main();

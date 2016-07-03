@@ -5,7 +5,7 @@ import {CommandHandlerDispatcher, SupportedCommandTypesRetriever} from "./Comman
 
 export abstract class AnnotatedCommandHandler implements CommandHandler {
     @CommandHandlerDispatcher()
-    public handle(command: Command): void {
+    public async handle(command: Command): Promise<void> {
     }
 
     @SupportedCommandTypesRetriever()

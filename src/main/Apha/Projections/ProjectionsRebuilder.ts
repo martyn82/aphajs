@@ -24,9 +24,9 @@ export abstract class ProjectionsRebuilder {
         this._logger = logger;
     }
 
-    public rebuildIfNecessary(): void {
+    public async rebuildIfNecessary(): Promise<void> {
         if (this.isRebuildNecessary()) {
-            this.rebuild();
+            return this.rebuild();
         } else {
             this._logger.info(`${this.projectionsType.name}: No rebuild is necessary`);
         }
@@ -42,10 +42,12 @@ export abstract class ProjectionsRebuilder {
         return true;
     }
 
-    protected rebuild(): void {
+    protected async rebuild(): Promise<void> {
         this._logger.info(`${this.projectionsType.name} rebuild necessary`);
+        this._logger.info("Counting events to rebuild...");
 
-        const eventCount = this.countEvents();
+        const eventCount = await this.countEvents();
+
         const replayingCluster = new ReplayingCluster(
             new ProgressReportingCluster(this.cluster, eventCount, this._logger, 5),
             this.eventStore
@@ -55,7 +57,7 @@ export abstract class ProjectionsRebuilder {
         const startTime = Date.now();
 
         try {
-            replayingCluster.startReplay();
+            await replayingCluster.startReplay();
             this.versionRepository.updateVersion(this.projectionsType.name, this.projectionsType.version);
 
             this._logger.info(`${this.projectionsType.name} rebuild finished in ${Date.now() - startTime} ms`);
@@ -65,12 +67,15 @@ export abstract class ProjectionsRebuilder {
         }
     }
 
-    private countEvents(): number {
+    private async countEvents(): Promise<number> {
         let eventCount = 0;
 
-        this.eventStore.getAggregateIds().forEach(aggregateId => {
-            eventCount += this.eventStore.getEventsForAggregate(aggregateId).length;
-        });
+        const aggregateIds = await this.eventStore.getAggregateIds();
+
+        for (const aggregateId of aggregateIds.values()) {
+            const events = await this.eventStore.getEventsForAggregate(aggregateId);
+            eventCount += events.length;
+        }
 
         return eventCount;
     }

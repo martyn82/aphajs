@@ -10,17 +10,17 @@ export class DemonstrateHandler extends AnnotatedCommandHandler {
     }
 
     @CommandHandler()
-    public handleDemonstrate(command: Demonstration.Demonstrate): void {
+    public async handleDemonstrate(command: Demonstration.Demonstrate): Promise<void> {
         console.log("received command", command.fullyQualifiedName);
         let aggregate;
 
         try {
-            aggregate = this.repository.findById(command.id);
+            aggregate = await this.repository.findById(command.id);
         } catch (e) {
             aggregate = new Demonstration();
         }
 
         aggregate.handle(command);
-        this.repository.store(aggregate, aggregate.version);
+        await this.repository.store(aggregate, aggregate.version);
     }
 }

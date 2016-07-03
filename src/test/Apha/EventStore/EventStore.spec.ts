@@ -182,23 +182,23 @@ class EventStoreEvent extends Event {
 }
 
 class EventStoreEventStorage implements EventStorage {
-    public contains(id: string): boolean {
+    public async contains(id: string): Promise<boolean> {
         return false;
     }
 
-    public append(event: EventDescriptor): boolean {
+    public async append(event: EventDescriptor): Promise<boolean> {
         return false;
     }
 
-    public find(id: string): EventDescriptor[] {
+    public async find(id: string): Promise<EventDescriptor[]> {
         return [];
     }
 
-    public findIdentities(): Set<string> {
+    public async findIdentities(): Promise<Set<string>> {
         return new Set<string>();
     }
 
-    public clear(): void {
+    public async clear(): Promise<void> {
     }
 }
 

@@ -5,11 +5,11 @@ import {EventDescriptor} from "../EventDescriptor";
 export class MemoryEventStorage implements EventStorage {
     private data: Map<string, EventDescriptor[]> = new Map<string, EventDescriptor[]>();
 
-    public contains(id: string): boolean {
+    public async contains(id: string): Promise<boolean> {
         return this.data.has(id);
     }
 
-    public append(event: EventDescriptor): boolean {
+    public async append(event: EventDescriptor): Promise<boolean> {
         if (!this.data.has(event.id)) {
             this.data.set(event.id, []);
         }
@@ -18,7 +18,7 @@ export class MemoryEventStorage implements EventStorage {
         return true;
     }
 
-    public find(id: string): EventDescriptor[] {
+    public async find(id: string): Promise<EventDescriptor[]> {
         if (!this.data.has(id)) {
             return [];
         }
@@ -26,7 +26,7 @@ export class MemoryEventStorage implements EventStorage {
         return this.data.get(id);
     }
 
-    public findIdentities(): Set<string> {
+    public async findIdentities(): Promise<Set<string>> {
         const identities = new Set<string>();
 
         for (const identity of this.data.keys()) {
@@ -36,7 +36,7 @@ export class MemoryEventStorage implements EventStorage {
         return identities;
     }
 
-    public clear(): void {
+    public async clear(): Promise<void> {
         this.data.clear();
     }
 }

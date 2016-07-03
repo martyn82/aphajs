@@ -10,7 +10,7 @@ export abstract class AggregateRoot {
     private eventLog: Event[] = [];
 
     public loadFromHistory(history: Event[]): void {
-        history.forEach((event) => {
+        history.forEach(event => {
             this.apply(event, false);
         });
     }

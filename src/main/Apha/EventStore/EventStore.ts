@@ -9,7 +9,7 @@ import {AggregateNotFoundException} from "./AggregateNotFoundException";
 import {EventClassMap} from "./EventClassMap";
 
 export class EventStore {
-    private currents: {[id: string]: number} = {};
+    private currents: Map<string, number> = new Map<string, number>();
 
     constructor(
         private eventBus: EventBus,
@@ -19,35 +19,44 @@ export class EventStore {
     ) {
     }
 
-    public save(aggregateId: string, aggregateType: string, events: Event[], expectedPlayhead: number): void {
-        if (!this.isValidPlayhead(aggregateId, expectedPlayhead)) {
-            throw new ConcurrencyException(expectedPlayhead, this.currents[aggregateId]);
+    public async save(
+        aggregateId: string,
+        aggregateType: string,
+        events: Event[],
+        expectedPlayhead: number
+    ): Promise<void> {
+        const validPlayhead = await this.isValidPlayhead(aggregateId, expectedPlayhead);
+
+        if (!validPlayhead) {
+            throw new ConcurrencyException(expectedPlayhead, this.currents.get(aggregateId));
         }
 
         let playhead = expectedPlayhead;
 
-        events.forEach((event: Event) => {
+        for (let i = 0; i < events.length; i++) {
+            const event = events[i];
+
             playhead++;
             event.version = playhead;
 
-            this.saveEvent(aggregateId, aggregateType, event);
+            await this.saveEvent(aggregateId, aggregateType, event);
             this.eventBus.publish(event);
-        });
+        }
     }
 
-    private isValidPlayhead(aggregateId: string, playhead: number): boolean {
-        const descriptors = this.storage.find(aggregateId);
+    private async isValidPlayhead(aggregateId: string, playhead: number): Promise<boolean> {
+        const descriptors = await this.storage.find(aggregateId);
 
         if (descriptors.length > 0) {
-            this.currents[aggregateId] = descriptors[descriptors.length - 1].playhead;
+            this.currents.set(aggregateId, descriptors[descriptors.length - 1].version);
         } else {
-            this.currents[aggregateId] = -1;
+            this.currents.set(aggregateId, -1);
         }
 
-        return (this.currents[aggregateId] === playhead);
+        return (this.currents.get(aggregateId) === playhead);
     }
 
-    private saveEvent(aggregateId: string, aggregateType: string, event: Event): void {
+    private async saveEvent(aggregateId: string, aggregateType: string, event: Event): Promise<boolean> {
         const descriptor = EventDescriptor.record(
             aggregateId,
             aggregateType,
@@ -56,15 +65,17 @@ export class EventStore {
             event.version
         );
 
-        this.storage.append(descriptor);
+        return this.storage.append(descriptor);
     }
 
-    public getEventsForAggregate(aggregateId: string): Event[] {
-        if (!this.storage.contains(aggregateId)) {
+    public async getEventsForAggregate(aggregateId: string): Promise<Event[]> {
+        const contains = await this.storage.contains(aggregateId);
+
+        if (!contains) {
             throw new AggregateNotFoundException(aggregateId);
         }
 
-        const descriptors = this.storage.find(aggregateId);
+        const descriptors = await this.storage.find(aggregateId);
 
         return descriptors.map((descriptor: EventDescriptor): Event => {
             return this.serializer.deserialize(
@@ -74,11 +85,12 @@ export class EventStore {
         });
     }
 
-    public getAggregateIds(): Set<string> {
+    public async getAggregateIds(): Promise<Set<string>> {
         return this.storage.findIdentities();
     }
 
-    public clear(): void {
-        this.storage.clear();
+    public async clear(): Promise<void> {
+        this.currents.clear();
+        return this.storage.clear();
     }
 }

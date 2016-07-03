@@ -50,94 +50,108 @@ const eventStore = new EventStore(cluster, eventStorage, serializer, new Annotat
 const rebuilder = new CoreProjectionsRebuilder(versionRepository, cluster, eventStore, accountProjections);
 rebuilder.logger = logger;
 
-// Seed some events ~~~~~~~~~~~~~~~~~~~~~~
-logger.info("*** Creating some data to rebuild...");
-
-const aggregatesToCreate = 1000000;
-
-logger.info(`*** Creating ${aggregatesToCreate} aggregates...`);
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 let numberOfActive = 0;
 let numberOfEvents = 0;
 let numberOfAggregates = 0;
-let latestProgressReported = -1;
 
-for (let i = 0; i < aggregatesToCreate; i++) {
-    let accountId = IdentityProvider.generateNew();
-    numberOfAggregates++;
+async function seedData() {
+    const aggregatesToCreate = 100000;
 
-    let event1 = new Account.Registered(accountId, "foo@bar.com", "passwd");
-    eventStorage.append(
-        new EventDescriptor(
-            accountId,
-            ClassNameInflector.className(Account),
-            ClassNameInflector.classOf(event1),
-            serializer.serialize(event1),
-            Date.now().toString(),
-            0
-        )
-    );
-    numberOfEvents++;
+    logger.info("*** Creating some data to rebuild...");
+    logger.info(`*** Creating ${aggregatesToCreate} aggregates...`);
 
-    if (i % 3 === 0) {
-        let event2 = new Account.Activated(accountId);
-        eventStorage.append(
+    let latestProgressReported = -1;
+
+    for (let i = 0; i < aggregatesToCreate; i++) {
+        let accountId = IdentityProvider.generateNew();
+        numberOfAggregates++;
+
+        let event1 = new Account.Registered(accountId, "foo@bar.com", "passwd");
+        await eventStorage.append(
             new EventDescriptor(
                 accountId,
                 ClassNameInflector.className(Account),
-                ClassNameInflector.classOf(event2),
-                serializer.serialize(event2),
+                ClassNameInflector.classOf(event1),
+                serializer.serialize(event1),
                 Date.now().toString(),
-                1
+                0
             )
         );
         numberOfEvents++;
 
-        if (i % 2 === 0) {
-            let event3 = new Account.Deactivated(accountId);
-            eventStorage.append(
+        if (i % 3 === 0) {
+            let event2 = new Account.Activated(accountId);
+            await eventStorage.append(
                 new EventDescriptor(
                     accountId,
                     ClassNameInflector.className(Account),
-                    ClassNameInflector.classOf(event3),
-                    serializer.serialize(event3),
+                    ClassNameInflector.classOf(event2),
+                    serializer.serialize(event2),
                     Date.now().toString(),
                     1
                 )
             );
             numberOfEvents++;
-        } else {
-            numberOfActive++;
+
+            if (i % 2 === 0) {
+                let event3 = new Account.Deactivated(accountId);
+                await eventStorage.append(
+                    new EventDescriptor(
+                        accountId,
+                        ClassNameInflector.className(Account),
+                        ClassNameInflector.classOf(event3),
+                        serializer.serialize(event3),
+                        Date.now().toString(),
+                        1
+                    )
+                );
+                numberOfEvents++;
+            } else {
+                numberOfActive++;
+            }
+        }
+
+        let progress = Math.floor(numberOfAggregates * 100 / aggregatesToCreate);
+        if (progress % 5 === 0 && latestProgressReported !== progress) {
+            logger.info(
+                `*** Creation progress: ${progress}% (${numberOfAggregates} / ${aggregatesToCreate} aggregates created)`
+            );
+            latestProgressReported = progress;
         }
     }
 
-    let progress = Math.floor(numberOfAggregates * 100 / aggregatesToCreate);
-    if (progress % 5 === 0 && latestProgressReported !== progress) {
-        logger.info(
-            `*** Creation progress: ${progress}% (${numberOfAggregates} / ${aggregatesToCreate} aggregates created)`
+    logger.info("*** Creation done.");
+    logger.info(`*** ${numberOfEvents} events inserted.`);
+}
+
+async function main(): Promise<number> {
+    await seedData();
+
+    logger.info("~~~~~~~~~");
+
+    // Start the rebuild
+    await rebuilder.rebuildIfNecessary();
+
+    const activeAccounts = accountProjections.findAllActive();
+
+    if (activeAccounts.length !== numberOfActive) {
+        logger.error(
+            `The number of active accounts (${activeAccounts.length}) did not match the expectation (${numberOfActive}).`
         );
-        latestProgressReported = progress;
+        return -1;
+    } else {
+        logger.info(`Constructed ${activeAccounts.length} projections`);
     }
-}
 
-logger.info("*** Creation done.");
-logger.info("~~~~~~~~~");
-
-// Start the rebuild ~~~~~~~~~~~~~~~~~~~~~~~
-
-rebuilder.rebuildIfNecessary();
-
-const activeAccounts = accountProjections.findAllActive();
-
-if (activeAccounts.length !== numberOfActive) {
-    throw new Error(
-        `The number of active accounts (${activeAccounts.length}) did not match the expectation (${numberOfActive}).`
+    logger.info(
+        `Rebuilt ${numberOfEvents} events, for ${numberOfAggregates} accounts (of which ${numberOfActive} activated)`
     );
+    logger.info("~~~~~~~~~");
+
+    await rebuilder.rebuildIfNecessary();
+    return 0;
 }
 
-logger.info(
-    `Rebuilt ${numberOfEvents} events, for ${numberOfAggregates} accounts (of which ${numberOfActive} activated)`
-);
-logger.info("~~~~~~~~~");
-
-rebuilder.rebuildIfNecessary();
+main().then(code => process.exit(code));

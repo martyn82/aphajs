@@ -29,13 +29,13 @@ export class SimpleCommandBus extends CommandBus {
         this.handlers.delete(commandClass);
     }
 
-    public send(command: Command) {
+    public async send(command: Command): Promise<void> {
         const commandClass = command.fullyQualifiedName;
 
         if (!this.handlers.has(commandClass)) {
             throw new NoCommandHandlerException(commandClass);
         }
 
-        this.handlers.get(commandClass).handle(command);
+        return this.handlers.get(commandClass).handle(command);
     }
 }

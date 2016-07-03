@@ -22,7 +22,7 @@ export abstract class AnnotatedAggregateRoot extends AggregateRoot
     }
 
     @CommandHandlerDispatcher()
-    public handle(command: Command): void {
+    public async handle(command: Command): Promise<void> {
     }
 
     @EventListenerDispatcher()

@@ -11,17 +11,21 @@ import {EventSourcingRepository} from "../src/main/Apha/Repository/EventSourcing
 import {SimpleCommandBus} from "../src/main/Apha/CommandHandling/SimpleCommandBus";
 import {AnnotatedEventClassMap} from "../src/main/Apha/EventStore/AnnotatedEventClassMap";
 
-const eventStorage = new MemoryEventStorage();
-const eventBus = new SimpleEventBus();
-eventBus.subscribe(new DemonstratedListener(eventStorage));
+async function main() {
+    const eventStorage = new MemoryEventStorage();
+    const eventBus = new SimpleEventBus();
+    eventBus.subscribe(new DemonstratedListener(eventStorage));
 
-const serializer = new JsonSerializer();
-const eventClassMap = new AnnotatedEventClassMap();
-const eventStore = new EventStore(eventBus, eventStorage, serializer, eventClassMap);
-const factory = new GenericAggregateFactory<Demonstration>(Demonstration);
-const repository = new EventSourcingRepository<Demonstration>(factory, eventStore);
+    const serializer = new JsonSerializer();
+    const eventClassMap = new AnnotatedEventClassMap();
+    const eventStore = new EventStore(eventBus, eventStorage, serializer, eventClassMap);
+    const factory = new GenericAggregateFactory<Demonstration>(Demonstration);
+    const repository = new EventSourcingRepository<Demonstration>(factory, eventStore);
 
-const commandBus = new SimpleCommandBus();
-commandBus.registerHandler(Demonstration.Demonstrate, new DemonstrateHandler(repository));
+    const commandBus = new SimpleCommandBus();
+    commandBus.registerHandler(Demonstration.Demonstrate, new DemonstrateHandler(repository));
 
-commandBus.send(new Demonstration.Demonstrate("foo"));
+    commandBus.send(new Demonstration.Demonstrate("foo"));
+}
+
+main();

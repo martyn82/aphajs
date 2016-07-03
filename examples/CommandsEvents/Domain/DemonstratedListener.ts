@@ -10,10 +10,10 @@ export class DemonstratedListener extends AnnotatedEventListener {
     }
 
     @EventListener()
-    public onDemonstrated(event: Demonstration.Demonstrated): void {
+    public async onDemonstrated(event: Demonstration.Demonstrated): Promise<void> {
         console.log("received event", event.fullyQualifiedName);
 
-        const identities = this.storage.findIdentities();
+        const identities = await this.storage.findIdentities();
         console.log("stored aggregates:", identities);
 
         identities.forEach((identity) => {

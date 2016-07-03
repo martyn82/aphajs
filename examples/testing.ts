@@ -27,28 +27,63 @@ commandBus.registerHandler(Account.Register, handler);
 commandBus.registerHandler(Account.Activate, handler);
 commandBus.registerHandler(Account.Deactivate, handler);
 
-const scenario = new Scenario(factory, eventStore, commandBus, AssertEvents);
+async function main() {
+    const scenario = new Scenario(factory, eventStore, commandBus, AssertEvents);
 
-console.log("When I register an Account\nThen the Account is registered\n");
-scenario
-    .given()
-    .when(Fixtures.RegisterAccount)
-    .then(Fixtures.AccountRegistered);
+    try {
+        console.log(
+            "When I register an Account\n" +
+            "Then the Account is registered\n"
+        );
+        await scenario
+            .given()
+            .when(Fixtures.RegisterAccount)
+            .then(Fixtures.AccountRegistered);
+    } catch (e) {
+        console.error(e);
+    }
 
-console.log("Given a registered Account\nWhen I activate the Account\nThen the Account is activated\n");
-scenario
-    .given(Fixtures.AccountRegistered)
-    .when(Fixtures.ActivateAccount)
-    .then(Fixtures.AccountActivated);
+    try {
+        console.log(
+            "Given a registered Account\n" +
+            "When I activate the Account\n" +
+            "Then the Account is activated\n"
+        );
+        await scenario
+            .given(Fixtures.AccountRegistered)
+            .when(Fixtures.ActivateAccount)
+            .then(Fixtures.AccountActivated);
+    } catch (e) {
+        console.error(e);
+    }
 
-console.log("Given an activated Account\nWhen I deactivate the Account\nThen the Account is deactivated\n");
-scenario
-    .given(Fixtures.AccountRegistered, Fixtures.AccountActivated)
-    .when(Fixtures.DeactivateAccount)
-    .then(Fixtures.AccountDeactivated);
+    try {
+        console.log(
+            "Given an activated Account\n" +
+            "When I deactivate the Account\n" +
+            "Then the Account is deactivated\n"
+        );
+        await scenario
+            .given(Fixtures.AccountRegistered, Fixtures.AccountActivated)
+            .when(Fixtures.DeactivateAccount)
+            .then(Fixtures.AccountDeactivated);
+    } catch (e) {
+        console.error(e);
+    }
 
-console.log("Given an activated Account\nWhen I activate the Account\nThen nothing happened\n");
-scenario
-    .given(Fixtures.AccountRegistered, Fixtures.AccountActivated)
-    .when(Fixtures.ActivateAccount)
-    .then();
+    try {
+        console.log(
+            "Given an activated Account\n" +
+            "When I activate the Account\n" +
+            "Then nothing happened\n"
+        );
+        await scenario
+            .given(Fixtures.AccountRegistered, Fixtures.AccountActivated)
+            .when(Fixtures.ActivateAccount)
+            .then();
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+main();

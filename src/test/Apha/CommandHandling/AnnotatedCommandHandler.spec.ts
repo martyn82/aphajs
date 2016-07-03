@@ -77,7 +77,7 @@ class CommandHandlerDecoratorSpecCommandHandler2 extends AnnotatedCommandHandler
 
 @Mixin(AnnotatedCommandHandler)
 class CommandHandlerDecoratorSpecMixedInCommandHandler implements AnnotatedCommandHandler {
-    handle: (command: Command) => void;
+    handle: (command: Command) => Promise<void>;
     getSupportedCommands: () => Set<CommandType>;
 
     public handleSomethingCalled: boolean = false;

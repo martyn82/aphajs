@@ -5,7 +5,7 @@ import {UnsupportedCommandException} from "./UnsupportedCommandException";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 
 export abstract class TypedCommandHandler implements CommandHandler {
-    public handle(command: Command): void {
+    public async handle(command: Command): Promise<void> {
         this.handleByInflection(command);
     }
 

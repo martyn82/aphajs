@@ -4,7 +4,9 @@
   "dependencies": {},
   "globalDevDependencies": {
     "chai": "registry:dt/chai#3.4.0+20160317120654",
+    "chai-as-promised": "registry:dt/chai-as-promised#0.0.0+20160423070304",
     "mocha": "registry:dt/mocha#2.2.5+20160317120654",
+    "mongodb": "registry:dt/mongodb#2.1.0+20160602142941",
     "node": "registry:dt/node#6.0.0+20160613154055",
     "promises-a-plus": "registry:dt/promises-a-plus#0.0.0+20160317120654"
   },

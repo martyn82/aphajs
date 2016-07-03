@@ -127,8 +127,8 @@ class ScenarioSpec_CommandHandler extends TypedCommandHandler {
         this.repository.store(aggregate, aggregate.version);
     }
 
-    public handleScenarioSpec_Command2(command: ScenarioSpec_Command2): void {
-        const aggregate = this.repository.findById(command.id);
+    public async handleScenarioSpec_Command2(command: ScenarioSpec_Command2): Promise<void> {
+        const aggregate = await this.repository.findById(command.id);
         aggregate.command2(command);
         this.repository.store(aggregate, aggregate.version);
     }

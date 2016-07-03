@@ -8,16 +8,16 @@ import {Account} from "./Account";
 export class AccountCommandHandler implements CommandHandler {
     constructor(private repository: EventSourcingRepository<Account>, private factory: AggregateFactory<Account>) {}
 
-    public handle(command: Command) {
+    public async handle(command: Command): Promise<void> {
         let aggregate;
 
         try {
-            aggregate = this.repository.findById(command.id);
+            aggregate = await this.repository.findById(command.id);
         } catch (e) {
             aggregate = this.factory.createAggregate([]);
         }
 
-        aggregate.handle(command);
-        this.repository.store(aggregate, aggregate.version);
+        await aggregate.handle(command);
+        await this.repository.store(aggregate, aggregate.version);
     }
 }

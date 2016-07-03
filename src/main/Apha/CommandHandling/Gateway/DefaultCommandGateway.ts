@@ -7,7 +7,7 @@ import {Command} from "../../Message/Command";
 export class DefaultCommandGateway implements CommandGateway {
     constructor(private commandBus: CommandBus, private interceptors: CommandDispatchInterceptor[] = []) {}
 
-    public send(command: Command): void {
+    public async send(command: Command): Promise<void> {
         this.notifyBeforeDispatch(command);
 
         try {

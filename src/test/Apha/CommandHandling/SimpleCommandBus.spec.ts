@@ -78,5 +78,5 @@ describe("SimpleCommandBus", () => {
 
 class SimpleCommandBusCommand extends Command {}
 class SimpleCommandBusCommandHandler implements CommandHandler {
-    public handle(command: Command): void {}
+    public async handle(command: Command): Promise<void> {}
 }

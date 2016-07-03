@@ -10,6 +10,8 @@ import {AssertEvents} from "./Assert";
 
 export class Scenario {
     private aggregate: AggregateRoot;
+    private events: Event[];
+    private commands: Command[];
 
     constructor(
         private aggregateFactory: AggregateFactory<AggregateRoot>,
@@ -19,7 +21,8 @@ export class Scenario {
     ) {}
 
     public given(...events: Event[]): this {
-        this.eventStore.clear();
+        this.aggregate = null;
+        this.events = [];
 
         if (events.length === 0) {
             return this;
@@ -27,29 +30,27 @@ export class Scenario {
 
         events.forEach(event => {
             event.version = -1;
+            this.events.push(event);
         });
-
-        const aggregate = this.getAggregate(events);
-        this.eventStore.save(aggregate.getId(), ClassNameInflector.classOf(aggregate), events, aggregate.version);
 
         return this;
     }
 
     public when(...commands: Command[]): this {
-        this.eventStore.clearTraceLog();
+        this.commands = [];
 
         if (commands.length === 0) {
             return this;
         }
 
-        commands.forEach((command: Command) => {
-            this.commandBus.send(command);
-        });
-
+        commands.forEach(command => this.commands.push(command));
         return this;
     }
 
-    public then(...expectedEvents: Event[]): void {
+    public async then(...expectedEvents: Event[]): Promise<void> {
+        await this.arrange();
+        await this.act();
+
         const actualEvents = this.eventStore.getEvents();
 
         expectedEvents.forEach((event: Event, index: number) => {
@@ -59,6 +60,32 @@ export class Scenario {
         });
 
         this.assert(expectedEvents, actualEvents);
+    }
+
+    private async arrange(): Promise<void> {
+        this.eventStore.clear();
+
+        const aggregate = this.getAggregate(this.events);
+
+        await this.eventStore.save(
+            aggregate.getId(),
+            ClassNameInflector.classOf(aggregate),
+            this.events,
+            aggregate.version
+        );
+
+        this.events = [];
+    }
+
+    private async act(): Promise<void> {
+        this.eventStore.clearTraceLog();
+
+        for (let i = 0; i < this.commands.length; i++) {
+            const command = this.commands[i];
+            await this.commandBus.send(command);
+        }
+
+        this.commands = [];
     }
 
     private getAggregate(events: Event[]): AggregateRoot {
