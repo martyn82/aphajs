@@ -1,9 +1,13 @@
 
 import * as sinon from "sinon";
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
 import {expect} from "chai";
 import {TypedCommandHandler} from "../../../main/Apha/CommandHandling/TypedCommandHandler";
 import {Command} from "../../../main/Apha/Message/Command";
 import {UnsupportedCommandException} from "../../../main/Apha/CommandHandling/UnsupportedCommandException";
+
+chai.use(chaiAsPromised);
 
 describe("TypedCommandHandler", () => {
     let handler;
@@ -15,22 +19,22 @@ describe("TypedCommandHandler", () => {
     });
 
     describe("handle", () => {
-        it("dispatches command to appropriate handler", () => {
+        it("dispatches command to appropriate handler", (done) => {
             const command = new TypedCommandHandlerSpecCommand();
             handlerMock.expects("handleTypedCommandHandlerSpecCommand")
                 .once()
                 .withArgs(command);
 
-            handler.handle(command);
-            handlerMock.verify();
+            handler.handle(command).then(() => {
+                handlerMock.verify();
+                done();
+            });
         });
 
-        it("throws exception if no appropriate handler can be found", () => {
+        it("throws exception if no appropriate handler can be found", (done) => {
             const command = new TypedCommandHandlerSpecCommand2();
 
-            expect(() => {
-                handler.handle(command);
-            }).to.throw(UnsupportedCommandException);
+            expect(handler.handle(command)).to.be.rejectedWith(UnsupportedCommandException).and.notify(done);
         });
     });
 });

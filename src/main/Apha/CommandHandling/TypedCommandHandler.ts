@@ -6,10 +6,10 @@ import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 
 export abstract class TypedCommandHandler implements CommandHandler {
     public async handle(command: Command): Promise<void> {
-        this.handleByInflection(command);
+        return this.handleByInflection(command);
     }
 
-    private handleByInflection(command: Command): void {
+    private async handleByInflection(command: Command): Promise<void> {
         const commandClass = ClassNameInflector.classOf(command);
         const handler = this["handle" + commandClass];
 
@@ -17,6 +17,6 @@ export abstract class TypedCommandHandler implements CommandHandler {
             throw new UnsupportedCommandException(commandClass);
         }
 
-        handler.call(this, command);
+        return handler.call(this, command);
     }
 }

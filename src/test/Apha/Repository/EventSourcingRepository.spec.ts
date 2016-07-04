@@ -1,5 +1,7 @@
 
 import * as sinon from "sinon";
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
 import {expect} from "chai";
 import {EventSourcingRepository} from "../../../main/Apha/Repository/EventSourcingRepository";
 import {AggregateFactory} from "../../../main/Apha/Domain/AggregateFactory";
@@ -11,6 +13,8 @@ import {EventStorage} from "../../../main/Apha/EventStore/Storage/EventStorage";
 import {EventDescriptor} from "../../../main/Apha/EventStore/EventDescriptor";
 import {JsonSerializer} from "../../../main/Apha/Serialization/JsonSerializer";
 import {EventClassMap} from "../../../main/Apha/EventStore/EventClassMap";
+
+chai.use(chaiAsPromised);
 
 describe("EventSourcingRepository", () => {
     let repository;
@@ -36,30 +40,36 @@ describe("EventSourcingRepository", () => {
     });
 
     describe("findById", () => {
-        it("retrieves aggregate by ID", () => {
+        it("retrieves aggregate by ID", (done) => {
             const aggregateId = "id";
             const events = [
                 new EventSourcingRepositoryEvent()
             ];
             const aggregate = new EventSourcingRepositoryAggregateRoot();
+            const promisedEvents = new Promise<Event[]>(resolve => resolve(events));
 
             eventStoreMock.expects("getEventsForAggregate")
                 .once()
                 .withArgs(aggregateId)
-                .returns(events);
+                .returns(promisedEvents);
 
             factoryMock.expects("createAggregate")
                 .once()
                 .withArgs()
                 .returns(aggregate);
 
-            const actual = repository.findById(aggregateId);
-            expect(actual).to.be.an.instanceOf(EventSourcingRepositoryAggregateRoot);
+            expect(repository.findById(aggregateId)).to.eventually.be
+                .an.instanceOf(EventSourcingRepositoryAggregateRoot)
+                .and.satisfy(() => {
+                    eventStoreMock.verify();
+                    factoryMock.verify();
+                    return true;
+                }).and.notify(done);
         });
     });
 
     describe("store", () => {
-        it("saves not yet committed changes of an aggregate", () => {
+        it("saves not yet committed changes of an aggregate", (done) => {
             const expectedPlayhead = -1;
             const aggregateId = "id";
 
@@ -90,7 +100,11 @@ describe("EventSourcingRepository", () => {
                     expectedPlayhead
                 );
 
-            repository.store(aggregate, expectedPlayhead);
+            expect(repository.store(aggregate, expectedPlayhead)).to.eventually.be.fulfilled.and.satisfy(() => {
+                aggregateMock.verify();
+                eventStoreMock.verify();
+                return true;
+            }).and.notify(done);
         });
     });
 });

@@ -63,7 +63,7 @@ export class Scenario {
     }
 
     private async arrange(): Promise<void> {
-        this.eventStore.clear();
+        await this.eventStore.clear();
 
         const aggregate = this.getAggregate(this.events);
 

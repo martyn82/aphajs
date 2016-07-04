@@ -1,5 +1,7 @@
 
 import * as sinon from "sinon";
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
 import {expect} from "chai";
 import {ReplayingCluster} from "../../../main/Apha/Replay/ReplayingCluster";
 import {SimpleCluster} from "../../../main/Apha/EventHandling/SimpleCluster";
@@ -10,6 +12,8 @@ import {JsonSerializer} from "../../../main/Apha/Serialization/JsonSerializer";
 import {EventClassMap} from "../../../main/Apha/EventStore/EventClassMap";
 import {Event} from "../../../main/Apha/Message/Event";
 import {EventListener} from "../../../main/Apha/EventHandling/EventListener";
+
+chai.use(chaiAsPromised);
 
 describe("ReplayingCluster", () => {
     let cluster;
@@ -33,28 +37,32 @@ describe("ReplayingCluster", () => {
     });
 
     describe("startReplay", () => {
-        it("should fetch aggregates and replay their events", () => {
+        it("should fetch aggregates and replay their events", (done) => {
             const ids = new Set<string>();
             ids.add("some-id");
 
+            const promisedIds = new Promise<Set<string>>(resolve => resolve(ids));
+
             const event = new ReplayingClusterSpecEvent();
+            const promisedEvents = new Promise<Event[]>(resolve => resolve([event]));
 
             eventStoreMock.expects("getAggregateIds")
                 .once()
-                .returns(ids);
+                .returns(promisedIds);
 
             eventStoreMock.expects("getEventsForAggregate")
                 .exactly(ids.size)
-                .returns([event]);
+                .returns(promisedEvents);
 
             delegateClusterMock.expects("publishAll")
                 .exactly(ids.size)
                 .withArgs(event);
 
-            cluster.startReplay();
-
-            eventStoreMock.verify();
-            delegateClusterMock.verify();
+            expect(cluster.startReplay()).to.eventually.be.fulfilled.satisfy(() => {
+                eventStoreMock.verify();
+                delegateClusterMock.verify();
+                return true;
+            }).and.notify(done);
         });
     });
 

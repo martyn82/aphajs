@@ -1,5 +1,7 @@
 
 import * as sinon from "sinon";
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
 import {expect} from "chai";
 import {Scenario} from "../../../main/Apha/Testing/Scenario";
 import {GenericAggregateFactory} from "../../../main/Apha/Domain/GenericAggregateFactory";
@@ -15,6 +17,8 @@ import {Repository} from "../../../main/Apha/Repository/Repository";
 import {EventSourcingRepository} from "../../../main/Apha/Repository/EventSourcingRepository";
 import {TypedCommandHandler} from "../../../main/Apha/CommandHandling/TypedCommandHandler";
 import {SimpleCommandBus} from "../../../main/Apha/CommandHandling/SimpleCommandBus";
+
+chai.use(chaiAsPromised);
 
 describe("Scenario", () => {
     let scenario;
@@ -43,51 +47,67 @@ describe("Scenario", () => {
         scenario = new Scenario(factory, eventStore, commandBus, assertSpy);
     });
 
-    it("should assert empty events; given nothing, when nothing, then nothing", () => {
-        scenario.given()
+    it("should assert empty events; given nothing, when nothing, then nothing", (done) => {
+        expect(scenario
+            .given()
             .when()
-            .then();
-
-        expect(assertSpy.called).to.be.true;
-        expect(assertSpy.calledWith([], [])).to.be.true;
+            .then()
+        ).to.eventually.be.fulfilled.and.satisfy(() => {
+            return Promise.all([
+                expect(assertSpy.called).to.be.true,
+                expect(assertSpy.calledWith([], [])).to.be.true
+            ]);
+        }).and.notify(done);
     });
 
-    it("should assert a single resulting event, given nothing", () => {
+    it("should assert a single resulting event, given nothing", (done) => {
         const aggregateId = "id";
         const event = new ScenarioSpec_Event(aggregateId);
 
-        scenario.given()
+        expect(scenario
+            .given()
             .when(new ScenarioSpec_Command(aggregateId))
-            .then(event);
-
-        expect(assertSpy.called).to.be.true;
-        expect(assertSpy.calledWith([event], [event])).to.be.true;
+            .then(event)
+        ).to.eventually.be.fulfilled.and.satisfy(() => {
+            return Promise.all([
+                expect(assertSpy.called).to.be.true,
+                expect(assertSpy.calledWith([event], [event])).to.be.true
+            ]);
+        }).and.notify(done);
     });
 
-    it("should assert multiple events in the right order", () => {
+    it("should assert multiple events in the right order", (done) => {
         const aggregateId = "id";
         const event1 = new ScenarioSpec_Event(aggregateId);
         const event2 = new ScenarioSpec_Event2(aggregateId, "foo");
 
-        scenario.given()
+        expect(scenario
+            .given()
             .when(new ScenarioSpec_Command(aggregateId), new ScenarioSpec_Command2(aggregateId, "foo"))
-            .then(event1, event2);
-
-        expect(assertSpy.called).to.be.true;
-        expect(assertSpy.calledWith([event1, event2], [event1, event2])).to.be.true;
+            .then(event1, event2)
+        ).to.eventually.be.fulfilled.and.satisfy(() => {
+            return Promise.all([
+                expect(assertSpy.called).to.be.true,
+                expect(assertSpy.calledWith([event1, event2], [event1, event2])).to.be.true
+            ]);
+        }).and.notify(done);
     });
 
-    it("should assert events given an initial arrangement", () => {
+    it("should assert events given an initial arrangement", (done) => {
         const aggregateId = "id";
         const event1 = new ScenarioSpec_Event(aggregateId);
         const event2 = new ScenarioSpec_Event2(aggregateId, "foo");
 
-        scenario.given(event1)
+        expect(scenario
+            .given(event1)
             .when(new ScenarioSpec_Command2(aggregateId, "foo"))
-            .then(event2);
-
-        expect(assertSpy.called).to.be.true;
-        expect(assertSpy.calledWith([event2], [event2])).to.be.true;
+            .then(event2)
+        ).to.eventually.be.fulfilled.and.satisfy(() => {
+            return Promise.all([
+                expect(assertSpy.called).to.be.true,
+                expect(assertSpy.calledWith([event2], [event2])).to.be.true
+            ]);
+        }).and.notify(done);
     });
 });
 
@@ -121,16 +141,16 @@ class ScenarioSpec_CommandHandler extends TypedCommandHandler {
         super();
     }
 
-    public handleScenarioSpec_Command(command: ScenarioSpec_Command): void {
+    public async handleScenarioSpec_Command(command: ScenarioSpec_Command): Promise<void> {
         const aggregate = new ScenarioSpec_AggregateRoot();
         aggregate.command(command);
-        this.repository.store(aggregate, aggregate.version);
+        return this.repository.store(aggregate, aggregate.version);
     }
 
     public async handleScenarioSpec_Command2(command: ScenarioSpec_Command2): Promise<void> {
         const aggregate = await this.repository.findById(command.id);
         aggregate.command2(command);
-        this.repository.store(aggregate, aggregate.version);
+        return this.repository.store(aggregate, aggregate.version);
     }
 }
 

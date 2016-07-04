@@ -1,11 +1,15 @@
 
 import * as sinon from "sinon";
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
 import {expect} from "chai";
 import {SimpleCommandBus} from "../../../main/Apha/CommandHandling/SimpleCommandBus";
 import {CommandHandler} from "../../../main/Apha/CommandHandling/CommandHandler";
 import {Command} from "../../../main/Apha/Message/Command";
 import {NoCommandHandlerException} from "../../../main/Apha/CommandHandling/NoCommandHandlerException";
 import {CommandHandlerAlreadyExistsException} from "../../../main/Apha/CommandHandling/CommandHandlerAlreadyExistsException";
+
+chai.use(chaiAsPromised);
 
 describe("SimpleCommandBus", () => {
     let commandBus;
@@ -15,7 +19,7 @@ describe("SimpleCommandBus", () => {
     });
 
     describe("handle", () => {
-        it("handles command by registered handler", () => {
+        it("handles command by registered handler", (done) => {
             const command = new SimpleCommandBusCommand();
             const handler = new SimpleCommandBusCommandHandler();
 
@@ -23,17 +27,15 @@ describe("SimpleCommandBus", () => {
             handlerMock.expects("handle").once().withArgs(command);
 
             commandBus.registerHandler(SimpleCommandBusCommand, handler);
-            commandBus.send(command);
-
-            handlerMock.verify();
+            commandBus.send(command).then(() => {
+                handlerMock.verify();
+                done();
+            });
         });
 
-        it("throws exception if command cannot be handled", () => {
+        it("throws exception if command cannot be handled", (done) => {
             const command = new SimpleCommandBusCommand();
-
-            expect(() => {
-                commandBus.send(command);
-            }).to.throw(NoCommandHandlerException);
+            expect(commandBus.send(command)).to.be.rejectedWith(NoCommandHandlerException).and.notify(done);
         });
     });
 
@@ -51,7 +53,7 @@ describe("SimpleCommandBus", () => {
     });
 
     describe("unregisterHandler", () => {
-        it("unregisters a handler by command type", () => {
+        it("unregisters a handler by command type", (done) => {
             const command = new SimpleCommandBusCommand();
             const handler = new SimpleCommandBusCommandHandler();
 
@@ -61,11 +63,10 @@ describe("SimpleCommandBus", () => {
             commandBus.registerHandler(SimpleCommandBusCommand, handler);
             commandBus.unregisterHandler(SimpleCommandBusCommand);
 
-            expect(() => {
-                commandBus.send(command);
-            }).to.throw(NoCommandHandlerException);
-
-            handlerMock.verify();
+            expect(commandBus.send(command)).to.be.rejectedWith(NoCommandHandlerException).and.notify(() => {
+                handlerMock.verify();
+                done();
+            });
         });
 
         it("is idempotent", () => {

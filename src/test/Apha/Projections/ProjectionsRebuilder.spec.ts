@@ -1,5 +1,8 @@
 
 import * as sinon from "sinon";
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
+import {expect} from "chai";
 import {ProjectionsRebuilder} from "../../../main/Apha/Projections/ProjectionsRebuilder";
 import {VersionRepository, VersionInfo} from "../../../main/Apha/Projections/VersionRepository";
 import {MemoryVersionStorage} from "../../../main/Apha/Projections/Storage/MemoryVersionStorage";
@@ -12,6 +15,8 @@ import {JsonSerializer} from "../../../main/Apha/Serialization/JsonSerializer";
 import {EventClassMap} from "../../../main/Apha/EventStore/EventClassMap";
 import {NullLogger} from "../../../main/Apha/Logging/NullLogger";
 import {Event} from "../../../main/Apha/Message/Event";
+
+chai.use(chaiAsPromised);
 
 describe("ProjectionsRebuilder", () => {
     let rebuilder;
@@ -38,39 +43,45 @@ describe("ProjectionsRebuilder", () => {
     });
 
     describe("rebuildIfNecessary", () => {
-        it("should start rebuild if projections version is bumped", () => {
+        it("should start rebuild if projections version is bumped", (done) => {
+            const promisedIds = new Promise<Set<string>>(resolve => {
+                const ids = new Set<string>();
+                ids.add("some-id");
+                resolve(ids);
+            });
+
             const event = new ProjectionsRebuilderSpecEvent();
+            const promisedEvents = new Promise<Event[]>(resolve => resolve([event]));
 
             eventStoreMock.expects("getAggregateIds")
                 .twice()
-                .returns((() => {
-                    const ids = new Set<string>();
-                    ids.add("some-id");
-                    return ids;
-                })());
+                .returns(promisedIds);
 
             eventStoreMock.expects("getEventsForAggregate")
                 .twice()
                 .withArgs("some-id")
-                .returns([event]);
+                .returns(promisedEvents);
 
-            rebuilder.rebuildIfNecessary();
-
-            eventStoreMock.verify();
+            expect(rebuilder.rebuildIfNecessary()).to.eventually.be.fulfilled.and.satisfy(() => {
+                eventStoreMock.verify();
+                return true;
+            }).and.notify(done);
         });
 
-        it("should not rebuild if projections version is unchanged", () => {
+        it("should not rebuild if projections version is unchanged", (done) => {
             versionRepositoryMock.expects("findByName")
                 .once()
                 .withArgs("foo")
                 .returns(new VersionInfo("foo", 1));
 
-            eventStoreMock.expects("getAggregateIds").never();
+            eventStoreMock.expects("getAggregateIds")
+                .never();
 
-            rebuilder.rebuildIfNecessary();
-
-            versionRepositoryMock.verify();
-            eventStoreMock.verify();
+            expect(rebuilder.rebuildIfNecessary()).to.eventually.be.fulfilled.and.satisfy(() => {
+                versionRepositoryMock.verify();
+                eventStoreMock.verify();
+                return true;
+            }).and.notify(done);
         });
     });
 });

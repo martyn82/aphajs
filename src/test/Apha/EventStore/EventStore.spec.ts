@@ -1,5 +1,7 @@
 
 import * as sinon from "sinon";
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
 import {expect} from "chai";
 import {EventStore} from "../../../main/Apha/EventStore/EventStore";
 import {EventBus} from "../../../main/Apha/EventHandling/EventBus";
@@ -12,6 +14,8 @@ import {AggregateNotFoundException} from "../../../main/Apha/EventStore/Aggregat
 import {EventListener} from "../../../main/Apha/EventHandling/EventListener";
 import {ConcurrencyException} from "../../../main/Apha/EventStore/ConcurrencyException";
 import {AnyType} from "../../../main/Inflect";
+
+chai.use(chaiAsPromised);
 
 describe("EventStore", () => {
     let eventStore;
@@ -36,16 +40,18 @@ describe("EventStore", () => {
     });
 
     describe("getAggregateIds", () => {
-        it("retrieves all IDs for all stored aggregates", () => {
+        it("retrieves all IDs for all stored aggregates", (done) => {
             storageMock.expects("findIdentities").once();
-            eventStore.getAggregateIds();
 
-            storageMock.verify();
+            eventStore.getAggregateIds().then(() => {
+                storageMock.verify();
+                done();
+            });
         });
     });
 
     describe("getEventsForAggregate", () => {
-        it("retrieves all events for aggregate with given ID", () => {
+        it("retrieves all events for aggregate with given ID", (done) => {
             const aggregateId = "id";
             const event = new EventStoreEvent();
             const descriptors = [
@@ -72,16 +78,16 @@ describe("EventStore", () => {
                 .once()
                 .returns(event);
 
-            const events = eventStore.getEventsForAggregate(aggregateId);
+            const promisedEvents = eventStore.getEventsForAggregate(aggregateId);
 
-            expect(events).to.have.lengthOf(1);
-            expect(events[0]).to.be.an.instanceOf(EventStoreEvent);
-
-            storageMock.verify();
-            storageMock.restore();
+            expect(promisedEvents).to.eventually.have.lengthOf(1).and.notify(() => {
+                storageMock.verify();
+                storageMock.restore();
+                done();
+            });
         });
 
-        it("throws exception if aggregate cannot be found", () => {
+        it("throws exception if aggregate cannot be found", (done) => {
             const aggregateId = "id";
 
             storageMock.expects("contains")
@@ -89,14 +95,13 @@ describe("EventStore", () => {
                 .withArgs(aggregateId)
                 .returns(false);
 
-            expect(() => {
-                eventStore.getEventsForAggregate(aggregateId);
-            }).to.throw(AggregateNotFoundException);
+            expect(eventStore.getEventsForAggregate(aggregateId)).to.be.rejectedWith(AggregateNotFoundException)
+                .and.notify(done);
         });
     });
 
     describe("save", () => {
-        it("stores a series of events for a new aggregate to storage", () => {
+        it("stores a series of events for a new aggregate to storage", (done) => {
             const aggregateId = "id";
             const aggregateType = "aggregatetype";
             const events = [
@@ -112,10 +117,13 @@ describe("EventStore", () => {
             storageMock.expects("append")
                 .exactly(events.length);
 
-            eventStore.save(aggregateId, aggregateType, events, -1);
+            expect(eventStore.save(aggregateId, aggregateType, events, -1)).to.be.fulfilled.and.notify(() => {
+                storageMock.verify();
+                done();
+            });
         });
 
-        it("stores a series of events for an existing aggregate to storage", () => {
+        it("stores a series of events for an existing aggregate to storage", (done) => {
             const aggregateId = "id";
             const aggregateType = "aggregatetype";
 
@@ -148,10 +156,13 @@ describe("EventStore", () => {
             storageMock.expects("append")
                 .exactly(events.length);
 
-            eventStore.save(aggregateId, aggregateType, events, 2);
+            expect(eventStore.save(aggregateId, aggregateType, events, 2)).to.be.fulfilled.and.notify(() => {
+                storageMock.verify();
+                done();
+            });
         });
 
-        it("throws exception if expected playhead is invalid", () => {
+        it("throws exception if expected playhead is invalid", (done) => {
             const aggregateId = "id";
             const aggregateType = "aggregatetype";
 
@@ -160,20 +171,20 @@ describe("EventStore", () => {
                 .withArgs(aggregateId)
                 .returns([]);
 
-            expect(() => {
-                eventStore.save(aggregateId, aggregateType, [], 1);
-            }).to.throw(ConcurrencyException);
+            expect(eventStore.save(aggregateId, aggregateType, [], 1)).to.be.rejectedWith(ConcurrencyException)
+                .and.notify(done);
         });
     });
 
     describe("clear", () => {
-        it("should clear the storage", () => {
+        it("should clear the storage", (done) => {
             storageMock.expects("clear")
                 .once();
 
-            eventStore.clear();
-
-            storageMock.verify();
+            expect(eventStore.clear()).to.be.fulfilled.and.notify(() => {
+                storageMock.verify();
+                done();
+            });
         });
     });
 });
