@@ -10,28 +10,26 @@ export class DefaultCommandGateway implements CommandGateway {
     public async send(command: Command): Promise<void> {
         this.notifyBeforeDispatch(command);
 
-        try {
-            this.commandBus.send(command);
-            this.notifyDispatchSuccessful(command);
-        } catch (e) {
-            this.notifyDispatchFailed(command, e);
-        }
+        return this.commandBus.send(command).then(
+            () => this.notifyDispatchSuccessful(command),
+            e => this.notifyDispatchFailed(command, e)
+        );
     }
 
     private notifyBeforeDispatch(command: Command): void {
-        this.interceptors.forEach((interceptor) => {
+        this.interceptors.forEach(interceptor => {
             interceptor.onBeforeDispatch(command);
         });
     }
 
     private notifyDispatchSuccessful(command: Command): void {
-        this.interceptors.forEach((interceptor) => {
+        this.interceptors.forEach(interceptor => {
             interceptor.onDispatchSuccessful(command);
         });
     }
 
     private notifyDispatchFailed(command: Command, error: Error): void {
-        this.interceptors.forEach((interceptor) => {
+        this.interceptors.forEach(interceptor => {
             interceptor.onDispatchFailed(command, error);
         });
     }
