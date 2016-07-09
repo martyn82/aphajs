@@ -15,23 +15,25 @@ describe("MemoryEventStorage", () => {
     });
 
     describe("findIdentities", () => {
-        it("retrieves all identities in the storage", () => {
+        it("retrieves all identities in the storage", (done) => {
             const aggregateId = "id";
             const event = EventDescriptor.record(aggregateId, "type", "eventtype", "{}", 1);
 
-            storage.append(event);
+            const promisedAppend = storage.append(event);
 
-            const promisedIdentities = storage.findIdentities();
+            expect(promisedAppend).to.eventually.be.fulfilled.and.satisfy(() => {
+                const promisedIdentities = storage.findIdentities();
 
-            return Promise.all([
-                expect(promisedIdentities).to.eventually.have.property("size", 1),
-                expect(promisedIdentities).to.eventually.satisfy(identities => {
-                    return identities.values().next().value === aggregateId;
-                })
-            ]);
+                return Promise.all([
+                    expect(promisedIdentities).to.eventually.have.property("size", 1),
+                    expect(promisedIdentities).to.eventually.satisfy(identities => {
+                        return identities.values().next().value === aggregateId;
+                    })
+                ]);
+            }).and.notify(done);
         });
 
-        it("retrieves an empty array if storage is empty", (done) => {
+        it("retrieves an empty set if storage is empty", (done) => {
             const promisedIdentities = storage.findIdentities();
             expect(promisedIdentities).to.eventually.have.property("size", 0).and.notify(done);
         });
@@ -45,8 +47,8 @@ describe("MemoryEventStorage", () => {
                 EventDescriptor.record(aggregateId, "type", "event", "{}", 2),
             ];
 
-            descriptors.forEach((descriptor) => {
-                storage.append(descriptor);
+            descriptors.forEach(async (descriptor) => {
+                await storage.append(descriptor);
             });
 
             const promisedEvents = storage.find(aggregateId);
@@ -63,18 +65,16 @@ describe("MemoryEventStorage", () => {
             const aggregateId = "id";
             const event = EventDescriptor.record(aggregateId, "type", "eventtype", "{}", 1);
 
-            storage.append(event).then(() => {
+            expect(storage.append(event)).to.eventually.be.fulfilled.and.satisfy(() => {
                 const promisedIdentities = storage.findIdentities();
 
-                Promise.all([
+                return Promise.all([
                     expect(promisedIdentities).to.eventually.have.property("size", 1),
                     expect(promisedIdentities).to.eventually.satisfy(identities => {
                         return identities.values().next().value === aggregateId;
                     })
-                ]).then(() => {
-                    done();
-                }, done.fail);
-            }, done.fail);
+                ]);
+            }).and.notify(done);
         });
     });
 
@@ -87,6 +87,20 @@ describe("MemoryEventStorage", () => {
             storage.append(EventDescriptor.record("id", "type", "event", "{}", 1)).then(() => {
                 expect(storage.contains("id")).to.eventually.equal(true).and.notify(done);
             }, done.fail);
+        });
+    });
+
+    describe("clear", () => {
+        it("should clear all from storage", () => {
+            const aggregateId = "some-id";
+            const eventDescriptor = EventDescriptor.record(aggregateId, "type", "event", "{}", 1);
+
+            return Promise.all([
+                expect(storage.append(eventDescriptor)).to.eventually.be.fulfilled,
+                expect(storage.clear()).to.eventually.be.fulfilled.and.then(() => {
+                    expect(storage.contains(aggregateId)).to.eventually.be.false;
+                })
+            ]);
         });
     });
 });
