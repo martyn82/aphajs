@@ -19,23 +19,15 @@ describe("MemoryEventStorage", () => {
             const aggregateId = "id";
             const event = EventDescriptor.record(aggregateId, "type", "eventtype", "{}", 1);
 
-            const promisedAppend = storage.append(event);
-
-            expect(promisedAppend).to.eventually.be.fulfilled.and.satisfy(() => {
-                const promisedIdentities = storage.findIdentities();
-
-                return Promise.all([
-                    expect(promisedIdentities).to.eventually.have.property("size", 1),
-                    expect(promisedIdentities).to.eventually.satisfy(identities => {
-                        return identities.values().next().value === aggregateId;
-                    })
-                ]);
-            }).and.notify(done);
+            expect(storage.append(event)).to.eventually.be.fulfilled.and.then(() => {
+                expect(storage.findIdentities()).to.eventually.be.fulfilled.and.satisfy(identities => {
+                    return identities.size === 1 && identities.values().next().value === aggregateId;
+                }).and.notify(done);
+            }, done.fail);
         });
 
         it("retrieves an empty set if storage is empty", (done) => {
-            const promisedIdentities = storage.findIdentities();
-            expect(promisedIdentities).to.eventually.have.property("size", 0).and.notify(done);
+            expect(storage.findIdentities()).to.eventually.have.property("size", 0).and.notify(done);
         });
     });
 
@@ -65,16 +57,11 @@ describe("MemoryEventStorage", () => {
             const aggregateId = "id";
             const event = EventDescriptor.record(aggregateId, "type", "eventtype", "{}", 1);
 
-            expect(storage.append(event)).to.eventually.be.fulfilled.and.satisfy(() => {
-                const promisedIdentities = storage.findIdentities();
-
-                return Promise.all([
-                    expect(promisedIdentities).to.eventually.have.property("size", 1),
-                    expect(promisedIdentities).to.eventually.satisfy(identities => {
-                        return identities.values().next().value === aggregateId;
-                    })
-                ]);
-            }).and.notify(done);
+            expect(storage.append(event)).to.eventually.be.fulfilled.and.then(() => {
+                expect(storage.findIdentities()).to.eventually.be.fulfilled.and.satisfy(identities => {
+                    return identities.size === 1 && identities.values().next().value === aggregateId;
+                }).and.notify(done);
+            }, done.fail);
         });
     });
 
