@@ -15,11 +15,11 @@ describe("MemoryVersionStorage", () => {
 
     describe("findByName", () => {
         it("should retrieve version by name", (done) => {
-            storage.upsert("foo", 12);
-
-            expect(storage.findByName("foo")).to.eventually.be.fulfilled.and.satisfy(version => {
-                return version === 12;
-            }).and.notify(done);
+            expect(storage.upsert("foo", 12)).to.eventually.be.fulfilled.and.then(() => {
+                expect(storage.findByName("foo")).to.eventually.be.fulfilled.and.satisfy(version => {
+                    return version === 12;
+                }).and.notify(done);
+            }, done.fail);
         });
 
         it("should return NULL if no version is stored", (done) => {
