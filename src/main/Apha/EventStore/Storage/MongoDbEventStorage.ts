@@ -10,7 +10,7 @@ export class MongoDbEventStorage implements EventStorage {
     }
 
     public async contains(id: string): Promise<boolean> {
-        const count = await this.collection.count({"id": id});
+        const count = await this.collection.count({id: id});
         return count > 0;
     }
 
@@ -21,7 +21,7 @@ export class MongoDbEventStorage implements EventStorage {
 
     public async find(id: string): Promise<EventDescriptor[]> {
         return new Promise<EventDescriptor[]>(resolve => {
-            const cursor = this.collection.find({"id": id});
+            const cursor = this.collection.find({id: id});
             const events = [];
 
             cursor.forEach(
@@ -29,6 +29,7 @@ export class MongoDbEventStorage implements EventStorage {
                     events.push(doc);
                 },
                 () => {
+                    cursor.close();
                     resolve(events);
                 }
             );
@@ -37,7 +38,7 @@ export class MongoDbEventStorage implements EventStorage {
 
     public async findIdentities(): Promise<Set<string>> {
         return new Promise<Set<string>>(resolve => {
-            const cursor = this.collection.find();
+            const cursor = this.collection.find(null, {id: 1});
             const ids = new Set<string>();
 
             cursor.forEach(
@@ -45,6 +46,7 @@ export class MongoDbEventStorage implements EventStorage {
                     ids.add(doc.id);
                 },
                 () => {
+                    cursor.close();
                     resolve(ids);
                 }
             );
@@ -52,5 +54,6 @@ export class MongoDbEventStorage implements EventStorage {
     }
 
     public async clear(): Promise<void> {
+        return this.collection.drop();
     }
 }

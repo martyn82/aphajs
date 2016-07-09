@@ -32,7 +32,7 @@ describe("MongoDbEventStorage", () => {
     });
 
     afterEach(done => {
-        mongoDb.dropCollection("events").then(() => done());
+        mongoDb.dropCollection("events").then(() => done(), () => done());
     });
 
     describe("append", () => {
@@ -107,16 +107,15 @@ describe("MongoDbEventStorage", () => {
     });
 
     describe("clear", () => {
-        it("should clear all from storage", () => {
+        it("should clear all from storage", (done) => {
             const aggregateId = "some-id";
             const eventDescriptor = EventDescriptor.record(aggregateId, "type", "event", "{}", 1);
 
-            return Promise.all([
-                expect(storage.append(eventDescriptor)).to.eventually.be.fulfilled,
+            expect(storage.append(eventDescriptor)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.clear()).to.eventually.be.fulfilled.and.then(() => {
-                    expect(storage.contains(aggregateId)).to.eventually.be.false;
-                })
-            ]);
+                    expect(storage.contains(aggregateId)).to.eventually.be.false.and.notify(done);
+                }, done.fail);
+            }, done.fail);
         });
     });
 });
