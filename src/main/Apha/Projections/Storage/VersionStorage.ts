@@ -1,5 +1,5 @@
 
 export interface VersionStorage {
-    findByName(name: string): number;
-    upsert(name: string, version: number): void;
+    findByName(name: string): Promise<number>;
+    upsert(name: string, version: number): Promise<void>;
 }

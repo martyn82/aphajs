@@ -25,15 +25,15 @@ export abstract class ProjectionsRebuilder {
     }
 
     public async rebuildIfNecessary(): Promise<void> {
-        if (this.isRebuildNecessary()) {
+        if (await this.isRebuildNecessary()) {
             return this.rebuild();
         } else {
             this._logger.info(`${this.projectionsType.name}: No rebuild is necessary`);
         }
     }
 
-    private isRebuildNecessary(): boolean {
-        const versionInfo = this.versionRepository.findByName(this.projectionsType.name);
+    private async isRebuildNecessary(): Promise<boolean> {
+        const versionInfo = await this.versionRepository.findByName(this.projectionsType.name);
 
         if (versionInfo) {
             return versionInfo.version !== this.projectionsType.version;

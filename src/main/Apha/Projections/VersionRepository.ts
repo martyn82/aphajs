@@ -10,8 +10,8 @@ export class VersionInfo {
 export class VersionRepository {
     constructor(private versionStorage: VersionStorage) {}
 
-    public findByName(name: string): VersionInfo {
-        const version = this.versionStorage.findByName(name);
+    public async findByName(name: string): Promise<VersionInfo> {
+        const version = await this.versionStorage.findByName(name);
 
         if (!version) {
             return null;
@@ -20,7 +20,7 @@ export class VersionRepository {
         return new VersionInfo(name, version);
     }
 
-    public updateVersion(name: string, version: number): void {
-        this.versionStorage.upsert(name, version);
+    public async updateVersion(name: string, version: number): Promise<void> {
+        return this.versionStorage.upsert(name, version);
     }
 }

@@ -72,7 +72,7 @@ describe("ProjectionsRebuilder", () => {
             versionRepositoryMock.expects("findByName")
                 .once()
                 .withArgs("foo")
-                .returns(new VersionInfo("foo", 1));
+                .returns(new Promise<VersionInfo>(resolve => resolve(new VersionInfo("foo", 1))));
 
             eventStoreMock.expects("getAggregateIds")
                 .never();
