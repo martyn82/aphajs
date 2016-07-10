@@ -1,4 +1,6 @@
 
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
 import {expect} from "chai";
 import {SimpleEventScheduler} from "../../../main/Apha/Scheduling/SimpleEventScheduler";
@@ -7,6 +9,8 @@ import {Event, EventType} from "../../../main/Apha/Message/Event";
 import {EventListener} from "../../../main/Apha/EventHandling/EventListener";
 import {ScheduleStorage, ScheduledEvent} from "../../../main/Apha/Scheduling/Storage/ScheduleStorage";
 import {TimeUnit} from "../../../main/Apha/Scheduling/EventScheduler";
+
+chai.use(chaiAsPromised);
 
 describe("SimpleEventScheduler", () => {
     let clock;
@@ -38,7 +42,7 @@ describe("SimpleEventScheduler", () => {
     });
 
     describe("schedule", () => {
-        it("schedules all scheduled events from storage", () => {
+        it("schedules all scheduled events from storage", (done) => {
             const eventBus = new SimpleEventSchedulerSpecEventBus();
             const storage = new SimpleEventSchedulerSpecScheduleStorage();
 
@@ -61,23 +65,29 @@ describe("SimpleEventScheduler", () => {
 
             storageMock.expects("findAll")
                 .once()
-                .returns(scheduled);
+                .returns(new Promise<ScheduledEvent[]>(resolve => resolve(scheduled)));
 
             storageMock.expects("remove")
-                .exactly(scheduled.length);
+                .exactly(scheduled.length)
+                .returns(new Promise<void>(resolve => resolve()));
 
             eventBusMock.expects("publish")
-                .exactly(scheduled.length);
+                .exactly(scheduled.length)
+                .returns(true);
 
             const scheduler = new SimpleEventScheduler(storage, eventBus);
-            scheduler.schedule();
-            clock.tick(1500);
 
-            storageMock.verify();
-            eventBusMock.verify();
+            expect(scheduler.schedule()).to.eventually.be.fulfilled.and.satisfy(() => {
+                clock.tick(1500);
+
+                storageMock.verify();
+                eventBusMock.verify();
+
+                return true;
+            }).and.notify(done);
         });
 
-        it("schedules all scheduled events from storage only once", () => {
+        it("schedules all scheduled events from storage only once", (done) => {
             const eventBus = new SimpleEventSchedulerSpecEventBus();
             const storage = new SimpleEventSchedulerSpecScheduleStorage();
 
@@ -100,11 +110,12 @@ describe("SimpleEventScheduler", () => {
 
             storageMock.expects("findAll")
                 .once()
-                .returns(scheduled);
+                .returns(new Promise<ScheduledEvent[]>(resolve => resolve(scheduled)));
 
             storageMock.expects("remove")
                 .once()
-                .withArgs(scheduled[0].token);
+                .withArgs(scheduled[0].token)
+                .returns(new Promise<void>(resolve => resolve()));
 
             eventBusMock.expects("publish")
                 .once()
@@ -112,16 +123,19 @@ describe("SimpleEventScheduler", () => {
                 .returns(true);
 
             const scheduler = new SimpleEventScheduler(storage, eventBus);
-            scheduler.schedule();
-            clock.tick(500);
 
-            storageMock.verify();
-            eventBusMock.verify();
+            expect(scheduler.schedule()).to.eventually.be.fulfilled.and.satisfy(() => {
+                clock.tick(500);
+
+                storageMock.verify();
+                eventBusMock.verify();
+                return true;
+            }).and.notify(done);
         });
     });
 
     describe("scheduleAt", () => {
-        it("schedules an event at given time", () => {
+        it("schedules an event at given time", (done) => {
             const event = new SimpleEventSchedulerSpecEvent();
             const scheduleDate = new Date("2050-04-05 03:01:20");
 
@@ -133,13 +147,15 @@ describe("SimpleEventScheduler", () => {
                     timestamp: scheduleDate.getTime()
                 });
 
-            const scheduleToken = scheduler.scheduleAt(scheduleDate, event);
-            expect(scheduleToken).not.to.be.undefined;
+            expect(scheduler.scheduleAt(scheduleDate, event)).to.eventually.be.fulfilled.and.satisfy(scheduleToken => {
+                expect(scheduleToken).not.to.be.undefined;
 
-            storageMock.verify();
+                storageMock.verify();
+                return true;
+            }).and.notify(done);
         });
 
-        it("publishes event immediately if given datetime is in the past", () => {
+        it("publishes event immediately if given datetime is in the past", (done) => {
             const event = new SimpleEventSchedulerSpecEvent();
             const scheduleDate = new Date("1990-06-04");
 
@@ -149,27 +165,31 @@ describe("SimpleEventScheduler", () => {
                     token: sinon.match.string,
                     event: event,
                     timestamp: scheduleDate.getTime()
-                });
+                })
+                .returns(new Promise<void>(resolve => resolve()));
 
             storageMock.expects("remove")
                 .once()
-                .withArgs(sinon.match.string);
+                .withArgs(sinon.match.string)
+                .returns(new Promise<void>(resolve => resolve()));
 
             eventBusMock.expects("publish")
                 .once()
                 .withArgs(event)
                 .returns(true);
 
-            scheduler.scheduleAt(scheduleDate, event);
-            clock.tick(1);
+            expect(scheduler.scheduleAt(scheduleDate, event)).to.eventually.be.fulfilled.and.satisfy(() => {
+                clock.tick(1);
 
-            storageMock.verify();
-            eventBusMock.verify();
+                storageMock.verify();
+                eventBusMock.verify();
+                return true;
+            }).and.notify(done);
         });
     });
 
     describe("scheduleAfter", () => {
-        it("schedules event after timeout", () => {
+        it("schedules event after timeout", (done) => {
             const event = new SimpleEventSchedulerSpecEvent();
             const timeout = 500;
 
@@ -179,25 +199,29 @@ describe("SimpleEventScheduler", () => {
                     token: sinon.match.string,
                     event: event,
                     timestamp: Date.now() + timeout
-                });
+                })
+                .returns(new Promise<void>(resolve => resolve()));
 
             storageMock.expects("remove")
                 .once()
-                .withArgs(sinon.match.string);
+                .withArgs(sinon.match.string)
+                .returns(new Promise<void>(resolve => resolve()));
 
             eventBusMock.expects("publish")
                 .once()
                 .withArgs(event)
                 .returns(true);
 
-            scheduler.scheduleAfter(timeout, event);
-            clock.tick(timeout);
+            expect(scheduler.scheduleAfter(timeout, event)).to.eventually.be.fulfilled.and.satisfy(() => {
+                clock.tick(timeout);
 
-            storageMock.verify();
-            eventBusMock.verify();
+                storageMock.verify();
+                eventBusMock.verify();
+                return true;
+            }).and.notify(done);
         });
 
-        it("schedules event after timeout in hours", () => {
+        it("schedules event after timeout in hours", (done) => {
             const event = new SimpleEventSchedulerSpecEvent();
             const timeout = 2;
 
@@ -207,14 +231,17 @@ describe("SimpleEventScheduler", () => {
                     token: sinon.match.string,
                     event: event,
                     timestamp: Date.now() + timeout * 3600000
-                });
+                })
+                .returns(new Promise<void>(resolve => resolve()));
 
-            scheduler.scheduleAfter(timeout, event, TimeUnit.Hours);
-
-            storageMock.verify();
+            expect(scheduler.scheduleAfter(timeout, event, TimeUnit.Hours)).to.eventually.be.fulfilled
+                .and.satisfy(() => {
+                storageMock.verify();
+                return true;
+            }).and.notify(done);
         });
 
-        it("schedules event after timeout in minutes", () => {
+        it("schedules event after timeout in minutes", (done) => {
             const event = new SimpleEventSchedulerSpecEvent();
             const timeout = 2;
 
@@ -224,14 +251,17 @@ describe("SimpleEventScheduler", () => {
                     token: sinon.match.string,
                     event: event,
                     timestamp: Date.now() + timeout * 60000
-                });
+                })
+                .returns(new Promise<void>(resolve => resolve()));
 
-            scheduler.scheduleAfter(timeout, event, TimeUnit.Minutes);
-
-            storageMock.verify();
+            expect(scheduler.scheduleAfter(timeout, event, TimeUnit.Minutes)).to.eventually.be.fulfilled
+                .and.satisfy(() => {
+                storageMock.verify();
+                return true;
+            }).and.notify(done);
         });
 
-        it("schedules event after timeout in seconds", () => {
+        it("schedules event after timeout in seconds", (done) => {
             const event = new SimpleEventSchedulerSpecEvent();
             const timeout = 2;
 
@@ -241,14 +271,17 @@ describe("SimpleEventScheduler", () => {
                     token: sinon.match.string,
                     event: event,
                     timestamp: Date.now() + timeout * 1000
-                });
+                })
+                .returns(new Promise<void>(resolve => resolve()));
 
-            scheduler.scheduleAfter(timeout, event, TimeUnit.Seconds);
-
-            storageMock.verify();
+            expect(scheduler.scheduleAfter(timeout, event, TimeUnit.Seconds)).to.eventually.be.fulfilled
+                .and.satisfy(() => {
+                storageMock.verify();
+                return true;
+            }).and.notify(done);
         });
 
-        it("schedules event after timeout in milliseconds", () => {
+        it("schedules event after timeout in milliseconds", (done) => {
             const event = new SimpleEventSchedulerSpecEvent();
             const timeout = 2;
 
@@ -258,49 +291,61 @@ describe("SimpleEventScheduler", () => {
                     token: sinon.match.string,
                     event: event,
                     timestamp: Date.now() + timeout
-                });
+                })
+                .returns(new Promise<void>(resolve => resolve()));
 
-            scheduler.scheduleAfter(timeout, event, TimeUnit.Milliseconds);
-
-            storageMock.verify();
+            expect(scheduler.scheduleAfter(timeout, event, TimeUnit.Milliseconds)).to.eventually.be.fulfilled
+                .and.satisfy(() => {
+                storageMock.verify();
+                return true;
+            }).and.notify(done);
         });
     });
 
     describe("cancelSchedule", () => {
-        it("cancels a scheduled event", () => {
+        it("cancels a scheduled event", (done) => {
             const event = new SimpleEventSchedulerSpecEvent();
             const timeout = 500;
 
             eventBusMock.expects("publish").never();
 
-            const token = scheduler.scheduleAfter(timeout, event);
+            expect(scheduler.scheduleAfter(timeout, event)).to.eventually.be.fulfilled.and.then(token => {
+                storageMock.expects("remove")
+                    .once()
+                    .withArgs(token.getToken())
+                    .returns(new Promise<void>(resolve => resolve()));
 
-            storageMock.expects("remove")
-                .once()
-                .withArgs(token.getToken());
+                clock.tick(300);
 
-            clock.tick(300);
+                expect(scheduler.cancelSchedule(token)).to.eventually.be.fulfilled.and.satisfy(() => {
+                    clock.tick(300);
 
-            scheduler.cancelSchedule(token);
-            clock.tick(300);
-
-            eventBusMock.verify();
+                    storageMock.verify();
+                    eventBusMock.verify();
+                    return true;
+                }).and.notify(done);
+            }, done.fail);
         });
 
-        it("is idempotent", () => {
+        it("is idempotent", (done) => {
             const event = new SimpleEventSchedulerSpecEvent();
             const timeout = 500;
 
             eventBusMock.expects("publish").never();
 
-            const token = scheduler.scheduleAfter(timeout, event);
-            clock.tick(300);
+            expect(scheduler.scheduleAfter(timeout, event)).to.eventually.be.fulfilled.and.then(token => {
+                clock.tick(300);
 
-            scheduler.cancelSchedule(token);
-            scheduler.cancelSchedule(token);
-            clock.tick(300);
+                expect(Promise.all([
+                    scheduler.cancelSchedule(token),
+                    scheduler.cancelSchedule(token)
+                ])).to.eventually.be.fulfilled.and.satisfy(() => {
+                    clock.tick(300);
 
-            eventBusMock.verify();
+                    eventBusMock.verify();
+                    return true;
+                }).and.notify(done);
+            }, done.fail);
         });
     });
 });
@@ -308,9 +353,9 @@ describe("SimpleEventScheduler", () => {
 class SimpleEventSchedulerSpecEvent extends Event {}
 
 class SimpleEventSchedulerSpecScheduleStorage implements ScheduleStorage {
-    public add(scheduled: ScheduledEvent): void {}
-    public remove(token: string): void {}
-    public findAll(): ScheduledEvent[] {
+    public async add(scheduled: ScheduledEvent): Promise<void> {}
+    public async remove(token: string): Promise<void> {}
+    public async findAll(): Promise<ScheduledEvent[]> {
         return [];
     }
 }

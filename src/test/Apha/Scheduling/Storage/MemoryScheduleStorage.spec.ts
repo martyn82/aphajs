@@ -1,8 +1,12 @@
 
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
 import {expect} from "chai";
 import {MemoryScheduleStorage} from "../../../../main/Apha/Scheduling/Storage/MemoryScheduleStorage";
 import {ScheduledEvent} from "../../../../main/Apha/Scheduling/Storage/ScheduleStorage";
 import {Event} from "../../../../main/Apha/Message/Event";
+
+chai.use(chaiAsPromised);
 
 describe("MemoryScheduleStorage", () => {
     let storage;
@@ -12,51 +16,50 @@ describe("MemoryScheduleStorage", () => {
     });
 
     describe("add", () => {
-        it("stores a scheduled event into storage", () => {
+        it("stores a scheduled event into storage", (done) => {
             const schedule: ScheduledEvent = {
                 event: new MemoryScheduleStorageSpecEvent(),
                 timestamp: 1,
                 token: "foo"
             };
 
-            storage.add(schedule);
-            const allSchedule = storage.findAll();
-
-            expect(allSchedule[0]).to.eql(schedule);
+            expect(storage.add(schedule)).to.eventually.be.fulfilled.and.then(() => {
+                expect(storage.findAll()).to.eventually.be.fulfilled.and.satisfy(allSchedule => {
+                    return allSchedule[0] === schedule;
+                }).and.notify(done);
+            }, done.fail);
         });
     });
 
     describe("remove", () => {
-        it("removes a scheduled event from storage", () => {
-            storage.add({
+        it("removes a scheduled event from storage", (done) => {
+            expect(storage.add({
                 event: new MemoryScheduleStorageSpecEvent(),
                 timestamp: 1,
                 token: "foo"
-            });
-
-            storage.remove("foo");
-
-            expect(storage.findAll()).to.have.lengthOf(0);
+            })).to.eventually.be.fulfilled.and.then(() => {
+                expect(storage.remove("foo")).to.eventually.be.fulfilled.and.then(() => {
+                    expect(storage.findAll()).to.eventually.have.lengthOf(0).and.notify(done);
+                }, done.fail);
+            }, done.fail);
         });
 
-        it("is idempotent", () => {
-            expect(() => {
-                storage.remove("foo");
-            }).not.to.throw(Error);
+        it("is idempotent", (done) => {
+            expect(storage.remove("foo")).to.eventually.be.fulfilled.and.notify(done);
         });
     });
 
     describe("findAll", () => {
-        it("retrieves all scheduled events from storage", () => {
+        it("retrieves all scheduled events from storage", (done) => {
             const schedule: ScheduledEvent = {
                 event: new MemoryScheduleStorageSpecEvent(),
                 timestamp: 1,
                 token: "foo"
             };
 
-            storage.add(schedule);
-
-            expect(storage.findAll()).to.have.lengthOf(1);
+            expect(storage.add(schedule)).to.eventually.be.fulfilled.and.then(() => {
+                expect(storage.findAll()).to.eventually.have.lengthOf(1).and.notify(done);
+            }, done.fail);
         });
     });
 });

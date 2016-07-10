@@ -10,8 +10,8 @@ export enum TimeUnit {
 }
 
 export interface EventScheduler {
-    cancelSchedule(token: ScheduleToken): void;
-    scheduleAt(dateTime: Date, event: Event): ScheduleToken;
-    scheduleAfter(timeout: number, event: Event, timeUnit: TimeUnit): ScheduleToken;
+    cancelSchedule(token: ScheduleToken): Promise<void>;
+    scheduleAt(dateTime: Date, event: Event): Promise<ScheduleToken>;
+    scheduleAfter(timeout: number, event: Event, timeUnit: TimeUnit): Promise<ScheduleToken>;
     destroy(): void;
 }

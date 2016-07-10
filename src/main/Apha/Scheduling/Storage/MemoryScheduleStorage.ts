@@ -2,25 +2,29 @@
 import {ScheduleStorage, ScheduledEvent} from "./ScheduleStorage";
 
 export class MemoryScheduleStorage implements ScheduleStorage {
-    private data: {[id: string]: ScheduledEvent} = {};
+    private data: Map<string, ScheduledEvent>;
 
-    public add(schedule: ScheduledEvent): void {
-        this.data[schedule.token] = schedule;
+    constructor() {
+        this.data = new Map<string, ScheduledEvent>();
     }
 
-    public remove(id: string): void {
-        if (!this.data[id]) {
+    public async add(schedule: ScheduledEvent): Promise<void> {
+        this.data.set(schedule.token, schedule);
+    }
+
+    public async remove(id: string): Promise<void> {
+        if (!this.data.has(id)) {
             return;
         }
 
-        delete this.data[id];
+        this.data.delete(id);
     }
 
-    public findAll(): ScheduledEvent[] {
+    public async findAll(): Promise<ScheduledEvent[]> {
         const schedule = [];
 
-        for (const id in this.data) {
-            schedule.push(this.data[id]);
+        for (const event of this.data.values()) {
+            schedule.push(event);
         }
 
         return schedule;

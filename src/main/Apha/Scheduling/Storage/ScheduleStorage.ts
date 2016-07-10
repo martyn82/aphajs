@@ -8,7 +8,7 @@ export type ScheduledEvent = {
 };
 
 export interface ScheduleStorage {
-    add(schedule: ScheduledEvent): void;
-    remove(id: string): void;
-    findAll(): ScheduledEvent[];
+    add(schedule: ScheduledEvent): Promise<void>;
+    remove(id: string): Promise<void>;
+    findAll(): Promise<ScheduledEvent[]>;
 }

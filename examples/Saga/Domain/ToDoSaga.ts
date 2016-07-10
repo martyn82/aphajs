@@ -39,11 +39,11 @@ export class ToDoSaga extends AnnotatedSaga {
     @SagaEventHandler({associationProperty: "id"})
     public onTodoItemCreated(event: ToDoItem.Created): void {
         console.log("saga", event);
-        this.token = this.scheduler.scheduleAfter(
+        this.scheduler.scheduleAfter(
             event.expireSeconds,
             new ToDoItemTimeout(event.id),
             TimeUnit.Seconds
-        );
+        ).then(token => this.token = token);
     }
 
     @SagaEventHandler({associationProperty: "id"})

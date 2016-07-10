@@ -6,54 +6,62 @@ import {ScheduleToken} from "./ScheduleToken";
 import {Event} from "../Message/Event";
 import {IdentityProvider} from "../Domain/IdentityProvider";
 
-type Schedule = {[token: string]: any};
+type Schedule = Map<string, any>;
 
 export class SimpleEventScheduler implements EventScheduler {
     private static MAX_TIMEOUT = 2147483647;
-    private static REFRESH_TIMEOUT = 864000000;
+    private static REFRESH_TIMEOUT = 864000000; // 24 hrs
 
     private refresh = null;
-    private currentSchedule: Schedule = {};
+    private currentSchedule: Schedule = new Map<string, any>();
 
     constructor(private storage: ScheduleStorage, private eventBus: EventBus) {}
 
     public destroy() {
-        clearTimeout(this.refresh);
+        global.clearTimeout(this.refresh);
     }
 
-    public schedule(): void {
-        this.scheduleStoredEvents(this);
+    public async schedule(): Promise<void> {
+        return this.scheduleStoredEvents(this);
     }
 
-    private scheduleStoredEvents(sender: SimpleEventScheduler): void {
-        for (const scheduledEvent of sender.storage.findAll()) {
-            if (sender.currentSchedule[scheduledEvent.token]) {
+    private async scheduleStoredEvents(sender: SimpleEventScheduler): Promise<void> {
+        const schedule = await sender.storage.findAll();
+
+        for (const scheduledEvent of schedule) {
+            if (sender.currentSchedule.has(scheduledEvent.token)) {
                 continue;
             }
 
             const timeout = scheduledEvent.timestamp - Date.now();
-            sender.currentSchedule[scheduledEvent.token] =
-                setTimeout(sender.onTimeout, timeout, sender, scheduledEvent);
+            sender.currentSchedule.set(
+                scheduledEvent.token,
+                global.setTimeout(sender.onTimeout, timeout, sender, scheduledEvent)
+            );
         }
 
-        this.refresh = setTimeout(sender.scheduleStoredEvents, SimpleEventScheduler.REFRESH_TIMEOUT, sender);
+        this.refresh = global.setTimeout(sender.scheduleStoredEvents, SimpleEventScheduler.REFRESH_TIMEOUT, sender);
     }
 
-    public cancelSchedule(token: ScheduleToken): void {
-        this.storage.remove(token.getToken());
+    public async cancelSchedule(token: ScheduleToken): Promise<void> {
+        await this.storage.remove(token.getToken());
 
         if (this.currentSchedule[token.getToken()]) {
-            clearTimeout(this.currentSchedule[token.getToken()]);
-            delete this.currentSchedule[token.getToken()];
+            global.clearTimeout(this.currentSchedule[token.getToken()]);
+            this.currentSchedule.delete(token.getToken());
         }
     }
 
-    public scheduleAt(dateTime: Date, event: Event): ScheduleToken {
+    public async scheduleAt(dateTime: Date, event: Event): Promise<ScheduleToken> {
         const timeout = dateTime.getTime() - Date.now();
         return this.scheduleAfter(timeout, event, TimeUnit.Milliseconds);
     }
 
-    public scheduleAfter(timeout: number, event: Event, timeUnit: TimeUnit = TimeUnit.Milliseconds): ScheduleToken {
+    public async scheduleAfter(
+        timeout: number,
+        event: Event,
+        timeUnit: TimeUnit = TimeUnit.Milliseconds
+    ): Promise<ScheduleToken> {
         const timeoutMs = this.toMillis(timeout, timeUnit);
 
         const token = new ScheduleToken(IdentityProvider.generateNew());
@@ -63,20 +71,20 @@ export class SimpleEventScheduler implements EventScheduler {
             timestamp: (Date.now() + timeoutMs)
         };
 
-        this.storage.add(scheduled);
+        await this.storage.add(scheduled);
 
         if (timeoutMs < 0) {
-            this.onTimeout(this, scheduled);
+            await this.onTimeout(this, scheduled);
         }
         else if (timeoutMs < SimpleEventScheduler.MAX_TIMEOUT) {
-            this.currentSchedule[scheduled.token] = setTimeout(this.onTimeout, timeoutMs, this, scheduled);
+            this.currentSchedule.set(scheduled.token, global.setTimeout(this.onTimeout, timeoutMs, this, scheduled));
         }
 
         return token;
     }
 
-    private onTimeout(sender: SimpleEventScheduler, scheduled: ScheduledEvent): void {
-        delete sender.currentSchedule[scheduled.token];
+    private async onTimeout(sender: SimpleEventScheduler, scheduled: ScheduledEvent): Promise<void> {
+        sender.currentSchedule.delete(scheduled.token);
         sender.storage.remove(scheduled.token);
         sender.eventBus.publish(scheduled.event);
     }
