@@ -31,7 +31,7 @@ describe("MongoDbVersionStorage", () => {
     });
 
     afterEach(done => {
-        mongoDb.dropCollection("versions").then(() => done());
+        mongoDb.dropCollection("versions").then(() => done(), () => done());
     });
 
     describe("upsert", () => {

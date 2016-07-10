@@ -38,7 +38,7 @@ describe("MongoDbScheduleStorage", () => {
     });
 
     afterEach(done => {
-        mongoDb.dropCollection("schedules").then(() => done());
+        mongoDb.dropCollection("schedules").then(() => done(), () => done());
     });
 
     describe("add", () => {

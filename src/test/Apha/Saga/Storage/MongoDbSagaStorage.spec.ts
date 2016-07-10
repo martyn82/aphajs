@@ -44,7 +44,7 @@ describe("MongoDbSagaStorage", () => {
     });
 
     afterEach(done => {
-        mongoDb.dropCollection("sagas").then(() => done());
+        mongoDb.dropCollection("sagas").then(() => done(), () => done());
     });
 
     describe("insert", () => {

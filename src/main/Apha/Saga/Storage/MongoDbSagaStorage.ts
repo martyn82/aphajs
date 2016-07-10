@@ -6,6 +6,7 @@ import {Collection} from "mongodb";
 export class MongoDbSagaStorage implements SagaStorage {
     constructor(private collection: Collection) {
         this.collection.createIndex({id: 1}, {unique: true});
+        this.collection.createIndex({sagaClass: 1, associationValues: 1});
     }
 
     public async insert(
