@@ -1,4 +1,6 @@
 
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
 import {expect} from "chai";
 import {MemorySagaStorage} from "../../../../main/Apha/Saga/Storage/MemorySagaStorage";
 import {Saga} from "../../../../main/Apha/Saga/Saga";
@@ -10,6 +12,8 @@ import {AssociationValueDescriptor} from "../../../../main/Apha/Saga/Storage/Ass
 import {SagaSerializer} from "../../../../main/Apha/Saga/SagaSerializer";
 import {JsonSerializer} from "../../../../main/Apha/Serialization/JsonSerializer";
 import {GenericSagaFactory} from "../../../../main/Apha/Saga/GenericSagaFactory";
+
+chai.use(chaiAsPromised);
 
 describe("MemorySagaStorage", () => {
     let storage;
@@ -25,7 +29,7 @@ describe("MemorySagaStorage", () => {
     });
 
     describe("insert", () => {
-        it("inserts a saga and its associated values into storage", () => {
+        it("inserts a saga and its associated values into storage", (done) => {
             const sagaId = "id";
             const associationValues = new AssociationValues([
                 new AssociationValue("foo", "bar"),
@@ -35,18 +39,20 @@ describe("MemorySagaStorage", () => {
             const saga = new MemorySagaStorageSpecSaga(sagaId, associationValues);
             const serializedSaga = serializer.serialize(saga);
 
-            storage.insert(
+            expect(storage.insert(
                 ClassNameInflector.classOf(saga),
                 sagaId,
                 AssociationValueDescriptor.fromValues(associationValues),
                 serializedSaga
-            );
-
-            const sagaData = storage.findById(sagaId);
-            expect(sagaData).to.equal(serializedSaga);
+            )).to.eventually.be.fulfilled.and.then(() => {
+                expect(storage.findById(sagaId)).to.eventually.be.fulfilled.and.satisfy(sagaData => {
+                    expect(sagaData).to.equal(serializedSaga);
+                    return true;
+                }).and.notify(done);
+            }, done.fail);
         });
 
-        it("associates a saga only once for a associated value", () => {
+        it("associates a saga only once for a associated value", (done) => {
             const sagaId = "id";
             const associationValues = new AssociationValues([
                 new AssociationValue("foo", "bar"),
@@ -57,48 +63,55 @@ describe("MemorySagaStorage", () => {
             const serializedSaga = serializer.serialize(saga);
             const sagaClass = ClassNameInflector.classOf(saga);
 
-            storage.insert(
-                sagaClass,
-                sagaId,
-                AssociationValueDescriptor.fromValues(associationValues),
-                serializedSaga
-            );
-
-            storage.insert(
-                sagaClass,
-                sagaId,
-                AssociationValueDescriptor.fromValues(associationValues),
-                serializedSaga
-            );
-
-            const foundSagas = storage.find(sagaClass, AssociationValueDescriptor.fromValues(associationValues));
-            expect(foundSagas).to.have.lengthOf(1);
+            expect(Promise.all([
+                storage.insert(
+                    sagaClass,
+                    sagaId,
+                    AssociationValueDescriptor.fromValues(associationValues),
+                    serializedSaga
+                ),
+                storage.insert(
+                    sagaClass,
+                    sagaId,
+                    AssociationValueDescriptor.fromValues(associationValues),
+                    serializedSaga
+                )
+            ])).to.eventually.be.fulfilled.and.then(() => {
+                expect(storage.find(sagaClass, AssociationValueDescriptor.fromValues(associationValues)))
+                    .to.eventually.be.fulfilled
+                    .and.satisfy(foundSagas => {
+                        expect(foundSagas).to.have.lengthOf(1);
+                        return true;
+                }).and.notify(done);
+            }, done.fail);
         });
     });
 
     describe("findById", () => {
-        it("finds a stored saga by ID", () => {
+        it("finds a stored saga by ID", (done) => {
             const saga = new MemorySagaStorageSpecSaga("id", new AssociationValues());
             const serializedSaga = serializer.serialize(saga);
 
-            storage.insert(
+            expect(storage.insert(
                 ClassNameInflector.classOf(saga),
                 saga.getId(),
                 AssociationValueDescriptor.fromValues(saga.getAssociationValues()),
                 serializedSaga
-            );
-
-            const sagaData = storage.findById(saga.getId());
-            expect(sagaData).to.equal(serializedSaga);
+            )).to.eventually.be.fulfilled.and.then(() => {
+                expect(storage.findById(saga.getId())).to.eventually.be.fulfilled.and.satisfy(sagaData => {
+                    expect(sagaData).to.equal(serializedSaga);
+                    return true;
+                }).and.notify(done);
+            }, done.fail);
         });
 
-        it("returns NULL if no saga with given ID was found", () => {
-            expect(storage.findById("id")).to.be.null;
+        it("returns NULL if no saga with given ID was found", (done) => {
+            expect(storage.findById("id")).to.become(null).and.notify(done);
         });
     });
 
     describe("find", () => {
-        it("retrieves sagas by type and associated values", () => {
+        it("retrieves sagas by type and associated values", (done) => {
             // matching saga
             const saga1 = new MemorySagaStorageSpecSaga("id1", new AssociationValues([
                 new AssociationValue("foo", "bar")
@@ -114,48 +127,49 @@ describe("MemorySagaStorage", () => {
                 new AssociationValue("foo", "baz")
             ]));
 
-            storage.insert(
-                "SomeSaga",
-                saga1.getId(),
-                AssociationValueDescriptor.fromValues(saga1.getAssociationValues()),
-                serializer.serialize(saga1)
-            );
-
-            storage.insert(
-                "SomeOtherSaga",
-                saga2.getId(),
-                AssociationValueDescriptor.fromValues(saga2.getAssociationValues()),
-                serializer.serialize(saga2)
-            );
-
-            storage.insert(
-                "SomeSaga",
-                saga3.getId(),
-                AssociationValueDescriptor.fromValues(saga3.getAssociationValues()),
-                serializer.serialize(saga3)
-            );
-
-            const foundSagas = storage.find(
-                "SomeSaga",
-                AssociationValueDescriptor.fromValues(saga1.getAssociationValues())
-            );
-
-            expect(foundSagas).to.have.lengthOf(1);
-            expect(foundSagas[0]).to.equal(saga1.getId());
+            expect(Promise.all([
+                storage.insert(
+                    "SomeSaga",
+                    saga1.getId(),
+                    AssociationValueDescriptor.fromValues(saga1.getAssociationValues()),
+                    serializer.serialize(saga1)
+                ),
+                storage.insert(
+                    "SomeOtherSaga",
+                    saga2.getId(),
+                    AssociationValueDescriptor.fromValues(saga2.getAssociationValues()),
+                    serializer.serialize(saga2)
+                ),
+                storage.insert(
+                    "SomeSaga",
+                    saga3.getId(),
+                    AssociationValueDescriptor.fromValues(saga3.getAssociationValues()),
+                    serializer.serialize(saga3)
+                )
+            ])).to.eventually.be.fulfilled.and.then(() => {
+                expect(storage.find("SomeSaga", AssociationValueDescriptor.fromValues(saga1.getAssociationValues())))
+                    .to.eventually.be.fulfilled
+                    .and.satisfy(foundSagas => {
+                        expect(foundSagas).to.have.lengthOf(1);
+                        expect(foundSagas[0]).to.equal(saga1.getId());
+                        return true;
+                }).and.notify(done);
+            }, done.fail);
         });
 
-        it("returns empty result if no sagas can be found with given type and associated values", () => {
-            const foundSagas = storage.find("SomeSaga", AssociationValueDescriptor.fromValues(new AssociationValues([
+        it("returns empty result if no sagas can be found with given type and associated values", (done) => {
+            expect(storage.find("SomeSaga", AssociationValueDescriptor.fromValues(new AssociationValues([
                 new AssociationValue("foo", "bar")
-            ])));
-
-            expect(foundSagas).to.have.lengthOf(0);
-            expect(foundSagas).to.eql([]);
+            ])))).to.eventually.be.fulfilled.and.satisfy(foundSagas => {
+                expect(foundSagas).to.have.lengthOf(0);
+                expect(foundSagas).to.eql([]);
+                return true;
+            }).and.notify(done);
         });
     });
 
     describe("remove", () => {
-        it("removes a previously stored saga", () => {
+        it("removes a previously stored saga", (done) => {
             // to-be-removed saga
             const saga1 = new MemorySagaStorageSpecSaga("id1", new AssociationValues([
                 new AssociationValue("foo", "bar")
@@ -166,73 +180,76 @@ describe("MemorySagaStorage", () => {
                 new AssociationValue("foo", "baz")
             ]));
 
-            storage.insert(
-                ClassNameInflector.classOf(saga1),
-                saga1.getId(),
-                AssociationValueDescriptor.fromValues(saga1.getAssociationValues()),
-                serializer.serialize(saga1)
-            );
-
-            storage.insert(
-                ClassNameInflector.classOf(saga2),
-                saga2.getId(),
-                AssociationValueDescriptor.fromValues(saga2.getAssociationValues()),
-                serializer.serialize(saga2)
-            );
-
-            storage.remove(saga1.getId());
-
-            expect(storage.findById(saga1.getId())).to.be.null;
+            expect(Promise.all([
+                storage.insert(
+                    ClassNameInflector.classOf(saga1),
+                    saga1.getId(),
+                    AssociationValueDescriptor.fromValues(saga1.getAssociationValues()),
+                    serializer.serialize(saga1)
+                ),
+                storage.insert(
+                    ClassNameInflector.classOf(saga2),
+                    saga2.getId(),
+                    AssociationValueDescriptor.fromValues(saga2.getAssociationValues()),
+                    serializer.serialize(saga2)
+                )
+            ])).to.eventually.be.fulfilled.and.then(() => {
+                expect(storage.remove(saga1.getId())).to.eventually.be.fulfilled.and.then(() => {
+                    expect(storage.findById(saga1.getId())).to.become(null).and.notify(done);
+                }, done.fail);
+            }, done.fail);
         });
 
-        it("is idempotent", () => {
-            storage.remove("id1");
+        it("is idempotent", (done) => {
+            expect(storage.remove("id1")).to.eventually.be.fulfilled.and.notify(done);
         });
     });
 
     describe("update", () => {
-        it("updates the saga", () => {
+        it("updates the saga", (done) => {
             const associationValue = new AssociationValue("foo", "bar");
             const associationValue2 = new AssociationValue("baz", "boo");
             let saga = new MemorySagaStorageSpecSaga("id", new AssociationValues([associationValue]));
 
-            storage.insert(
+            expect(storage.insert(
                 "SomeSaga",
                 saga.getId(),
                 AssociationValueDescriptor.fromValues(saga.getAssociationValues()),
                 serializer.serialize(saga)
-            );
+            )).to.eventually.be.fulfilled.and.then(() => {
+                const updatedAssociationValues = new AssociationValues([associationValue, associationValue2]);
+                saga = new MemorySagaStorageSpecSaga("id", updatedAssociationValues);
 
-            const updatedAssociationValues = new AssociationValues([associationValue, associationValue2]);
-            saga = new MemorySagaStorageSpecSaga("id", updatedAssociationValues);
-
-            storage.update(
-                "SomeSaga",
-                saga.getId(),
-                AssociationValueDescriptor.fromValues(saga.getAssociationValues()),
-                serializer.serialize(saga)
-            );
-
-            const serializedSaga = storage.findById(saga.getId());
-            const actualSaga = serializer.deserialize(serializedSaga, MemorySagaStorageSpecSaga);
-
-            expect(actualSaga.getAssociationValues()).to.eql(updatedAssociationValues);
+                expect(storage.update(
+                    "SomeSaga",
+                    saga.getId(),
+                    AssociationValueDescriptor.fromValues(saga.getAssociationValues()),
+                    serializer.serialize(saga)
+                )).to.eventually.be.fulfilled.and.then(() => {
+                    expect(storage.findById(saga.getId())).to.eventually.be.fulfilled.and.satisfy(serializedSaga => {
+                        const actualSaga = serializer.deserialize(serializedSaga, MemorySagaStorageSpecSaga);
+                        expect(actualSaga.getAssociationValues()).to.eql(updatedAssociationValues);
+                        return true;
+                    }).and.notify(done);
+                }, done.fail);
+            }, done.fail);
         });
 
-        it("inserts the saga if it does not exist", () => {
+        it("inserts the saga if it does not exist", (done) => {
             const saga = new MemorySagaStorageSpecSaga("id", new AssociationValues([]));
 
-            storage.update(
+            expect(storage.update(
                 "SomeSaga",
                 saga.getId(),
                 AssociationValueDescriptor.fromValues(saga.getAssociationValues()),
                 serializer.serialize(saga)
-            );
-
-            const serializedSaga = storage.findById(saga.getId());
-            const actualSaga = serializer.deserialize(serializedSaga);
-
-            expect(actualSaga).to.eql(saga);
+            )).to.eventually.be.fulfilled.and.then(() => {
+                expect(storage.findById(saga.getId())).to.eventually.be.fulfilled.and.satisfy(serializedSaga => {
+                    const actualSaga = serializer.deserialize(serializedSaga);
+                    expect(actualSaga).to.eql(saga);
+                    return true;
+                }).and.notify(done);
+            }, done.fail);
         });
     });
 });

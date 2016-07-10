@@ -16,7 +16,12 @@ export class MemorySagaStorage implements SagaStorage {
     private sagas: SagaMap = {};
     private associations: AssociationMap = {};
 
-    public insert(sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string): void {
+    public async insert(
+        sagaClass: string,
+        id: string,
+        associationValues: AssociationValueDescriptor,
+        data: string
+    ): Promise<void> {
         this.sagas[id] = {
             className: sagaClass,
             id: id,
@@ -45,17 +50,22 @@ export class MemorySagaStorage implements SagaStorage {
         }
     }
 
-    public update(sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string): void {
+    public async update(
+        sagaClass: string,
+        id: string,
+        associationValues: AssociationValueDescriptor,
+        data: string
+    ): Promise<void> {
         if (!this.sagas[id]) {
-            this.insert(sagaClass, id, associationValues, data);
-        } else {
-            this.sagas[id].associations = associationValues;
-            this.sagas[id].serializedSaga = data;
-            this.associateSaga(id, associationValues);
+            return this.insert(sagaClass, id, associationValues, data);
         }
+
+        this.sagas[id].associations = associationValues;
+        this.sagas[id].serializedSaga = data;
+        this.associateSaga(id, associationValues);
     }
 
-    public remove(id: string): void {
+    public async remove(id: string): Promise<void> {
         if (!this.sagas[id]) {
             return;
         }
@@ -73,7 +83,7 @@ export class MemorySagaStorage implements SagaStorage {
         delete this.sagas[id];
     }
 
-    public findById(id: string): string {
+    public async findById(id: string): Promise<string> {
         if (!this.sagas[id]) {
             return null;
         }
@@ -81,7 +91,7 @@ export class MemorySagaStorage implements SagaStorage {
         return this.sagas[id].serializedSaga;
     }
 
-    public find(sagaClass: string, associationValue: AssociationValueDescriptor): string[] {
+    public async find(sagaClass: string, associationValue: AssociationValueDescriptor): Promise<string[]> {
         let foundIdentities = [];
 
         for (const field in associationValue) {

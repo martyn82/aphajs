@@ -1,5 +1,8 @@
 
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
+import {expect} from "chai";
 import {SimpleSagaManager} from "../../../main/Apha/Saga/SimpleSagaManager";
 import {SagaRepository} from "../../../main/Apha/Saga/SagaRepository";
 import {GenericSagaFactory} from "../../../main/Apha/Saga/GenericSagaFactory";
@@ -12,6 +15,8 @@ import {SagaStorage} from "../../../main/Apha/Saga/Storage/SagaStorage";
 import {AssociationValueDescriptor} from "../../../main/Apha/Saga/Storage/AssociationValueDescriptor";
 import {SagaSerializer} from "../../../main/Apha/Saga/SagaSerializer";
 import {JsonSerializer} from "../../../main/Apha/Serialization/JsonSerializer";
+
+chai.use(chaiAsPromised);
 
 describe("SimpleSagaManager", () => {
     let manager;
@@ -38,7 +43,7 @@ describe("SimpleSagaManager", () => {
     });
 
     describe("on", () => {
-        it("delegates event to correct sagas", () => {
+        it("delegates event to correct sagas", (done) => {
             const associationValue = new AssociationValue("foo", "bar");
             const associationValues = new AssociationValues([associationValue]);
             const sagaId = "sagaId";
@@ -55,29 +60,31 @@ describe("SimpleSagaManager", () => {
             repositoryMock.expects("find")
                 .once()
                 .withArgs(SimpleSagaManagerSpecSaga, associationValue)
-                .returns([sagaId]);
+                .returns(new Promise<string[]>(resolve => resolve([sagaId])));
 
             repositoryMock.expects("load")
                 .once()
                 .withArgs(sagaId, SimpleSagaManagerSpecSaga)
-                .returns(saga);
+                .returns(new Promise<SimpleSagaManagerSpecSaga>(resolve => resolve(saga)));
 
             repositoryMock.expects("commit")
                 .once()
-                .withArgs(saga);
+                .withArgs(saga)
+                .returns(new Promise<void>(resolve => resolve()));
 
             sagaMock.expects("on")
                 .once()
                 .withArgs(event);
 
-            manager.on(event);
-
-            resolverMock.verify();
-            repositoryMock.verify();
-            sagaMock.verify();
+            expect(manager.on(event)).to.eventually.be.fulfilled.and.satisfy(() => {
+                resolverMock.verify();
+                repositoryMock.verify();
+                sagaMock.verify();
+                return true;
+            }).and.notify(done);
         });
 
-        it("create new saga if none found because of saga creation policy", () => {
+        it("create new saga if none found because of saga creation policy", (done) => {
             const associationValue = new AssociationValue("foo", "bar");
             const associationValues = new AssociationValues([associationValue]);
             const sagaId = "sagaId";
@@ -94,13 +101,14 @@ describe("SimpleSagaManager", () => {
             repositoryMock.expects("find")
                 .once()
                 .withArgs(SimpleSagaManagerSpecSaga, associationValue)
-                .returns([]);
+                .returns(new Promise<string[]>(resolve => resolve([])));
 
             repositoryMock.expects("load").never();
 
             repositoryMock.expects("commit")
                 .once()
-                .withArgs(saga);
+                .withArgs(saga)
+                .returns(new Promise<void>(resolve => resolve()));
 
             sagaMock.expects("on")
                 .once()
@@ -110,12 +118,13 @@ describe("SimpleSagaManager", () => {
                 .once()
                 .returns(saga);
 
-            manager.on(event);
-
-            resolverMock.verify();
-            repositoryMock.verify();
-            sagaMock.verify();
-            factoryMock.verify();
+            expect(manager.on(event)).to.eventually.be.fulfilled.and.satisfy(() => {
+                resolverMock.verify();
+                repositoryMock.verify();
+                sagaMock.verify();
+                factoryMock.verify();
+                return true;
+            }).and.notify(done);
         });
     });
 });
@@ -137,13 +146,23 @@ class SimpleSagaManagerSpecAssociationValueResolver implements AssociationValueR
 }
 
 class SimpleSagaManagerSpecSagaStorage implements SagaStorage {
-    public insert(sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string): void {}
-    public update(sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string): void {}
-    public remove(id: string): void {}
-    public findById(id: string): string {
+    public async insert(
+        sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string
+    ): Promise<void> {
+        return null;
+    }
+    public async update(
+        sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string
+    ): Promise<void> {
+        return null;
+    }
+    public async remove(id: string): Promise<void> {
+        return null;
+    }
+    public async findById(id: string): Promise<string> {
         return "";
     }
-    public find(sagaClass: string, associationValue: AssociationValueDescriptor): string[] {
+    public async find(sagaClass: string, associationValue: AssociationValueDescriptor): Promise<string[]> {
         return [];
     }
 }

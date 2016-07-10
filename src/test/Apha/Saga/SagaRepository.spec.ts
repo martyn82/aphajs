@@ -1,4 +1,6 @@
 
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
 import {expect} from "chai";
 import {SagaRepository} from "../../../main/Apha/Saga/SagaRepository";
@@ -11,6 +13,8 @@ import {AssociationValues} from "../../../main/Apha/Saga/AssociationValues";
 import {JsonSerializer} from "../../../main/Apha/Serialization/JsonSerializer";
 import {GenericSagaFactory} from "../../../main/Apha/Saga/GenericSagaFactory";
 import {AssociationValue} from "../../../main/Apha/Saga/AssociationValue";
+
+chai.use(chaiAsPromised);
 
 describe("SagaRepository", () => {
     let repository;
@@ -27,7 +31,7 @@ describe("SagaRepository", () => {
     });
 
     describe("add", () => {
-        it("adds an active saga to the repository", () => {
+        it("adds an active saga to the repository", (done) => {
             const sagaId = "id";
             const saga = new SagaRepositorySpecSaga(sagaId, new AssociationValues());
             const descriptors = AssociationValueDescriptor.fromValues(saga.getAssociationValues());
@@ -39,28 +43,32 @@ describe("SagaRepository", () => {
                     sagaId,
                     descriptors,
                     "{\"id\":\"id\",\"associationValues\":{\"items\":[]}}"
-                );
+                )
+                .returns(new Promise<void>(resolve => resolve()));
 
-            repository.add(saga);
-
-            storageMock.verify();
+            expect(repository.add(saga)).to.eventually.be.fulfilled.and.satisfy(() => {
+                storageMock.verify();
+                return true;
+            }).and.notify(done);
         });
 
-        it("does not add saga to the repository if it is inactive", () => {
+        it("does not add saga to the repository if it is inactive", (done) => {
             const saga = new SagaRepositorySpecSaga("id", new AssociationValues());
             const sagaMock = sinon.mock(saga);
 
             sagaMock.expects("isActive").returns(false);
             storageMock.expects("insert").never();
 
-            repository.add(saga);
-
-            storageMock.verify();
+            expect(repository.add(saga)).to.eventually.be.fulfilled.and.satisfy(() => {
+                sagaMock.verify();
+                storageMock.verify();
+                return true;
+            }).and.notify(done);
         });
     });
 
     describe("commit", () => {
-        it("updates existing active saga in repository", () => {
+        it("updates existing active saga in repository", (done) => {
             const sagaId = "id";
             const saga = new SagaRepositorySpecSaga(sagaId, new AssociationValues());
             const descriptors = AssociationValueDescriptor.fromValues(saga.getAssociationValues());
@@ -72,14 +80,16 @@ describe("SagaRepository", () => {
                     sagaId,
                     descriptors,
                     "{\"id\":\"id\",\"associationValues\":{\"items\":[]}}"
-                );
+                )
+                .returns(new Promise<void>(resolve => resolve()));
 
-            repository.commit(saga);
-
-            storageMock.verify();
+            expect(repository.commit(saga)).to.eventually.be.fulfilled.and.satisfy(() => {
+                storageMock.verify();
+                return true;
+            }).and.notify(done);
         });
 
-        it("removes an existing saga from repository if it is inactive", () => {
+        it("removes an existing saga from repository if it is inactive", (done) => {
             const sagaId = "id";
             const saga = new SagaRepositorySpecSaga(sagaId, new AssociationValues());
             const sagaMock = sinon.mock(saga);
@@ -87,16 +97,19 @@ describe("SagaRepository", () => {
             sagaMock.expects("isActive").returns(false);
             storageMock.expects("remove")
                 .once()
-                .withArgs(sagaId);
+                .withArgs(sagaId)
+                .returns(new Promise<void>(resolve => resolve()));
 
-            repository.commit(saga);
-
-            storageMock.verify();
+            expect(repository.commit(saga)).to.eventually.be.fulfilled.and.satisfy(() => {
+                sagaMock.verify();
+                storageMock.verify();
+                return true;
+            }).and.notify(done);
         });
     });
 
     describe("find", () => {
-        it("retrieves all matching saga IDs for given saga type and association value", () => {
+        it("retrieves all matching saga IDs for given saga type and association value", (done) => {
             const associationValue = new AssociationValue("foo", "bar");
             const descriptor = AssociationValueDescriptor.fromValue(associationValue);
 
@@ -105,36 +118,45 @@ describe("SagaRepository", () => {
                 .withArgs(
                     "SagaRepositorySpecSaga",
                     descriptor
-                );
+                )
+                .returns(new Promise<void>(resolve => resolve()));
 
-            repository.find(SagaRepositorySpecSaga, associationValue);
-
-            storageMock.verify();
+            expect(
+                repository.find(SagaRepositorySpecSaga, associationValue)
+            ).to.eventually.be.fulfilled.and.satisfy(() => {
+                storageMock.verify();
+                return true;
+            }).and.notify(done);
         });
     });
 
     describe("load", () => {
-        it("finds and deserializes a saga from repository", () => {
+        it("finds and deserializes a saga from repository", (done) => {
             storageMock.expects("findById")
                 .once()
                 .withArgs("id")
-                .returns("{\"id\":\"id\",\"associationValues\":{\"items\":[]}}");
+                .returns(
+                    new Promise<string>(resolve => resolve("{\"id\":\"id\",\"associationValues\":{\"items\":[]}}"))
+                );
 
-            const saga = repository.load("id", SagaRepositorySpecSaga);
+            expect(repository.load("id", SagaRepositorySpecSaga)).to.eventually.be.fulfilled.and.satisfy(saga => {
+                expect(saga).to.be.an.instanceOf(SagaRepositorySpecSaga);
+                expect(saga.getId()).to.equal("id");
 
-            expect(saga).to.be.an.instanceOf(SagaRepositorySpecSaga);
-            expect(saga.getId()).to.equal("id");
-
-            storageMock.verify();
+                storageMock.verify();
+                return true;
+            }).and.notify(done);
         });
 
-        it("returns null if saga cannot be loaded", () => {
-            storageMock.expects("findById").returns(null);
+        it("returns null if saga cannot be loaded", (done) => {
+            storageMock.expects("findById").returns(new Promise<string>(resolve => resolve(null)));
 
-            const saga = repository.load("id", SagaRepositorySpecSaga);
-            expect(saga).to.be.null;
+            expect(repository.load("id", SagaRepositorySpecSaga)).to.eventually.be.fulfilled.and.satisfy(saga => {
+                expect(saga).to.be.null;
 
-            storageMock.verify();
+                storageMock.verify();
+                return true;
+            }).and.notify(done);
         });
     });
 });
@@ -149,13 +171,23 @@ class SagaRepositorySpecSaga extends Saga {
 }
 
 class SagaRepositorySpecSagaStorage implements SagaStorage {
-    insert(sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string): void {}
-    update(sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string): void {}
-    remove(id: string): void {}
-    findById(id: string): string {
+    async insert(
+        sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string
+    ): Promise<void> {
         return null;
     }
-    find(sagaClass: string, associationValue: AssociationValueDescriptor): string[] {
+    async update(
+        sagaClass: string, id: string, associationValues: AssociationValueDescriptor, data: string
+    ): Promise<void> {
+        return null;
+    }
+    async remove(id: string): Promise<void> {
+        return null;
+    }
+    async findById(id: string): Promise<string> {
+        return null;
+    }
+    async find(sagaClass: string, associationValue: AssociationValueDescriptor): Promise<string[]> {
         return [];
     }
 }

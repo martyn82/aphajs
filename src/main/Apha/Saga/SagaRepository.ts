@@ -9,12 +9,12 @@ import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 export class SagaRepository<T extends Saga> {
     constructor(private storage: SagaStorage, private serializer: SagaSerializer<T>) {}
 
-    public add(saga: T): void {
+    public async add(saga: T): Promise<void> {
         if (!saga.isActive()) {
             return;
         }
 
-        this.storage.insert(
+        return this.storage.insert(
             ClassNameInflector.classOf(saga),
             saga.getId(),
             AssociationValueDescriptor.fromValues(saga.getAssociationValues()),
@@ -22,13 +22,13 @@ export class SagaRepository<T extends Saga> {
         );
     }
 
-    public commit(saga: T): void {
+    public async commit(saga: T): Promise<void> {
         if (!saga.isActive()) {
             this.storage.remove(saga.getId());
             return;
         }
 
-        this.storage.update(
+        return this.storage.update(
             ClassNameInflector.classOf(saga),
             saga.getId(),
             AssociationValueDescriptor.fromValues(saga.getAssociationValues()),
@@ -36,13 +36,13 @@ export class SagaRepository<T extends Saga> {
         );
     }
 
-    public find(sagaType: SagaType<T>, associationValue: AssociationValue): string[] {
+    public async find(sagaType: SagaType<T>, associationValue: AssociationValue): Promise<string[]> {
         const sagaClass = ClassNameInflector.className(sagaType);
         return this.storage.find(sagaClass, AssociationValueDescriptor.fromValue(associationValue));
     }
 
-    public load(id: string, sagaType: SagaType<T>): T {
-        const sagaData = this.storage.findById(id);
+    public async load(id: string, sagaType: SagaType<T>): Promise<T> {
+        const sagaData = await this.storage.findById(id);
 
         if (!sagaData) {
             return null;

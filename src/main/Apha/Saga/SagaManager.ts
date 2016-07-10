@@ -22,19 +22,19 @@ export abstract class SagaManager<T extends Saga> implements EventListener {
         private factory: SagaFactory<T>
     ) {}
 
-    public on(event: Event): void {
+    public async on(event: Event): Promise<void> {
         let handled = false;
 
-        this.sagaTypes.forEach((sagaType) => {
+        this.sagaTypes.forEach(async (sagaType) => {
             const associationValues = this.extractAssociationValues(sagaType, event);
 
             for (const associationValue of associationValues) {
-                const sagaIds = this.repository.find(sagaType, associationValue);
+                const sagaIds = await this.repository.find(sagaType, associationValue);
 
-                sagaIds.forEach((sagaId) => {
-                    const saga = this.repository.load(sagaId, sagaType);
+                sagaIds.forEach(async (sagaId) => {
+                    const saga = await this.repository.load(sagaId, sagaType);
                     saga.on(event);
-                    this.commit(saga);
+                    await this.commit(saga);
                     handled = true;
                 });
             }
@@ -45,13 +45,13 @@ export abstract class SagaManager<T extends Saga> implements EventListener {
             ) {
                 const saga = this.factory.createSaga(sagaType, IdentityProvider.generateNew(), associationValues);
                 saga.on(event);
-                this.commit(saga);
+                await this.commit(saga);
             }
         });
     }
 
-    protected commit(saga: T): void {
-        this.repository.commit(saga);
+    protected async commit(saga: T): Promise<void> {
+        return this.repository.commit(saga);
     }
 
     protected getAssociationValueResolver(): AssociationValueResolver {
