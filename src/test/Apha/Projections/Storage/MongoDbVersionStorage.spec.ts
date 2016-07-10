@@ -44,8 +44,10 @@ describe("MongoDbVersionStorage", () => {
         });
 
         it("should update an existing version", (done) => {
-            expect(Promise.all([storage.upsert("foo", 1), storage.upsert("foo", 2)])).to.eventually.be.fulfilled
-                .and.then(() => {
+            expect(Promise.all([
+                expect(storage.upsert("foo", 1)).to.eventually.be.fulfilled,
+                expect(storage.upsert("foo", 2)).to.eventually.be.fulfilled
+            ])).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.findByName("foo")).to.eventually.be.fulfilled.and.satisfy(version => {
                     return version === 2;
                 }).and.notify(done);

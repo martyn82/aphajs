@@ -30,6 +30,5 @@ export class MongoDbVersionStorage implements VersionStorage {
             {name: name, version: version},
             {upsert: true}
         );
-        return;
     }
 }
