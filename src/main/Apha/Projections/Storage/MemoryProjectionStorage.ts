@@ -6,11 +6,11 @@ import {ProjectionNotFoundException} from "./ProjectionNotFoundException";
 export class MemoryProjectionStorage<T extends Projection> implements ProjectionStorage<T> {
     private data: {[id: string]: T} = {};
 
-    public upsert(id: string, projection: T): void {
+    public async upsert(id: string, projection: T): Promise<void> {
         this.data[id] = projection;
     }
 
-    public remove(id: string): void {
+    public async remove(id: string): Promise<void> {
         if (!this.data[id]) {
             return;
         }
@@ -18,7 +18,7 @@ export class MemoryProjectionStorage<T extends Projection> implements Projection
         delete this.data[id];
     }
 
-    public find(id: string): T {
+    public async find(id: string): Promise<T> {
         if (!this.data[id]) {
             throw new ProjectionNotFoundException(id);
         }
@@ -26,19 +26,19 @@ export class MemoryProjectionStorage<T extends Projection> implements Projection
         return this.data[id];
     }
 
-    public findAll(offset: number, limit: number): T[] {
+    public async findAll(offset: number, limit: number): Promise<T[]> {
         return Object.getOwnPropertyNames(this.data).slice(offset, offset + limit).map((id) => {
             return this.data[id];
         });
     }
 
-    public clear(): void {
+    public async clear(): Promise<void> {
         Object.getOwnPropertyNames(this.data).forEach((id: string) => {
             delete this.data[id];
         });
     }
 
-    public findBy(criteria: {[name: string]: string}, offset: number, limit: number): T[] {
+    public async findBy(criteria: {[name: string]: string}, offset: number, limit: number): Promise<T[]> {
         return Object.keys(this.data).filter((id: string) => {
             return Object.keys(criteria).every((name: string) => {
                 return this.data[id][name] === criteria[name];

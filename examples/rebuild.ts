@@ -133,8 +133,7 @@ async function main(): Promise<number> {
 
     // Start the rebuild
     await rebuilder.rebuildIfNecessary();
-
-    const activeAccounts = accountProjections.findAllActive();
+    const activeAccounts = await accountProjections.findAllActive();
 
     if (activeAccounts.length !== numberOfActive) {
         logger.error(

@@ -7,7 +7,6 @@ import {Event, EventType} from "../../src/main/Apha/Message/Event";
 import {EventListener} from "../../src/main/Apha/EventHandling/EventListenerDecorator";
 import {Mixin} from "../../src/main/MixinDecorator";
 import {Account} from "./Account";
-import {clone} from "../../src/main/Clone";
 
 namespace ProjectionsType {
     export const Account = "Account";
@@ -45,21 +44,23 @@ export class AccountProjections extends Projections<AccountProjection> implement
 
     @EventListener()
     public onAccountActivated(event: Account.Activated): void {
-        const account = this.storage.find(event.id);
-        this.storage.upsert(event.id, account.copy({_active: true}));
+        this.storage.find(event.id).then(account => {
+            this.storage.upsert(event.id, account.copy({_active: true}));
+        });
     }
 
     @EventListener()
     public onAccountDeactivated(event: Account.Deactivated): void {
-        const account = this.storage.find(event.id);
-        this.storage.upsert(event.id, account.copy({_active: false}));
+        this.storage.find(event.id).then(account => {
+            this.storage.upsert(event.id, account.copy({_active: false}));
+        });
     }
 
-    public findAll(page: number, pageSize: number): AccountProjection[] {
+    public async findAll(page: number, pageSize: number): Promise<AccountProjection[]> {
         return this.storage.findAll((page - 1) * pageSize, pageSize);
     }
 
-    public findAllActive(): AccountProjection[] {
+    public async findAllActive(): Promise<AccountProjection[]> {
         return this.storage.findBy({_active: true}, 0, 100000);
     }
 }
