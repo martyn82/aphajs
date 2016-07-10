@@ -60,7 +60,7 @@
     "istanbul": "^0.4.4",
     "mkdirp": "^0.5.1",
     "mocha": "^2.5.3",
-    "mongodb": "^2.1.21",
+    "mongodb": "^2.2.0",
     "remap-istanbul": "^0.6.4",
     "rimraf": "^2.5.3",
     "sinon": "^1.17.3",
