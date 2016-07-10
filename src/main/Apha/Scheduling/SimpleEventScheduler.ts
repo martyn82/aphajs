@@ -46,7 +46,7 @@ export class SimpleEventScheduler implements EventScheduler {
     public async cancelSchedule(token: ScheduleToken): Promise<void> {
         await this.storage.remove(token.getToken());
 
-        if (this.currentSchedule[token.getToken()]) {
+        if (this.currentSchedule.has(token.getToken())) {
             global.clearTimeout(this.currentSchedule[token.getToken()]);
             this.currentSchedule.delete(token.getToken());
         }
