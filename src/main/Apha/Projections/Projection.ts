@@ -1,16 +1,18 @@
 
 import {clone} from "../../Clone";
 
+export type ProjectionType = {new(...args: any[]): Projection};
+
 export abstract class Projection {
     public copy(overrides?: {}): this {
-        const proj = clone(this, Reflect.construct(this.constructor, []));
+        const projection = clone(this, Reflect.construct(this.constructor, []));
 
         for (const prop in overrides) {
-            if (proj.hasOwnProperty(prop)) {
-                proj[prop] = overrides[prop];
+            if (overrides.hasOwnProperty(prop) && projection.hasOwnProperty(prop)) {
+                projection[prop] = overrides[prop];
             }
         }
 
-        return proj;
+        return projection;
     }
 }

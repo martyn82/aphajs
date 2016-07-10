@@ -2,17 +2,38 @@
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import {expect} from "chai";
-import {MemoryProjectionStorage} from "../../../../main/Apha/Projections/Storage/MemoryProjectionStorage";
 import {Projection} from "../../../../main/Apha/Projections/Projection";
 import {ProjectionNotFoundException} from "../../../../main/Apha/Projections/Storage/ProjectionNotFoundException";
+import {MongoClient} from "mongodb";
+import {MongoDbProjectionStorage} from "../../../../main/Apha/Projections/Storage/MongoDbProjectionStorage";
 
 chai.use(chaiAsPromised);
 
-describe("MemoryProjectionStorage", () => {
+describe("MongoDbProjectionStorage", () => {
+    let mongoDb;
     let storage;
 
+    before(done => {
+        MongoClient.connect("mongodb://localhost:27017/test").then(db => {
+            mongoDb = db;
+            done();
+        });
+    });
+
+    after(done => {
+        mongoDb.dropDatabase().then(() => {
+            mongoDb.close();
+            done();
+        });
+    });
+
     beforeEach(() => {
-        storage = new MemoryProjectionStorage();
+        const collection = mongoDb.collection("test_projections");
+        storage = new MongoDbProjectionStorage(collection, MemoryProjectionStorageSpecProjection);
+    });
+
+    afterEach(done => {
+        mongoDb.dropCollection("test_projections").then(() => done(), () => done());
     });
 
     describe("upsert", () => {
