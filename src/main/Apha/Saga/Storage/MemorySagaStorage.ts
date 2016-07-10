@@ -22,14 +22,22 @@ export class MemorySagaStorage implements SagaStorage {
         associationValues: AssociationValueDescriptor,
         data: string
     ): Promise<void> {
-        this.sagas[id] = {
-            className: sagaClass,
-            id: id,
-            associations: associationValues,
-            serializedSaga: data
-        };
+        return new Promise<void>((resolve, reject) => {
+            if (this.sagas[id]) {
+                reject();
+                return;
+            }
 
-        this.associateSaga(id, associationValues);
+            this.sagas[id] = {
+                className: sagaClass,
+                id: id,
+                associations: associationValues,
+                serializedSaga: data
+            };
+
+            this.associateSaga(id, associationValues);
+            resolve();
+        });
     }
 
     private associateSaga(id: string, associationValues: AssociationValueDescriptor): void {

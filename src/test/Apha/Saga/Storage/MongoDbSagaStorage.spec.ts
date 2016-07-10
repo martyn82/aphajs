@@ -2,30 +2,49 @@
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import {expect} from "chai";
-import {MemorySagaStorage} from "../../../../main/Apha/Saga/Storage/MemorySagaStorage";
 import {Saga} from "../../../../main/Apha/Saga/Saga";
 import {Event} from "../../../../main/Apha/Message/Event";
 import {AssociationValues} from "../../../../main/Apha/Saga/AssociationValues";
 import {AssociationValue} from "../../../../main/Apha/Saga/AssociationValue";
 import {ClassNameInflector} from "../../../../main/Apha/Inflection/ClassNameInflector";
 import {AssociationValueDescriptor} from "../../../../main/Apha/Saga/Storage/AssociationValueDescriptor";
-import {SagaSerializer} from "../../../../main/Apha/Saga/SagaSerializer";
+import {MongoClient} from "mongodb";
+import {MongoDbSagaStorage} from "../../../../main/Apha/Saga/Storage/MongoDbSagaStorage";
 import {JsonSerializer} from "../../../../main/Apha/Serialization/JsonSerializer";
 import {GenericSagaFactory} from "../../../../main/Apha/Saga/GenericSagaFactory";
+import {SagaSerializer} from "../../../../main/Apha/Saga/SagaSerializer";
 
 chai.use(chaiAsPromised);
 
-describe("MemorySagaStorage", () => {
+describe("MongoDbSagaStorage", () => {
+    let mongoDb;
     let storage;
     let serializer;
 
-    before(() => {
-        const factory = new GenericSagaFactory<MemorySagaStorageSpecSaga>();
-        serializer = new SagaSerializer<MemorySagaStorageSpecSaga>(new JsonSerializer(), factory);
+    before(done => {
+        const factory = new GenericSagaFactory<MongoDbSagaStorageSpecSaga>();
+        serializer = new SagaSerializer<MongoDbSagaStorageSpecSaga>(new JsonSerializer(), factory);
+
+        MongoClient.connect("mongodb://localhost:27017/test").then(db => {
+            mongoDb = db;
+            done();
+        });
+    });
+
+    after(done => {
+        mongoDb.dropDatabase().then(() => {
+            mongoDb.close();
+            done();
+        });
     });
 
     beforeEach(() => {
-        storage = new MemorySagaStorage();
+        const collection = mongoDb.collection("sagas");
+        storage = new MongoDbSagaStorage(collection);
+    });
+
+    afterEach(done => {
+        mongoDb.dropCollection("sagas").then(() => done());
     });
 
     describe("insert", () => {
@@ -36,7 +55,7 @@ describe("MemorySagaStorage", () => {
                 new AssociationValue("baz", "boo")
             ]);
 
-            const saga = new MemorySagaStorageSpecSaga(sagaId, associationValues);
+            const saga = new MongoDbSagaStorageSpecSaga(sagaId, associationValues);
             const serializedSaga = serializer.serialize(saga);
 
             expect(storage.insert(
@@ -52,14 +71,14 @@ describe("MemorySagaStorage", () => {
             }, done.fail);
         });
 
-        it("associates a saga only once for a associated value", (done) => {
+        it("associates a saga only once for an associated value", (done) => {
             const sagaId = "id";
             const associationValues = new AssociationValues([
                 new AssociationValue("foo", "bar"),
                 new AssociationValue("baz", "boo")
             ]);
 
-            const saga = new MemorySagaStorageSpecSaga(sagaId, associationValues);
+            const saga = new MongoDbSagaStorageSpecSaga(sagaId, associationValues);
             const serializedSaga = serializer.serialize(saga);
             const sagaClass = ClassNameInflector.classOf(saga);
 
@@ -89,7 +108,7 @@ describe("MemorySagaStorage", () => {
 
     describe("findById", () => {
         it("finds a stored saga by ID", (done) => {
-            const saga = new MemorySagaStorageSpecSaga("id", new AssociationValues());
+            const saga = new MongoDbSagaStorageSpecSaga("id", new AssociationValues());
             const serializedSaga = serializer.serialize(saga);
 
             expect(storage.insert(
@@ -113,17 +132,17 @@ describe("MemorySagaStorage", () => {
     describe("find", () => {
         it("retrieves sagas by type and associated values", (done) => {
             // matching saga
-            const saga1 = new MemorySagaStorageSpecSaga("id1", new AssociationValues([
+            const saga1 = new MongoDbSagaStorageSpecSaga("id1", new AssociationValues([
                 new AssociationValue("foo", "bar")
             ]));
 
             // non-matching: same associationValue, but other type, at insert()
-            const saga2 = new MemorySagaStorageSpecSaga("id2", new AssociationValues([
+            const saga2 = new MongoDbSagaStorageSpecSaga("id2", new AssociationValues([
                 new AssociationValue("foo", "bar")
             ]));
 
             // non-matching: other associationValue (same key)
-            const saga3 = new MemorySagaStorageSpecSaga("id3", new AssociationValues([
+            const saga3 = new MongoDbSagaStorageSpecSaga("id3", new AssociationValues([
                 new AssociationValue("foo", "baz")
             ]));
 
@@ -171,12 +190,12 @@ describe("MemorySagaStorage", () => {
     describe("remove", () => {
         it("removes a previously stored saga", (done) => {
             // to-be-removed saga
-            const saga1 = new MemorySagaStorageSpecSaga("id1", new AssociationValues([
+            const saga1 = new MongoDbSagaStorageSpecSaga("id1", new AssociationValues([
                 new AssociationValue("foo", "bar")
             ]));
 
             // like-saga, different associations
-            const saga2 = new MemorySagaStorageSpecSaga("id2", new AssociationValues([
+            const saga2 = new MongoDbSagaStorageSpecSaga("id2", new AssociationValues([
                 new AssociationValue("foo", "baz")
             ]));
 
@@ -209,7 +228,7 @@ describe("MemorySagaStorage", () => {
         it("updates the saga", (done) => {
             const associationValue = new AssociationValue("foo", "bar");
             const associationValue2 = new AssociationValue("baz", "boo");
-            let saga = new MemorySagaStorageSpecSaga("id", new AssociationValues([associationValue]));
+            let saga = new MongoDbSagaStorageSpecSaga("id", new AssociationValues([associationValue]));
 
             expect(storage.insert(
                 "SomeSaga",
@@ -218,7 +237,7 @@ describe("MemorySagaStorage", () => {
                 serializer.serialize(saga)
             )).to.eventually.be.fulfilled.and.then(() => {
                 const updatedAssociationValues = new AssociationValues([associationValue, associationValue2]);
-                saga = new MemorySagaStorageSpecSaga("id", updatedAssociationValues);
+                saga = new MongoDbSagaStorageSpecSaga("id", updatedAssociationValues);
 
                 expect(storage.update(
                     "SomeSaga",
@@ -227,7 +246,7 @@ describe("MemorySagaStorage", () => {
                     serializer.serialize(saga)
                 )).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.findById(saga.getId())).to.eventually.be.fulfilled.and.satisfy(serializedSaga => {
-                        const actualSaga = serializer.deserialize(serializedSaga, MemorySagaStorageSpecSaga);
+                        const actualSaga = serializer.deserialize(serializedSaga, MongoDbSagaStorageSpecSaga);
                         expect(actualSaga.getAssociationValues()).to.eql(updatedAssociationValues);
                         return true;
                     }).and.notify(done);
@@ -236,7 +255,7 @@ describe("MemorySagaStorage", () => {
         });
 
         it("inserts the saga if it does not exist", (done) => {
-            const saga = new MemorySagaStorageSpecSaga("id", new AssociationValues([]));
+            const saga = new MongoDbSagaStorageSpecSaga("id", new AssociationValues([]));
 
             expect(storage.update(
                 "SomeSaga",
@@ -254,7 +273,7 @@ describe("MemorySagaStorage", () => {
     });
 });
 
-class MemorySagaStorageSpecSaga extends Saga {
+class MongoDbSagaStorageSpecSaga extends Saga {
     public on(event: Event): void {}
 
     public isActive(): boolean {

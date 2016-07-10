@@ -4,7 +4,7 @@ import {Collection} from "mongodb";
 
 export class MongoDbVersionStorage implements VersionStorage {
     constructor(private collection: Collection) {
-        this.collection.createIndex({name: 1});
+        this.collection.createIndex({name: 1}, {unique: true});
     }
 
     public async findByName(name: string): Promise<number> {
