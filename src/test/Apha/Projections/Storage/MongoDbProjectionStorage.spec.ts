@@ -104,7 +104,9 @@ describe("MongoDbProjectionStorage", () => {
             for (let i = 0; i < 4; i++) {
                 const projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
                 projections.push(projection);
-                promises.push(storage.upsert(i.toString(), projection));
+                promises.push(
+                    expect(storage.upsert(i.toString(), projection)).to.eventually.be.fulfilled
+                );
             }
 
             expect(Promise.all(promises)).to.eventually.be.fulfilled.and.then(() => {
@@ -153,14 +155,16 @@ describe("MongoDbProjectionStorage", () => {
 
             const promises = [];
             for (let i = 0; i < projections.length; i++) {
-                promises.push(storage.upsert(i.toString(), projections[i]));
+                promises.push(
+                    expect(storage.upsert(i.toString(), projections[i])).to.eventually.be.fulfilled
+                );
             }
 
             expect(Promise.all(promises)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.findBy({foo: "foo"}, 0, 10)).to.eventually.be.fulfilled.and.satisfy(page => {
                     expect(page).to.have.lengthOf(2);
-                    expect(page[0]).to.eql(projections[0]);
-                    expect(page[1]).to.eql(projections[2]);
+                    expect(page).to.contain(projections[0]);
+                    expect(page).to.contain(projections[2]);
                     return true;
                 }).and.notify(done);
             }, done.fail);
@@ -177,7 +181,9 @@ describe("MongoDbProjectionStorage", () => {
             const promises = [];
 
             for (let i = 0; i < projections.length; i++) {
-                promises.push(storage.upsert(i.toString(), projections[i]));
+                promises.push(
+                    expect(storage.upsert(i.toString(), projections[i])).to.eventually.be.fulfilled
+                );
             }
 
             expect(Promise.all(promises)).to.eventually.be.fulfilled.and.then(() => {

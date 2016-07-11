@@ -83,7 +83,9 @@ describe("MemoryProjectionStorage", () => {
             for (let i = 0; i < 4; i++) {
                 const projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
                 projections.push(projection);
-                promises.push(storage.upsert(i.toString(), projection));
+                promises.push(
+                    expect(storage.upsert(i.toString(), projection)).to.eventually.be.fulfilled
+                );
             }
 
             expect(Promise.all(promises)).to.eventually.be.fulfilled.and.then(() => {
@@ -132,7 +134,9 @@ describe("MemoryProjectionStorage", () => {
 
             const promises = [];
             for (let i = 0; i < projections.length; i++) {
-                promises.push(storage.upsert(i.toString(), projections[i]));
+                promises.push(
+                    expect(storage.upsert(i.toString(), projections[i])).to.eventually.be.fulfilled
+                );
             }
 
             expect(Promise.all(promises)).to.eventually.be.fulfilled.and.then(() => {
@@ -156,7 +160,9 @@ describe("MemoryProjectionStorage", () => {
             const promises = [];
 
             for (let i = 0; i < projections.length; i++) {
-                promises.push(storage.upsert(i.toString(), projections[i]));
+                promises.push(
+                    expect(storage.upsert(i.toString(), projections[i])).to.eventually.be.fulfilled
+                );
             }
 
             expect(Promise.all(promises)).to.eventually.be.fulfilled.and.then(() => {

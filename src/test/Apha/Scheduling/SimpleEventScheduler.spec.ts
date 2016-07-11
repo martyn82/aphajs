@@ -337,8 +337,8 @@ describe("SimpleEventScheduler", () => {
                 clock.tick(300);
 
                 expect(Promise.all([
-                    scheduler.cancelSchedule(token),
-                    scheduler.cancelSchedule(token)
+                    expect(scheduler.cancelSchedule(token)).to.eventually.be.fulfilled,
+                    expect(scheduler.cancelSchedule(token)).to.eventually.be.fulfilled
                 ])).to.eventually.be.fulfilled.and.satisfy(() => {
                     clock.tick(300);
 

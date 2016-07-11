@@ -77,7 +77,9 @@ describe("MongoDbEventStorage", () => {
 
             const promisedAppends = [];
             descriptors.forEach(descriptor => {
-                promisedAppends.push(storage.append(descriptor));
+                promisedAppends.push(
+                    expect(storage.append(descriptor)).to.eventually.be.fulfilled
+                );
             });
 
             expect(Promise.all(promisedAppends)).to.eventually.be.fulfilled.then(() => {
@@ -91,14 +93,13 @@ describe("MongoDbEventStorage", () => {
     });
 
     describe("contains", () => {
-        it("should return true if an aggregate ID exists in storage", () => {
+        it("should return true if an aggregate ID exists in storage", (done) => {
             const aggregateId = "some-id";
             const eventDescriptor = EventDescriptor.record(aggregateId, "AggregateType", "EventType", "{}", 1);
 
-            return Promise.all([
-                expect(storage.append(eventDescriptor)).to.eventually.be.fulfilled,
-                expect(storage.contains(aggregateId)).to.eventually.be.true
-            ]);
+            expect(storage.append(eventDescriptor)).to.eventually.be.fulfilled.and.then(() => {
+                expect(storage.contains(aggregateId)).to.eventually.be.true.and.notify(done);
+            }, done.fail);
         });
 
         it("should return false if an aggregate ID does not exist in storage", (done) => {

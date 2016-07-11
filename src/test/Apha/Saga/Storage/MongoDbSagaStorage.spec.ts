@@ -147,24 +147,24 @@ describe("MongoDbSagaStorage", () => {
             ]));
 
             expect(Promise.all([
-                storage.insert(
+                expect(storage.insert(
                     "SomeSaga",
                     saga1.getId(),
                     AssociationValueDescriptor.fromValues(saga1.getAssociationValues()),
                     serializer.serialize(saga1)
-                ),
-                storage.insert(
+                )).to.eventually.be.fulfilled,
+                expect(storage.insert(
                     "SomeOtherSaga",
                     saga2.getId(),
                     AssociationValueDescriptor.fromValues(saga2.getAssociationValues()),
                     serializer.serialize(saga2)
-                ),
-                storage.insert(
+                )).to.eventually.be.fulfilled,
+                expect(storage.insert(
                     "SomeSaga",
                     saga3.getId(),
                     AssociationValueDescriptor.fromValues(saga3.getAssociationValues()),
                     serializer.serialize(saga3)
-                )
+                )).to.eventually.be.fulfilled
             ])).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.find("SomeSaga", AssociationValueDescriptor.fromValues(saga1.getAssociationValues())))
                     .to.eventually.be.fulfilled
@@ -200,18 +200,18 @@ describe("MongoDbSagaStorage", () => {
             ]));
 
             expect(Promise.all([
-                storage.insert(
+                expect(storage.insert(
                     ClassNameInflector.classOf(saga1),
                     saga1.getId(),
                     AssociationValueDescriptor.fromValues(saga1.getAssociationValues()),
                     serializer.serialize(saga1)
-                ),
-                storage.insert(
+                )).to.eventually.be.fulfilled,
+                expect(storage.insert(
                     ClassNameInflector.classOf(saga2),
                     saga2.getId(),
                     AssociationValueDescriptor.fromValues(saga2.getAssociationValues()),
                     serializer.serialize(saga2)
-                )
+                )).to.eventually.be.fulfilled
             ])).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.remove(saga1.getId())).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.findById(saga1.getId())).to.become(null).and.notify(done);
