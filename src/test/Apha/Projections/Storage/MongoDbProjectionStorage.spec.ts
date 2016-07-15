@@ -29,7 +29,7 @@ describe("MongoDbProjectionStorage", () => {
 
     beforeEach(() => {
         const collection = mongoDb.collection("test_projections");
-        storage = new MongoDbProjectionStorage(collection, MemoryProjectionStorageSpecProjection);
+        storage = new MongoDbProjectionStorage(collection, MongoDbProjectionStorageSpecProjection);
     });
 
     afterEach(done => {
@@ -39,7 +39,7 @@ describe("MongoDbProjectionStorage", () => {
     describe("upsert", () => {
         it("inserts a new projection into storage", (done) => {
             const projectionId = "id";
-            const projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
+            const projection = new MongoDbProjectionStorageSpecProjection("foo", "bar");
 
             expect(storage.upsert(projectionId, projection)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.find(projectionId)).to.eventually.be.fulfilled.and.satisfy(actualProjection => {
@@ -51,10 +51,10 @@ describe("MongoDbProjectionStorage", () => {
 
         it("updates an existing projection in storage", (done) => {
             const projectionId = "id";
-            let projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
+            let projection = new MongoDbProjectionStorageSpecProjection("foo", "bar");
 
             expect(storage.upsert(projectionId, projection)).to.eventually.be.fulfilled.and.then(() => {
-                projection = new MemoryProjectionStorageSpecProjection("foo", "foo");
+                projection = new MongoDbProjectionStorageSpecProjection("foo", "foo");
 
                 expect(storage.upsert(projectionId, projection)).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.find(projectionId)).to.eventually.eql(projection).and.notify(done);
@@ -66,7 +66,7 @@ describe("MongoDbProjectionStorage", () => {
     describe("remove", () => {
         it("removes a projection from storage", (done) => {
             const projectionId = "id";
-            const projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
+            const projection = new MongoDbProjectionStorageSpecProjection("foo", "bar");
 
             expect(storage.upsert(projectionId, projection)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.remove(projectionId)).to.eventually.be.fulfilled.and.then(() => {
@@ -84,7 +84,7 @@ describe("MongoDbProjectionStorage", () => {
     describe("find", () => {
         it("retrieves a stored projection from storage", (done) => {
             const projectionId = "id";
-            const projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
+            const projection = new MongoDbProjectionStorageSpecProjection("foo", "bar");
 
             expect(storage.upsert(projectionId, projection)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.find(projectionId)).to.eventually.eql(projection).and.notify(done);
@@ -102,7 +102,7 @@ describe("MongoDbProjectionStorage", () => {
             const promises = [];
 
             for (let i = 0; i < 4; i++) {
-                const projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
+                const projection = new MongoDbProjectionStorageSpecProjection("foo", "bar");
                 projections.push(projection);
                 promises.push(
                     expect(storage.upsert(i.toString(), projection)).to.eventually.be.fulfilled
@@ -112,8 +112,8 @@ describe("MongoDbProjectionStorage", () => {
             expect(Promise.all(promises)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.findAll(1, 2)).to.eventually.be.fulfilled.and.satisfy(page => {
                     expect(page).to.have.lengthOf(2);
-                    expect(page[0]).to.eql(projections[1]);
-                    expect(page[1]).to.eql(projections[2]);
+                    expect(page).to.contain(projections[1]);
+                    expect(page).to.contain(projections[2]);
                     return true;
                 }).and.notify(done);
             }, done.fail);
@@ -130,7 +130,7 @@ describe("MongoDbProjectionStorage", () => {
     describe("clear", () => {
         it("clears all projections from storage", (done) => {
             const projectionId = "id";
-            const projection = new MemoryProjectionStorageSpecProjection("foo", "bar");
+            const projection = new MongoDbProjectionStorageSpecProjection("foo", "bar");
 
             expect(storage.upsert(projectionId, projection)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.clear()).to.eventually.be.fulfilled.and.then(() => {
@@ -148,10 +148,10 @@ describe("MongoDbProjectionStorage", () => {
         it("retrieves projections matching criteria", (done) => {
             const projections = [];
 
-            projections.push(new MemoryProjectionStorageSpecProjection("foo", "bar"));
-            projections.push(new MemoryProjectionStorageSpecProjection("bar", "foo"));
-            projections.push(new MemoryProjectionStorageSpecProjection("foo", "foo"));
-            projections.push(new MemoryProjectionStorageSpecProjection("bar", "bar"));
+            projections.push(new MongoDbProjectionStorageSpecProjection("foo", "bar"));
+            projections.push(new MongoDbProjectionStorageSpecProjection("bar", "foo"));
+            projections.push(new MongoDbProjectionStorageSpecProjection("foo", "foo"));
+            projections.push(new MongoDbProjectionStorageSpecProjection("bar", "bar"));
 
             const promises = [];
             for (let i = 0; i < projections.length; i++) {
@@ -173,10 +173,10 @@ describe("MongoDbProjectionStorage", () => {
         it("retrieves projections matching multiple criteria", (done) => {
             const projections = [];
 
-            projections.push(new MemoryProjectionStorageSpecProjection("foo", "bar"));
-            projections.push(new MemoryProjectionStorageSpecProjection("bar", "foo"));
-            projections.push(new MemoryProjectionStorageSpecProjection("foo", "foo"));
-            projections.push(new MemoryProjectionStorageSpecProjection("bar", "bar"));
+            projections.push(new MongoDbProjectionStorageSpecProjection("foo", "bar"));
+            projections.push(new MongoDbProjectionStorageSpecProjection("bar", "foo"));
+            projections.push(new MongoDbProjectionStorageSpecProjection("foo", "foo"));
+            projections.push(new MongoDbProjectionStorageSpecProjection("bar", "bar"));
 
             const promises = [];
 
@@ -197,7 +197,7 @@ describe("MongoDbProjectionStorage", () => {
     });
 });
 
-class MemoryProjectionStorageSpecProjection extends Projection {
+class MongoDbProjectionStorageSpecProjection extends Projection {
     constructor(public foo: string, public bar: string) {
         super();
     }
