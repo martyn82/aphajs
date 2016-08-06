@@ -51,7 +51,6 @@
     "test:unit:coverage:lcov": "remap-istanbul -i ${npm_package_config_test_reports_dir}/coverage.json -t lcovonly -o ${npm_package_config_test_reports_dir}/lcov.info"
   },
   "dependencies": {
-    "mongodb": "^2.2.5",
     "reflect-metadata": "^0.1.4",
     "winston": "^2.2.0"
   },
@@ -62,7 +61,7 @@
     "istanbul": "^0.4.4",
     "mkdirp": "^0.5.1",
     "mocha": "^2.5.3",
-    "mongodb": "^2.2.1",
+    "mongodb": "^2.2.5",
     "remap-istanbul": "^0.6.4",
     "rimraf": "^2.5.4",
     "sinon": "^1.17.5",
