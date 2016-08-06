@@ -23,7 +23,7 @@ describe("MemoryEventStorage", () => {
                 expect(storage.findIdentities()).to.eventually.be.fulfilled.and.satisfy(identities => {
                     return identities.size === 1 && identities.values().next().value === aggregateId;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("retrieves an empty set if storage is empty", (done) => {
@@ -61,7 +61,7 @@ describe("MemoryEventStorage", () => {
                 expect(storage.findIdentities()).to.eventually.be.fulfilled.and.satisfy(identities => {
                     return identities.size === 1 && identities.values().next().value === aggregateId;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
     });
 
@@ -73,7 +73,7 @@ describe("MemoryEventStorage", () => {
         it("returns true if an ID exists in storage", (done) => {
             storage.append(EventDescriptor.record("id", "type", "event", "{}", 1)).then(() => {
                 expect(storage.contains("id")).to.eventually.equal(true).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
     });
 

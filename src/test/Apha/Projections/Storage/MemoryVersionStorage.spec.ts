@@ -19,7 +19,7 @@ describe("MemoryVersionStorage", () => {
                 expect(storage.findByName("foo")).to.eventually.be.fulfilled.and.satisfy(version => {
                     return version === 12;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("should return NULL if no version is stored", (done) => {
@@ -35,7 +35,7 @@ describe("MemoryVersionStorage", () => {
                 expect(storage.findByName("foo")).to.eventually.be.fulfilled.and.satisfy(version => {
                     return version === 1;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("should update an existing version", (done) => {
@@ -47,7 +47,7 @@ describe("MemoryVersionStorage", () => {
                     expect(storage.findByName("foo")).to.eventually.be.fulfilled.and.satisfy(version => {
                         return version === 2;
                     }).and.notify(done);
-                }, done.fail);
+                }, error => done(error));
         });
     });
 });

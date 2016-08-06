@@ -27,7 +27,7 @@ describe("MemoryScheduleStorage", () => {
                 expect(storage.findAll()).to.eventually.be.fulfilled.and.satisfy(allSchedule => {
                     return allSchedule[0] === schedule;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
     });
 
@@ -40,8 +40,8 @@ describe("MemoryScheduleStorage", () => {
             })).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.remove("foo")).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.findAll()).to.eventually.have.lengthOf(0).and.notify(done);
-                }, done.fail);
-            }, done.fail);
+                }, error => done(error));
+            }, error => done(error));
         });
 
         it("is idempotent", (done) => {
@@ -59,7 +59,7 @@ describe("MemoryScheduleStorage", () => {
 
             expect(storage.add(schedule)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.findAll()).to.eventually.have.lengthOf(1).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
     });
 });

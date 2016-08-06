@@ -68,7 +68,7 @@ describe("MongoDbSagaStorage", () => {
                     expect(sagaData).to.equal(serializedSaga);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("associates a saga only once for an associated value", (done) => {
@@ -102,7 +102,7 @@ describe("MongoDbSagaStorage", () => {
                         expect(foundSagas).to.have.lengthOf(1);
                         return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
     });
 
@@ -121,7 +121,7 @@ describe("MongoDbSagaStorage", () => {
                     expect(sagaData).to.equal(serializedSaga);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("returns NULL if no saga with given ID was found", (done) => {
@@ -173,7 +173,7 @@ describe("MongoDbSagaStorage", () => {
                         expect(foundSagas[0]).to.equal(saga1.getId());
                         return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("returns empty result if no sagas can be found with given type and associated values", (done) => {
@@ -215,8 +215,8 @@ describe("MongoDbSagaStorage", () => {
             ])).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.remove(saga1.getId())).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.findById(saga1.getId())).to.become(null).and.notify(done);
-                }, done.fail);
-            }, done.fail);
+                }, error => done(error));
+            }, error => done(error));
         });
 
         it("is idempotent", (done) => {
@@ -250,8 +250,8 @@ describe("MongoDbSagaStorage", () => {
                         expect(actualSaga.getAssociationValues()).to.eql(updatedAssociationValues);
                         return true;
                     }).and.notify(done);
-                }, done.fail);
-            }, done.fail);
+                }, error => done(error));
+            }, error => done(error));
         });
 
         it("inserts the saga if it does not exist", (done) => {
@@ -268,7 +268,7 @@ describe("MongoDbSagaStorage", () => {
                     expect(actualSaga).to.eql(saga);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
     });
 });

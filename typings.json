@@ -8,12 +8,8 @@
     "elasticsearch": "registry:dt/elasticsearch#0.0.0+20160803225414",
     "mocha": "registry:dt/mocha#2.2.5+20160720003353",
     "mongodb": "registry:dt/mongodb#2.1.0+20160602142941",
-    "node": "registry:dt/node#6.0.0+20160709114037",
     "promises-a-plus": "registry:dt/promises-a-plus#0.0.0+20160317120654",
     "sinon": "registry:dt/sinon#1.16.0+20160517064723"
-  },
-  "devDependencies": {
-    "sinon": "registry:npm/sinon#1.16.0+20160427193336"
   },
   "globalDependencies": {
     "node": "registry:dt/node#6.0.0+20160805072842",

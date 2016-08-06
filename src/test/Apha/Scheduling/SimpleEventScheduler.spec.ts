@@ -324,7 +324,7 @@ describe("SimpleEventScheduler", () => {
                     eventBusMock.verify();
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("is idempotent", (done) => {
@@ -345,7 +345,7 @@ describe("SimpleEventScheduler", () => {
                     eventBusMock.verify();
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
     });
 });

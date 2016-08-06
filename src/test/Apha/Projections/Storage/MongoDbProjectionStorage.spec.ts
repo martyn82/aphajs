@@ -46,7 +46,7 @@ describe("MongoDbProjectionStorage", () => {
                     expect(actualProjection).to.eql(projection);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("updates an existing projection in storage", (done) => {
@@ -58,8 +58,8 @@ describe("MongoDbProjectionStorage", () => {
 
                 expect(storage.upsert(projectionId, projection)).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.find(projectionId)).to.eventually.eql(projection).and.notify(done);
-                }, done.fail);
-            }, done.fail);
+                }, error => done(error));
+            }, error => done(error));
         });
     });
 
@@ -72,8 +72,8 @@ describe("MongoDbProjectionStorage", () => {
                 expect(storage.remove(projectionId)).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.find(projectionId)).to.eventually.be.rejectedWith(ProjectionNotFoundException)
                         .and.notify(done);
-                }, done.fail);
-            }, done.fail);
+                }, error => done(error));
+            }, error => done(error));
         });
 
         it("is idempotent", (done) => {
@@ -88,7 +88,7 @@ describe("MongoDbProjectionStorage", () => {
 
             expect(storage.upsert(projectionId, projection)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.find(projectionId)).to.eventually.eql(projection).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("throws exception if projection cannot be found", (done) => {
@@ -116,7 +116,7 @@ describe("MongoDbProjectionStorage", () => {
                     expect(page).to.contain(projections[2]);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("retrieves an empty page if no projections match", (done) => {
@@ -135,8 +135,8 @@ describe("MongoDbProjectionStorage", () => {
             expect(storage.upsert(projectionId, projection)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.clear()).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.findAll(0, 500)).to.eventually.have.lengthOf(0).and.notify(done);
-                }, done.fail);
-            }, done.fail);
+                }, error => done(error));
+            }, error => done(error));
         });
 
         it("is idempotent", (done) => {
@@ -167,7 +167,7 @@ describe("MongoDbProjectionStorage", () => {
                     expect(page).to.contain(projections[2]);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("retrieves projections matching multiple criteria", (done) => {
@@ -192,7 +192,7 @@ describe("MongoDbProjectionStorage", () => {
                     expect(page[0]).to.eql(projections[0]);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
     });
 });

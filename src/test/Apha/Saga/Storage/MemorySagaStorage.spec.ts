@@ -49,7 +49,7 @@ describe("MemorySagaStorage", () => {
                     expect(sagaData).to.equal(serializedSaga);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("associates a saga only once for a associated value", (done) => {
@@ -83,7 +83,7 @@ describe("MemorySagaStorage", () => {
                         expect(foundSagas).to.have.lengthOf(1);
                         return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
     });
 
@@ -102,7 +102,7 @@ describe("MemorySagaStorage", () => {
                     expect(sagaData).to.equal(serializedSaga);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("returns NULL if no saga with given ID was found", (done) => {
@@ -154,7 +154,7 @@ describe("MemorySagaStorage", () => {
                         expect(foundSagas[0]).to.equal(saga1.getId());
                         return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("returns empty result if no sagas can be found with given type and associated values", (done) => {
@@ -196,8 +196,8 @@ describe("MemorySagaStorage", () => {
             ])).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.remove(saga1.getId())).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.findById(saga1.getId())).to.become(null).and.notify(done);
-                }, done.fail);
-            }, done.fail);
+                }, error => done(error));
+            }, error => done(error));
         });
 
         it("is idempotent", (done) => {
@@ -231,8 +231,8 @@ describe("MemorySagaStorage", () => {
                         expect(actualSaga.getAssociationValues()).to.eql(updatedAssociationValues);
                         return true;
                     }).and.notify(done);
-                }, done.fail);
-            }, done.fail);
+                }, error => done(error));
+            }, error => done(error));
         });
 
         it("inserts the saga if it does not exist", (done) => {
@@ -249,7 +249,7 @@ describe("MemorySagaStorage", () => {
                     expect(actualSaga).to.eql(saga);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
     });
 });

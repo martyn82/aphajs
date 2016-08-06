@@ -55,7 +55,7 @@ describe("MongoDbScheduleStorage", () => {
                         allSchedule[0].event.fullyQualifiedName === schedule.event.fullyQualifiedName &&
                         allSchedule[0].timestamp === schedule.timestamp;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
     });
 
@@ -68,8 +68,8 @@ describe("MongoDbScheduleStorage", () => {
             })).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.remove("foo")).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.findAll()).to.eventually.have.lengthOf(0).and.notify(done);
-                }, done.fail);
-            }, done.fail);
+                }, error => done(error));
+            }, error => done(error));
         });
 
         it("is idempotent", (done) => {
@@ -87,7 +87,7 @@ describe("MongoDbScheduleStorage", () => {
 
             expect(storage.add(schedule)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.findAll()).to.eventually.have.lengthOf(1).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
     });
 });

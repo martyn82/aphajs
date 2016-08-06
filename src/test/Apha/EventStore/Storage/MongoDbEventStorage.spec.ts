@@ -59,7 +59,7 @@ describe("MongoDbEventStorage", () => {
                 expect(storage.findIdentities()).to.eventually.be.fulfilled.and.satisfy(identities => {
                     return identities.values().next().value === aggregateId && identities.size === 1;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("should return an empty set if no identities are stored", (done) => {
@@ -84,7 +84,7 @@ describe("MongoDbEventStorage", () => {
 
             expect(Promise.all(promisedAppends)).to.eventually.be.fulfilled.then(() => {
                 expect(storage.find(aggregateId)).to.eventually.have.lengthOf(descriptors.length).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("should return an empty array if aggregate is unknown", (done) => {
@@ -99,7 +99,7 @@ describe("MongoDbEventStorage", () => {
 
             expect(storage.append(eventDescriptor)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.contains(aggregateId)).to.eventually.be.true.and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("should return false if an aggregate ID does not exist in storage", (done) => {
@@ -115,8 +115,8 @@ describe("MongoDbEventStorage", () => {
             expect(storage.append(eventDescriptor)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.clear()).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.contains(aggregateId)).to.eventually.be.false.and.notify(done);
-                }, done.fail);
-            }, done.fail);
+                }, error => done(error));
+            }, error => done(error));
         });
     });
 });

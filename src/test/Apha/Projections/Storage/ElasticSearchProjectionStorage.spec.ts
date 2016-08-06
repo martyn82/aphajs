@@ -24,7 +24,7 @@ describe("ElasticSearchProjectionStorage", () => {
             requestTimeout: Infinity
         }, error => {
             if (error) {
-                done.fail(error);
+                done(error);
             } else {
                 done();
             }
@@ -61,7 +61,7 @@ describe("ElasticSearchProjectionStorage", () => {
         client.indices.delete({
             index: "test_projections",
             ignore: [404]
-        }).then(() => done(), done.fail);
+        }).then(() => done(), error => done(error));
     });
 
     describe("upsert", () => {
@@ -74,7 +74,7 @@ describe("ElasticSearchProjectionStorage", () => {
                     expect(actualProjection).to.eql(projection);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("updates an existing projection in storage", (done) => {
@@ -86,8 +86,8 @@ describe("ElasticSearchProjectionStorage", () => {
 
                 expect(storage.upsert(projectionId, projection)).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.find(projectionId)).to.eventually.eql(projection).and.notify(done);
-                }, done.fail);
-            }, done.fail);
+                }, error => done(error));
+            }, error => done(error));
         });
     });
 
@@ -100,8 +100,8 @@ describe("ElasticSearchProjectionStorage", () => {
                 expect(storage.remove(projectionId)).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.find(projectionId)).to.eventually.be.rejectedWith(ProjectionNotFoundException)
                         .and.notify(done);
-                }, done.fail);
-            }, done.fail);
+                }, error => done(error));
+            }, error => done(error));
         });
 
         it("is idempotent", (done) => {
@@ -116,7 +116,7 @@ describe("ElasticSearchProjectionStorage", () => {
 
             expect(storage.upsert(projectionId, projection)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.find(projectionId)).to.eventually.eql(projection).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("throws exception if projection cannot be found", (done) => {
@@ -147,7 +147,7 @@ describe("ElasticSearchProjectionStorage", () => {
                     expect(page).to.contain(projections[2]);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("retrieves an empty page if no projections match", (done) => {
@@ -171,8 +171,8 @@ describe("ElasticSearchProjectionStorage", () => {
             expect(Promise.all(promises)).to.eventually.be.fulfilled.and.then(() => {
                 expect(storage.clear()).to.eventually.be.fulfilled.and.then(() => {
                     expect(storage.findAll(0, 500)).to.eventually.have.lengthOf(0).and.notify(done);
-                }, done.fail);
-            }, done.fail);
+                }, error => done(error));
+            }, error => done(error));
         });
 
         it("is idempotent", (done) => {
@@ -205,7 +205,7 @@ describe("ElasticSearchProjectionStorage", () => {
                     expect(page).to.contain(projections[2]);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
 
         it("retrieves projections matching multiple criteria", (done) => {
@@ -232,7 +232,7 @@ describe("ElasticSearchProjectionStorage", () => {
                     expect(page[0]).to.eql(projections[0]);
                     return true;
                 }).and.notify(done);
-            }, done.fail);
+            }, error => done(error));
         });
     });
 });
