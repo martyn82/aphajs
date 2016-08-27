@@ -5,7 +5,7 @@ import {ProjectionStorage} from "../../src/main/Apha/Projections/Storage/Project
 import {AnnotatedEventListener} from "../../src/main/Apha/EventHandling/AnnotatedEventListener";
 import {Event, EventType} from "../../src/main/Apha/Message/Event";
 import {EventListener} from "../../src/main/Apha/EventHandling/EventListenerDecorator";
-import {Mixin} from "../../src/main/MixinDecorator";
+import {Mixin} from "ts-essentials/target/build/main/lib/mixin";
 import {Account} from "./Account";
 
 namespace ProjectionsType {
