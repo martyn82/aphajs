@@ -40,7 +40,7 @@
     "compile:ts": "tsc --project ./tsconfig.json --outDir ${npm_package_config_build_dir}",
     "lint": "npm run lint:ts",
     "lint:ts": "tslint ${npm_package_config_all_sources_dir}/**/*.ts",
-    "postinstall": "typings install",
+    "postinstall": "typings install && npm run compile",
     "posttest:unit:coverage:html": "echo \"Coverage report:\n\tfile://$(pwd)/${npm_package_config_test_reports_dir}/html/index.html\n\"",
     "precompile:ts": "npm run clean:build && npm run lint",
     "preinstall": "npm prune",
