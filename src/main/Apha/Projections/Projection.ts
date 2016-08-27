@@ -1,5 +1,5 @@
 
-import {clone} from "../../Clone";
+import {clone} from "ts-essentials/target/build/main/lib/clone";
 
 export type ProjectionType = {new(...args: any[]): Projection};
 

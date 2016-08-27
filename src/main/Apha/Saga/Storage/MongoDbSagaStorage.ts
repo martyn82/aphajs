@@ -55,7 +55,7 @@ export class MongoDbSagaStorage implements SagaStorage {
                     cursor.close();
                     resolve(data);
                 }
-            )
+            );
         });
     }
 
@@ -78,7 +78,7 @@ export class MongoDbSagaStorage implements SagaStorage {
                     cursor.close();
                     resolve(sagaIds);
                 }
-            )
+            );
         });
     }
 }

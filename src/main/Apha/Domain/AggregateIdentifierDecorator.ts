@@ -3,7 +3,7 @@ import "reflect-metadata";
 import {MetadataKeys} from "../Decorators/MetadataKeys";
 import {DecoratorException} from "../Decorators/DecoratorException";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
-import {AnyType} from "../../Inflect";
+import {AnyType} from "ts-essentials/target/build/main/lib/inflection";
 
 export type AnnotatedAggregateIdentifier = {
     name: string,

@@ -1,6 +1,6 @@
 
 import {Event} from "../Message/Event";
-import {Exception} from "../../Exception";
+import {Exception} from "ts-essentials/target/build/main/lib/Exception";
 
 export type AssertEvents = (expectedEvents: Event[], actualEvents: Event[]) => void;
 

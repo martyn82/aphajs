@@ -1,7 +1,7 @@
 
 import "reflect-metadata";
 import {Serializer} from "./Serializer";
-import {AnyType} from "../../Inflect";
+import {AnyType} from "ts-essentials/target/build/main/lib/inflection";
 import {
     AnnotatedSerializableProperties,
     AnnotatedIgnoreSerializationProperties,

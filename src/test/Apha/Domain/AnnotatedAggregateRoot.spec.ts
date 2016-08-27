@@ -54,10 +54,14 @@ describe("AnnotatedAggregateRoot", () => {
 });
 
 class AnnotatedAggregateRootSpecCommand1 extends Command {
-    constructor(protected _id: string) {super();}
+    constructor(protected _id: string) {
+        super();
+    }
 }
 class AnnotatedAggregateRootSpecEvent1 extends Event {
-    constructor(protected _id: string) {super();}
+    constructor(protected _id: string) {
+        super();
+    }
 }
 
 class AnnotatedAggregateRootSpecAggregateRoot extends AnnotatedAggregateRoot {

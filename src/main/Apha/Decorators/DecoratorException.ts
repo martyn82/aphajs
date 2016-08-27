@@ -1,5 +1,5 @@
 
-import {Exception} from "../../Exception";
+import {Exception} from "ts-essentials/target/build/main/lib/Exception";
 
 export class DecoratorException extends Exception {
     constructor(targetClass: string, name: string, decoratorName: string) {

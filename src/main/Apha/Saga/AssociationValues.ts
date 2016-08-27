@@ -4,7 +4,7 @@ import {AssociationValue} from "./AssociationValue";
 
 export class AssociationValues implements Iterable<AssociationValue> {
     @Serializer.Serializable({genericType: AssociationValue})
-    private items : AssociationValue[];
+    private items: AssociationValue[];
 
     constructor(items: AssociationValue[] = []) {
         this.items = items;

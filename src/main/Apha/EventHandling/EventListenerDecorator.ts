@@ -84,7 +84,7 @@ export function EventListenerDispatcher(): Function {
 
             handlers.get(eventClass).call(this, event);
         };
-    }
+    };
 }
 
 export function SupportedEventTypesRetriever(): Function {

@@ -3,7 +3,7 @@ import {expect} from "chai";
 import {AnnotatedEventListener} from "../../../main/Apha/EventHandling/AnnotatedEventListener";
 import {Event, EventType} from "../../../main/Apha/Message/Event";
 import {EventListener} from "../../../main/Apha/EventHandling/EventListenerDecorator";
-import {Mixin} from "../../../main/MixinDecorator";
+import {Mixin} from "ts-essentials/target/build/main/lib/mixin";
 
 describe("AnnotatedEventListener", () => {
     describe("on", () => {

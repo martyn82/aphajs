@@ -1,6 +1,6 @@
 
 import "reflect-metadata";
-import {AnyType} from "../../Inflect";
+import {AnyType} from "ts-essentials/target/build/main/lib/inflection";
 import {MetadataKeys} from "../Decorators/MetadataKeys";
 import {ClassNameInflector} from "../Inflection/ClassNameInflector";
 import {DecoratorException} from "../Decorators/DecoratorException";
@@ -30,7 +30,7 @@ export namespace Serializer {
 
             ignores.push(propertyName);
             Reflect.defineMetadata(IGNORE_SERIALIZATION_PROPERTIES, ignores, target);
-        }
+        };
     }
 
     export function Serializable(options?: SerializableTypeOptions): Function {
@@ -60,6 +60,6 @@ export namespace Serializer {
 
             serializables[propertyName] = serializableType;
             Reflect.defineMetadata(SERIALIZABLE_PROPERTIES, serializables, target);
-        }
+        };
     }
 }

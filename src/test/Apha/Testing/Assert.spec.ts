@@ -93,8 +93,12 @@ describe("Assert", () => {
 });
 
 class AssertSpecEvent1 extends Event {
-    constructor(protected _id?: string) {super();}
+    constructor(protected _id?: string) {
+        super();
+    }
 }
 class AssertSpecEvent2 extends Event {
-    constructor(protected _id?: string) {super();}
+    constructor(protected _id?: string) {
+        super();
+    }
 }

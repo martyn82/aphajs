@@ -26,22 +26,22 @@ describe("Scenario", () => {
 
     beforeEach(() => {
         const events = new Set<EventType>();
-        events.add(ScenarioSpec_Event);
-        events.add(ScenarioSpec_Event2);
+        events.add(ScenarioSpecEvent);
+        events.add(ScenarioSpecEvent2);
 
-        const factory = new GenericAggregateFactory<ScenarioSpec_AggregateRoot>(ScenarioSpec_AggregateRoot);
+        const factory = new GenericAggregateFactory<ScenarioSpecAggregateRoot>(ScenarioSpecAggregateRoot);
         const eventStore = new TraceableEventStore(
             new SimpleEventBus(),
             new MemoryEventStorage(),
             new JsonSerializer(),
             new EventClassMap(events)
         );
-        const repository = new EventSourcingRepository<ScenarioSpec_AggregateRoot>(factory, eventStore);
-        const commandHandler = new ScenarioSpec_CommandHandler(repository);
+        const repository = new EventSourcingRepository<ScenarioSpecAggregateRoot>(factory, eventStore);
+        const commandHandler = new ScenarioSpecCommandHandler(repository);
         const commandBus = new SimpleCommandBus();
 
-        commandBus.registerHandler(ScenarioSpec_Command, commandHandler);
-        commandBus.registerHandler(ScenarioSpec_Command2, commandHandler);
+        commandBus.registerHandler(ScenarioSpecCommand, commandHandler);
+        commandBus.registerHandler(ScenarioSpecCommand2, commandHandler);
 
         assertSpy = sinon.spy();
         scenario = new Scenario(factory, eventStore, commandBus, assertSpy);
@@ -62,11 +62,11 @@ describe("Scenario", () => {
 
     it("should assert a single resulting event, given nothing", (done) => {
         const aggregateId = "id";
-        const event = new ScenarioSpec_Event(aggregateId);
+        const event = new ScenarioSpecEvent(aggregateId);
 
         expect(scenario
             .given()
-            .when(new ScenarioSpec_Command(aggregateId))
+            .when(new ScenarioSpecCommand(aggregateId))
             .then(event)
         ).to.eventually.be.fulfilled.and.satisfy(() => {
             return Promise.all([
@@ -78,12 +78,12 @@ describe("Scenario", () => {
 
     it("should assert multiple events in the right order", (done) => {
         const aggregateId = "id";
-        const event1 = new ScenarioSpec_Event(aggregateId);
-        const event2 = new ScenarioSpec_Event2(aggregateId, "foo");
+        const event1 = new ScenarioSpecEvent(aggregateId);
+        const event2 = new ScenarioSpecEvent2(aggregateId, "foo");
 
         expect(scenario
             .given()
-            .when(new ScenarioSpec_Command(aggregateId), new ScenarioSpec_Command2(aggregateId, "foo"))
+            .when(new ScenarioSpecCommand(aggregateId), new ScenarioSpecCommand2(aggregateId, "foo"))
             .then(event1, event2)
         ).to.eventually.be.fulfilled.and.satisfy(() => {
             return Promise.all([
@@ -95,12 +95,12 @@ describe("Scenario", () => {
 
     it("should assert events given an initial arrangement", (done) => {
         const aggregateId = "id";
-        const event1 = new ScenarioSpec_Event(aggregateId);
-        const event2 = new ScenarioSpec_Event2(aggregateId, "foo");
+        const event1 = new ScenarioSpecEvent(aggregateId);
+        const event2 = new ScenarioSpecEvent2(aggregateId, "foo");
 
         expect(scenario
             .given(event1)
-            .when(new ScenarioSpec_Command2(aggregateId, "foo"))
+            .when(new ScenarioSpecCommand2(aggregateId, "foo"))
             .then(event2)
         ).to.eventually.be.fulfilled.and.satisfy(() => {
             return Promise.all([
@@ -111,7 +111,7 @@ describe("Scenario", () => {
     });
 });
 
-class ScenarioSpec_AggregateRoot extends AggregateRoot {
+class ScenarioSpecAggregateRoot extends AggregateRoot {
     private id: string;
     private val: string;
 
@@ -119,53 +119,65 @@ class ScenarioSpec_AggregateRoot extends AggregateRoot {
         return this.id;
     }
 
-    public command(command: ScenarioSpec_Command): void {
-        this.apply(new ScenarioSpec_Event(command.id));
+    public command(command: ScenarioSpecCommand): void {
+        this.apply(new ScenarioSpecEvent(command.id));
     }
 
-    protected onScenarioSpec_Event(event: ScenarioSpec_Event): void {
+    protected onScenarioSpecEvent(event: ScenarioSpecEvent): void {
         this.id = event.id;
     }
 
-    public command2(command: ScenarioSpec_Command2): void {
-        this.apply(new ScenarioSpec_Event2(command.id, command.val));
+    public command2(command: ScenarioSpecCommand2): void {
+        this.apply(new ScenarioSpecEvent2(command.id, command.val));
     }
 
-    protected onScenarioSpec_Event2(event: ScenarioSpec_Event2): void {
+    protected onScenarioSpecEvent2(event: ScenarioSpecEvent2): void {
         this.val = event.val;
     }
 }
 
-class ScenarioSpec_CommandHandler extends TypedCommandHandler {
-    constructor(private repository: Repository<ScenarioSpec_AggregateRoot>) {
+class ScenarioSpecCommandHandler extends TypedCommandHandler {
+    constructor(private repository: Repository<ScenarioSpecAggregateRoot>) {
         super();
     }
 
-    public async handleScenarioSpec_Command(command: ScenarioSpec_Command): Promise<void> {
-        const aggregate = new ScenarioSpec_AggregateRoot();
+    public async handleScenarioSpecCommand(command: ScenarioSpecCommand): Promise<void> {
+        const aggregate = new ScenarioSpecAggregateRoot();
         aggregate.command(command);
         return this.repository.store(aggregate, aggregate.version);
     }
 
-    public async handleScenarioSpec_Command2(command: ScenarioSpec_Command2): Promise<void> {
+    public async handleScenarioSpecCommand2(command: ScenarioSpecCommand2): Promise<void> {
         const aggregate = await this.repository.findById(command.id);
         aggregate.command2(command);
         return this.repository.store(aggregate, aggregate.version);
     }
 }
 
-class ScenarioSpec_Command extends Command {
-    constructor(protected _id: string) {super();}
+class ScenarioSpecCommand extends Command {
+    constructor(protected _id: string) {
+        super();
+    }
 }
-class ScenarioSpec_Event extends Event {
-    constructor(protected _id: string) {super();}
+class ScenarioSpecEvent extends Event {
+    constructor(protected _id: string) {
+        super();
+    }
 }
 
-class ScenarioSpec_Command2 extends Command {
-    constructor(protected _id: string, private _val: string) {super();}
-    public get val(): string {return this._val;}
+class ScenarioSpecCommand2 extends Command {
+    constructor(protected _id: string, private _val: string) {
+        super();
+    }
+    public get val(): string {
+        return this._val;
+    }
 }
-class ScenarioSpec_Event2 extends Event {
-    constructor(protected _id: string, private _val: string) {super();}
-    public get val(): string {return this._val;}
+class ScenarioSpecEvent2 extends Event {
+    constructor(protected _id: string, private _val: string) {
+        super();
+    }
+    public get val(): string {
+        return this._val;
+    }
 }

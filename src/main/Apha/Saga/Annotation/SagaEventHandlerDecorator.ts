@@ -77,5 +77,5 @@ export function SagaEventHandlerDispatcher(): Function {
                 this.end();
             }
         };
-    }
+    };
 }

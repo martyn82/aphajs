@@ -2,7 +2,7 @@
 import {Serializer} from "../Serialization/Serializer";
 import {SagaFactory} from "./SagaFactory";
 import {Saga} from "./Saga";
-import {AnyType} from "../../Inflect";
+import {AnyType} from "ts-essentials/target/build/main/lib/inflection";
 
 export class SagaSerializer<T extends Saga> implements Serializer {
     constructor(private serializer: Serializer, private factory: SagaFactory<T>) {}

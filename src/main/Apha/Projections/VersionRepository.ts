@@ -2,9 +2,16 @@
 import {VersionStorage} from "./Storage/VersionStorage";
 
 export class VersionInfo {
-    constructor(private _name: string, private _version: number) {}
-    public get name(): string {return this._name;}
-    public get version(): number {return this._version;}
+    constructor(private _name: string, private _version: number) {
+    }
+
+    public get name(): string {
+        return this._name;
+    }
+
+    public get version(): number {
+        return this._version;
+    }
 }
 
 export class VersionRepository {

@@ -3,7 +3,7 @@ import {expect} from "chai";
 import {CommandHandler} from "../../../main/Apha/CommandHandling/CommandHandlerDecorator";
 import {Command, CommandType} from "../../../main/Apha/Message/Command";
 import {AnnotatedCommandHandler} from "../../../main/Apha/CommandHandling/AnnotatedCommandHandler";
-import {Mixin} from "../../../main/MixinDecorator";
+import {Mixin} from "ts-essentials/target/build/main/lib/mixin";
 
 describe("AnnotatedCommandHandler", () => {
     describe("handle", () => {

@@ -1,6 +1,5 @@
 
 import {expect} from "chai";
-import {Inflect} from "../../../main/Inflect";
 import {ClassNameInflector} from "../../../main/Apha/Inflection/ClassNameInflector";
 import {InflectionException} from "../../../main/Apha/Inflection/InflectionException";
 import ClassNameInflectorSpecNamespacedClass = ClassNameInflectorSpecNamespace.ClassNameInflectorSpecNamespacedClass;

@@ -13,7 +13,7 @@ import {EventClassMap} from "../../../main/Apha/EventStore/EventClassMap";
 import {AggregateNotFoundException} from "../../../main/Apha/EventStore/AggregateNotFoundException";
 import {EventListener} from "../../../main/Apha/EventHandling/EventListener";
 import {ConcurrencyException} from "../../../main/Apha/EventStore/ConcurrencyException";
-import {AnyType} from "../../../main/Inflect";
+import {AnyType} from "ts-essentials/target/build/main/lib/inflection";
 
 chai.use(chaiAsPromised);
 

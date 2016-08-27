@@ -1,7 +1,7 @@
 
 import {AggregateRoot} from "./AggregateRoot";
 import {AnnotatedCommandHandler} from "../CommandHandling/AnnotatedCommandHandler";
-import {Mixin} from "../../MixinDecorator";
+import {Mixin} from "ts-essentials/target/build/main/lib/mixin";
 import {CommandHandlerDispatcher, defineDeferredCommandHandlers} from "../CommandHandling/CommandHandlerDecorator";
 import {AnnotatedEventListener} from "../EventHandling/AnnotatedEventListener";
 import {Command, CommandType} from "../Message/Command";
